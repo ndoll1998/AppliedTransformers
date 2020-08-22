@@ -25,7 +25,7 @@ class AspectOpinionExtractionTrainer(BaseTrainer):
         dataset_type:type,
         data_base_dir:str,
         seq_length:int,
-        batch_size:int
+        batch_size:int,
         # optimizer
         learning_rate:float,
         weight_decay:float,
