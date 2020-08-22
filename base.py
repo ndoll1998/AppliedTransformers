@@ -102,7 +102,7 @@ class BaseTrainer(object):
             with tqdm(total=len(self.test_dataloader)) as pbar:
                 pbar.set_description("Test")
 
-                for i, batch in enumerate(self.train_dataloader, 1):
+                for i, batch in enumerate(self.test_dataloader, 1):
                     # evaluate batch
                     loss, cache = self.evaluate_batch(*batch)
                     test_running_loss += loss.item()
