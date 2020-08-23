@@ -28,7 +28,7 @@ class SemEval2015Task12(AspectOpinionExtractionDataset):
     TEST_ASPECT_TERMS_FILE = "SemEval2015-Task12/aspectTerm_restest15.txt"
     TEST_SENTENCE_AND_OPINIONS_FILE = "SemEval2015-Task12/sentence_restest15_op.txt"
     
-    def __init__(self, train:bool, tokenizer:transformers.BertTokenizer, seq_length:int, data_base_dir:str ='./data'):
+    def yield_item_features(self, train:bool, data_base_dir:str ='./data'):
 
         # get files for training or evaluation
         aspect_fname = SemEval2015Task12.TRAIN_ASPECT_TERMS_FILE if train else SemEval2015Task12.TEST_ASPECT_TERMS_FILE
@@ -44,7 +44,6 @@ class SemEval2015Task12(AspectOpinionExtractionDataset):
             all_sents_opinions = f.read().split('\n')
         assert len(all_aspects) == len(all_sents_opinions)
 
-        all_input_ids, all_labels_a, all_labels_o = [], [], []
         # preprocess data
         for sent_opinions, aspects in zip(all_sents_opinions, all_aspects):
             # separate sentence from opinions
@@ -52,27 +51,11 @@ class SemEval2015Task12(AspectOpinionExtractionDataset):
             # get aspects and opinions
             opinions = [o.strip()[:-3] for o in opinions.split(',')] if len(opinions) > 0 else []
             aspects = [a.strip() for a in aspects.split(',')] if len(aspects) > 0 else []
-            # tokenize text and all aspect and opinion
-            tokens = tokenizer.tokenize(sent)[:seq_length]
-            aspect_tokens = map(tokenizer.tokenize, aspects)
-            opinion_tokens = map(tokenizer.tokenize, opinions)
-            # create labels and convert tokens to ids
-            labels_a = mark_bio(tokens, aspect_tokens)
-            labels_o = mark_bio(tokens, opinion_tokens)
-            input_ids = tokenizer.convert_tokens_to_ids(tokens)
-            # pad to fit sequence length
-            input_ids += [tokenizer.pad_token_id] * (seq_length - len(input_ids))
-            labels_a += [-1] * (seq_length - len(labels_a))
-            labels_o += [-1] * (seq_length - len(labels_o))
-            # add to lists
-            all_input_ids.append(input_ids)
-            all_labels_a.append(labels_a)
-            all_labels_o.append(labels_o)
-
-        # create tensors
-        input_ids = torch.LongTensor(all_input_ids)
-        labels_a = torch.LongTensor(all_labels_a)
-        labels_o = torch.LongTensor(all_labels_o)
-
-        # initialize dataset
-        AspectOpinionExtractionDataset.__init__(self, input_ids, labels_a, labels_o)
+            # build aspect and opinion spans
+            opinion_pos = [sent.find(o) for o in opinions]
+            opinion_spans = [(i, i + len(o)) for i, o in zip(opinion_pos, opinions)]
+            aspect_pos = [sent.find(a) for a in aspects]
+            aspect_spans = [(i, i + len(a)) for i, a in zip(aspect_pos, aspects)]
+            
+            # yield features
+            yield sent, aspect_spans, opinion_spans

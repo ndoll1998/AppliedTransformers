@@ -18,7 +18,7 @@ class SmartdataCorpus(RelationExtractionDataset):
 
     RELATIONS = ["Acquisition", "Insolvency", "Layoffs", "Merger", "OrganizationLeadership", "SpinOff", "Strike"]
 
-    def __init__(self, train:bool, tokenizer:transformers.BertTokenizer, seq_length:int, data_base_dir:str ='./data'):
+    def yield_item_features(self, train:bool, data_base_dir:str ='./data'):
 
         # build full path 
         fname = SmartdataCorpus.TRAIN_FILE if train else SmartdataCorpus.TEST_FILE
@@ -29,10 +29,6 @@ class SmartdataCorpus(RelationExtractionDataset):
             json_dumps = [('' if i == 0 else '{') +  s + ('' if i == len(json_dumps) - 1 else '}') for i, s in enumerate(json_dumps)]
             documents = [json.loads(dump) for dump in json_dumps][1:]
 
-        # build relation-to-index map
-        rel2id = {rel: i for i, rel in enumerate(SmartdataCorpus.RELATIONS)}
-
-        input_ids, e1_e2_starts, relation_labels = [], [], []
         # process data
         for doc in documents:
             for sent in doc['sentences']['array']:
@@ -45,41 +41,16 @@ class SmartdataCorpus(RelationExtractionDataset):
                     rel_type = rel['name']
 
                     # check type
-                    if rel_type not in rel2id:
+                    if rel_type not in SmartdataCorpus.RELATIONS:
                         continue
                     
                     types = ['organization-company', 'person', 'org-position', 'trigger', 'organization']
                     args = tuple(arg for arg in rel['args']['array'] if arg['conceptMention']['type'] in types)
                     # create bi-relations from n-ary relations
                     for argA, argB in combinations(args, 2):
-                        # sort arguments
+                        # get entity spans
                         argA, argB = argA['conceptMention'], argB['conceptMention']
-                        argA, argB = sorted((argA, argB), key=lambda a: a['span']['start'])
-                        # mark in text
-                        marked_sent = (sent_string[:off + argA['span']['start']] + \
-                            "[e1]" + sent_string[off + argA['span']['start']:off + argA['span']['end']] + "[/e1]" + \
-                            sent_string[off + argA['span']['end']:off + argB['span']['start']] + \
-                            "[e2]" + sent_string[off + argB['span']['start']:off + argB['span']['end']] + "[/e2]" + \
-                            sent_string[off + argB['span']['end']:]).replace('\n', ' ').strip()
-                        # tokenize sentence
-                        token_ids = tokenizer.encode(marked_sent)[:seq_length]
-                        token_ids += [tokenizer.pad_token_id] * (seq_length - len(token_ids))
-                        # find entity starts
-                        if (tokenizer._entity1_token_id not in token_ids) or (tokenizer._entity2_token_id not in token_ids): 
-                            continue
-                        entity_starts = (token_ids.index(tokenizer.entity1_token_id), token_ids.index(tokenizer.entity2_token_id))
-                        # add to lists
-                        input_ids.append(token_ids)
-                        e1_e2_starts.append(entity_starts)
-                        relation_labels.append(rel2id[rel_type])
+                        spanA = (argA['span']['start'] + off, argA['span']['end'] + off)
+                        spanB = (argB['span']['start'] + off, argB['span']['end'] + off)
 
-        # convert to tensors
-        input_ids = torch.LongTensor(input_ids)
-        e1_e2_starts = torch.LongTensor(e1_e2_starts)
-        labels = torch.LongTensor(relation_labels)
-        # initialize dataset
-        RelationExtractionDataset.__init__(self, input_ids, e1_e2_starts, labels)
-
-    @property
-    def num_relations(self):
-        return len(SmartdataCorpus.RELATIONS)
+                        yield sent_string, spanA, spanB, rel_type

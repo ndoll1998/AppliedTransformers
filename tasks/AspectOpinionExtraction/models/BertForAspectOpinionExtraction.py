@@ -1,17 +1,33 @@
 import torch
 import torch.nn.functional as F
+# import base model
+from .AspectOpinionExtractionModel import AspectOpinionExtractionModel
 # import Bert Config and Model
 from transformers import BertConfig
 from transformers import BertForTokenClassification
 
-class BertForAspectOpinionExtraction(BertForTokenClassification):
+class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenClassification):
 
     def __init__(self, config:BertConfig):
         # number of labels to predict is 3+3 = 6
         # BIO-Scheme for aspects and opinions separately
         config.num_labels = 6
         # initialize model
-        super(BertForAspectOpinionExtraction, self).__init__(config)
+        BertForTokenClassification.__init__(self, config)
+
+    def preprocess(self, input_ids, labels_a, labels_o, tokenizer, device) -> dict:
+        # move all to device
+        input_ids = input_ids.to(device)
+        labels_a, labels_o = labels_a.to(device), labels_o.to(device)
+        # create attention mask
+        mask = (input_ids != tokenizer.pad_token_id)
+        # return kwargs for forward call
+        return {
+            'input_ids': input_ids,
+            'attention_mask': mask,
+            'aspect_labels': labels_a,
+            'opinion_labels': labels_o
+        }
 
     def forward(self, 
         input_ids,
@@ -26,7 +42,7 @@ class BertForAspectOpinionExtraction(BertForTokenClassification):
         output_hidden_states=None,
     ):
         # predict
-        outputs = super(BertForAspectOpinionExtraction, self).forward(
+        outputs = BertForTokenClassification.forward(self,
             input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids, 
             position_ids=position_ids, head_mask=head_mask, inputs_embeds=inputs_embeds,
             output_attentions=output_attentions, output_hidden_states=output_hidden_states

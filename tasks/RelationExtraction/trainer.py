@@ -2,8 +2,7 @@
 import torch
 import transformers
 # import model and tokenizer
-from .modeling import BertForRelationExtraction
-from .tokenization import BertForRelationExtractionTokenizer
+from .models import RelationExtractionModel
 # import datasets
 from .datasets import RelationExtractionDataset
 # import base trainer and metrics
@@ -15,27 +14,32 @@ from matplotlib import pyplot as plt
 
 class RelationExtractionTrainer(BaseTrainer):
 
+    BASE_MODEL_TYPE = RelationExtractionModel
     BASE_DATASET_TYPE = RelationExtractionDataset
 
     def __init__(self, 
-        # model
-        bert_base_model:str,
-        device:str,
-        # optimizer
-        learning_rate:float,
-        weight_decay:float,
+        # model and tokenizer
+        model_type:type =None,
+        pretrained_name:str =None,
+        model_kwargs:dict ={},
+        device:str ='cpu',
         # data
-        dataset_type:type,
-        data_base_dir:str,
-        seq_length:int,
-        batch_size:int
+        dataset_type:torch.utils.data.Dataset =None,
+        data_base_dir:str ='./data',
+        seq_length:int =None,
+        batch_size:int =None,
+        # optimizer
+        learning_rate:float =None,
+        weight_decay:float =None,
     ):
+        # update model kwargs
+        model_kwargs.update({'num_labels': dataset_type.num_relations})
         # initialize trainer
         BaseTrainer.__init__(self, 
             # model
-            bert_model_type=None,   # manually initialize model
-            tokenizer_type=BertForRelationExtractionTokenizer,
-            bert_base_model=bert_base_model,
+            model_type=model_type,
+            pretrained_name=pretrained_name,
+            model_kwargs=model_kwargs,
             device=device,
             # optimizer
             learning_rate=learning_rate,
@@ -46,26 +50,19 @@ class RelationExtractionTrainer(BaseTrainer):
             seq_length=seq_length,
             batch_size=batch_size
         )
-        # create model
-        self.model = BertForRelationExtraction.from_pretrained(bert_base_model, num_labels=self.train_dataloader.dataset.num_relations)
+        # update model embedding dimensions to match tokenizer
         self.model.resize_token_embeddings(len(self.tokenizer))
-        self.model.to(self.device)
-        # create optimizer
-        self.optim = transformers.AdamW(self.model.parameters(), lr=self.lr, weight_decay=self.wd)
     
-    def compute_batch_loss(self, input_ids, e1_e2_start, labels):
-        # move all to device and build attention mask
-        input_ids, e1_e2_start, labels = input_ids.to(self.device), e1_e2_start.to(self.device), labels.to(self.device)
-        mask = (input_ids != self.tokenizer.pad_token_id)
+    def compute_batch_loss(self, *batch):
+        # convert dataset batch to inputs for model
+        kwargs = self.model.preprocess(*batch, self.tokenizer, self.device)
         # apply model and get loss
-        return self.model.forward(input_ids, attention_mask=mask, e1_e2_start=e1_e2_start, labels=labels)[0]
+        return self.model.forward(**kwargs)[0]
 
-    def evaluate_batch(self, input_ids, e1_e2_start, labels):
-        # move all to device and build attention mask
-        input_ids, e1_e2_start, labels = input_ids.to(self.device), e1_e2_start.to(self.device), labels.to(self.device)
-        mask = (input_ids != self.tokenizer.pad_token_id)
-        # apply model and get loss
-        loss, logits = self.model.forward(input_ids, attention_mask=mask, e1_e2_start=e1_e2_start, labels=labels)[:2]
+    def evaluate_batch(self, *batch, labels):
+        # convert dataset batch to inputs for model and apply model
+        kwargs = self.model.preprocess(*batch, labels, self.tokenizer, self.device)
+        loss, logits = self.model.forward(**kwargs)[:2]
         # build targets and predictions
         targets = labels.cpu().tolist()
         predicts = logits.max(dim=-1)[1].cpu().tolist()

@@ -8,7 +8,22 @@ We use a BERT encoder with a linear classification layer after it. We apply a cu
 
 ## Datasets
 
-Datasets for this task must inherit the `RelationExtractionDataset` which specifies `input-ids`, `entity-start-positions` and `relation-labels` in that order.
+Datasets for this task must inherit the `RelationExtractionDataset` which specifies `input-ids`, `relation-target-A-token-spans`, `relation-target-B-spans` and `relation-labels` in that order.
+
+A custom dataset must have the following form.
+```python
+
+class CustomDataset(AspectOpinionExtractionDataset):
+    
+    # list of all relation types in the dataset
+    RELATIONS = ['YOUR', 'RELATIONS', ...]
+
+    def yield_dataset_item(self, train:bool, base_data_dir:str):
+        # read and process data here
+        # yield tuples of the following form 
+        yield (text, relation_target_A_span, relation_target_B_span, relation_type)
+
+```
 
 We currently provide the following datasets for this task:
 

@@ -1,9 +1,7 @@
 # import torch
 import torch
-# import model and tokenizer
-from .modeling import BertForAspectOpinionExtraction
-from transformers import BertTokenizer
-# import datasets
+# import base model and dataset
+from .models import AspectOpinionExtractionModel
 from .datasets import AspectOpinionExtractionDataset
 # import base trainer and metrics
 from base import BaseTrainer
@@ -14,58 +12,20 @@ from matplotlib import pyplot as plt
 
 class AspectOpinionExtractionTrainer(BaseTrainer):
 
-    # dataset type
+    # base types
+    BASE_MODEL_TYPE = AspectOpinionExtractionModel
     BASE_DATASET_TYPE = AspectOpinionExtractionDataset
 
-    def __init__(self, 
-        # model
-        bert_base_model:str,
-        device:str,
-        # dataset parameters
-        dataset_type:type,
-        data_base_dir:str,
-        seq_length:int,
-        batch_size:int,
-        # optimizer
-        learning_rate:float,
-        weight_decay:float,
-    ):
-        # initialize trainer
-        BaseTrainer.__init__(self, 
-            # model
-            bert_model_type=BertForAspectOpinionExtraction,
-            tokenizer_type=BertTokenizer,
-            bert_base_model=bert_base_model,
-            device=device,
-            # optimizer
-            learning_rate=learning_rate,
-            weight_decay=weight_decay,
-            # data
-            dataset_type=dataset_type,
-            data_base_dir=data_base_dir,
-            seq_length=seq_length,
-            batch_size=batch_size
-        )
-
-    def compute_batch_loss(self, input_ids, labels_a, labels_o):
-        # move all to device and build attention mask
-        input_ids, labels_a, labels_o = input_ids.to(self.device), labels_a.to(self.device), labels_o.to(self.device)
-        mask = (input_ids != self.tokenizer.pad_token_id)
+    def compute_batch_loss(self, *batch):
+        # preprocess batch
+        kwargs = self.model.preprocess(*batch, self.tokenizer, self.device)
         # apply model and get loss
-        return self.model.forward(
-            input_ids, attention_mask=mask,
-            aspect_labels=labels_a, opinion_labels=labels_o
-        )[0]
+        return self.model.forward(**kwargs)[0]
 
-    def evaluate_batch(self, input_ids, labels_a, labels_o):
-        # move all to device and build attention mask
-        input_ids, labels_a, labels_o = input_ids.to(self.device), labels_a.to(self.device), labels_o.to(self.device)
-        mask = (input_ids != self.tokenizer.pad_token_id)
-        # apply model and get loss
-        loss, logits_a, logits_o = self.model.forward(
-            input_ids, attention_mask=mask,
-            aspect_labels=labels_a, opinion_labels=labels_o
-        )[:3]
+    def evaluate_batch(self, *batch):
+        # preprocess batch and apply model
+        kwargs = self.model.preprocess(*batch, self.tokenizer, self.device)
+        loss, logits_a, logits_o = self.model.forward(**kwargs)[:3]
         # build targets
         target_a = labels_a[mask].cpu().tolist()
         target_o = labels_o[mask].cpu().tolist()

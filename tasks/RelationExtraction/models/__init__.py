@@ -1,0 +1,2 @@
+from .RelationExtractionModel import RelationExtractionModel
+from .BertForRelationExtraction import BertForRelationExtraction

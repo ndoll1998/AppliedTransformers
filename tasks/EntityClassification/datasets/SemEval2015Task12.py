@@ -19,9 +19,7 @@ class SemEval2015Task12_AspectSentiment(EntityClassificationDataset):
 
     LABELS = ['positive', 'neutral', 'negative']
 
-    def __init__(self, train:bool, tokenizer:transformers.BertTokenizer, seq_length:int, data_base_dir:str ='./data'):
-        # create label-to-id map
-        label2id = {l:i for i, l in enumerate(SemEval2015Task12_AspectSentiment.LABELS)}
+    def yield_item_features(self, train:bool, data_base_dir:str ='./data'):
 
         # build full paths to files
         fname = SemEval2015Task12_AspectSentiment.TRAIN_FILE if train else SemEval2015Task12_AspectSentiment.TEST_FILE
@@ -31,7 +29,6 @@ class SemEval2015Task12_AspectSentiment(EntityClassificationDataset):
         tree = ET.parse(fpath)
         root = tree.getroot()
         
-        all_input_ids, all_entity_starts, all_labels = [], [], []
         # parse all reviews
         for review in root:
             for sent in review[0].findall('sentence'):
@@ -47,39 +44,14 @@ class SemEval2015Task12_AspectSentiment(EntityClassificationDataset):
                 # remove unvalids - no aspect target
                 sentiments = [s for s, (b, e) in zip(sentiments, aspects) if b < e]
                 aspects = [(b, e) for (b, e) in aspects if b < e]
-                # sort aspects
-                sort_idx = sorted(range(len(aspects)), key=lambda i: aspects[i][0])
-                aspects = [aspects[i] for i in sort_idx]
-                sentiments = [sentiments[i] for i in sort_idx]
-                # mark aspects in sentence
-                for (b, e) in aspects[::-1]:
-                    text = text[:b] + '[e]' + text[b:e] + '[/e]' + text[e:]
-                # encode sentence
-                input_ids = tokenizer.encode(text)[:seq_length]
-                # find all entity starts
-                entity_starts = [i for i, t in enumerate(input_ids) if t == tokenizer.entity_token_id]
-                # no entities in bounds
-                if len(entity_starts) == 0:
+                # no aspects found
+                if len(aspects) == 0:
                     continue
-                # get labels
-                labels = [label2id[l] for l in sentiments[:len(entity_starts)]]
-                # add to lists
-                all_input_ids.append(input_ids + [tokenizer.pad_token_id] * (seq_length - len(input_ids)))
-                all_entity_starts.append(entity_starts)
-                all_labels.append(labels)
+                
+                # build dataset item
+                yield text, aspects, sentiments
 
-        n = len(all_input_ids)
-        m = max((len(labels) for labels in all_labels))
-        # convert to tensors
-        input_ids = torch.LongTensor(all_input_ids)
-        entity_starts = torch.LongTensor(match_2d_shape(all_entity_starts, (n, m), fill_val=-1))
-        labels = torch.LongTensor(match_2d_shape(all_labels, (n, m), fill_val=-1))
-        # initialize dataset
-        EntityClassificationDataset.__init__(self, input_ids, entity_starts, labels)
 
-    @property
-    def num_labels(self):
-        return len(SemEval2015Task12_AspectSentiment.LABELS)
 
 class SemEval2015Task12_OpinionSentiment(EntityClassificationDataset):
     """ Dataset for the SemEval2014 Task4 data for Opinion-based Sentiment Analysis
@@ -91,9 +63,7 @@ class SemEval2015Task12_OpinionSentiment(EntityClassificationDataset):
 
     LABELS = ['+1', '-1']
 
-    def __init__(self, train:bool, tokenizer:transformers.BertTokenizer, seq_length:int, data_base_dir:str ='./data'):
-        # create label-to-id map
-        label2id = {l:i for i, l in enumerate(SemEval2015Task12_OpinionSentiment.LABELS)}
+    def yield_item_features(self, train:bool, data_base_dir:str ='./data'):
 
         # build full paths to files
         fname = SemEval2015Task12_OpinionSentiment.TRAIN_FILE if train else SemEval2015Task12_OpinionSentiment.TEST_FILE
@@ -103,7 +73,6 @@ class SemEval2015Task12_OpinionSentiment(EntityClassificationDataset):
         with open(fpath, 'r', encoding='utf-8') as f:
             all_sents_opinions = f.read().split('\n')
 
-        all_input_ids, all_entity_starts, all_labels = [], [], []
         # preprocess data
         for sent_opinions in all_sents_opinions:
             # no opinions
@@ -114,36 +83,9 @@ class SemEval2015Task12_OpinionSentiment(EntityClassificationDataset):
             # get aspects and opinions
             opinions = [o.strip() for o in opinions.split(',')] if len(opinions) > 0 else []
             opinions, sentiments = zip(*[(o[:-2].strip(), o[-2:]) for o in opinions])
-            # find opinions in sentence
+            # build opinion spans
             opinion_pos = [sent.find(o) for o in opinions]
-            sort_idx = sorted(range(len(opinions)), key=lambda i: opinion_pos[i])
-            # mark opinions in sentence
-            for i, o in zip(opinion_pos[::-1], opinions[::-1]):
-                sent = sent[:i] + '[e]' + o + '[/e]' + sent[i + len(o):]
-            # encode sentence
-            input_ids = tokenizer.encode(sent)[:seq_length]
-            # find all entity starts
-            entity_starts = [i for i, t in enumerate(input_ids) if t == tokenizer.entity_token_id]
-            # no entities in bounds
-            if len(entity_starts) == 0:
-                continue
-            # sort sentiments to match the order of entity-starts and get labels
-            sentiments = [sentiments[i] for i in sort_idx]
-            labels = [label2id[l] for l in sentiments[:len(entity_starts)]]
-            # add to lists
-            all_input_ids.append(input_ids + [tokenizer.pad_token_id] * (seq_length - len(input_ids)))
-            all_entity_starts.append(entity_starts)
-            all_labels.append(labels)
-
-        n = len(all_input_ids)
-        m = max((len(labels) for labels in all_labels))
-        # convert to tensors
-        input_ids = torch.LongTensor(all_input_ids)
-        entity_starts = torch.LongTensor(match_2d_shape(all_entity_starts, (n, m), fill_val=-1))
-        labels = torch.LongTensor(match_2d_shape(all_labels, (n, m), fill_val=-1))
-        # initialize dataset
-        EntityClassificationDataset.__init__(self, input_ids, entity_starts, labels)
-
-    @property
-    def num_labels(self):
-        return len(SemEval2015Task12_OpinionSentiment.LABELS)
+            opinion_spans = [(i, i + len(o)) for i, o in zip(opinion_pos, opinions)]
+            
+            yield sent, opinion_spans, sentiments
+            

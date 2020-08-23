@@ -8,7 +8,19 @@ We use a basic BERT model for token classification. It outputs aspect and opinio
 
 ## Datasets
 
-Datasets for this task must inherit the `AspectOpinionExtractionDataset` which specifies `input-ids`, `aspect-labels` and `opinion-labels` in that order.
+Datasets for this task must inherit the `AspectOpinionExtractionDataset` which specifies `input-ids`, `aspects` and `opinions`. The `aspects` and `opinion` labels follow an begin-in-out scheme. 
+
+A custom dataset must have the following form.
+```python
+
+class CustomDataset(AspectOpinionExtractionDataset):
+    
+    def yield_dataset_item(self, train:bool, base_data_dir:str):
+        # read and process data here
+        # yield tuples of the following form 
+        yield (text, aspect_spans, opinion_spans)
+
+```
 
 We currently provide the following datasets for this task:
 

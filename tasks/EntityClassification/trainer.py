@@ -1,10 +1,7 @@
-# import torch and transformers
+# import torch
 import torch
-import transformers
-# import model and tokenizer
-from .modeling import BertForEntityClassification
-from .tokenization import BertForEntityLinkingTokenizer
-# import datasets
+# import base model, tokenizer and dataset
+from .models import EntityClassificationModel
 from .datasets import EntityClassificationDataset
 # import base trainer and metrics
 from base import BaseTrainer
@@ -13,29 +10,36 @@ from sklearn.metrics import f1_score
 from matplotlib import pyplot as plt
 
 
+
 class EntityClassificationTrainer(BaseTrainer):
 
+    # set base types for model and dataset
+    BASE_MODEL_TYPE = EntityClassificationModel
     BASE_DATASET_TYPE = EntityClassificationDataset
 
     def __init__(self, 
-        # model
-        bert_base_model:str,
-        device:str,
+        # model and tokenizer
+        model_type:type =None,
+        pretrained_name:str =None,
+        model_kwargs:dict ={},
+        device:str ='cpu',
         # data
-        dataset_type:type,
-        data_base_dir:str,
-        seq_length:int,
-        batch_size:int,
+        dataset_type:torch.utils.data.Dataset =None,
+        data_base_dir:str ='./data',
+        seq_length:int =None,
+        batch_size:int =None,
         # optimizer
-        learning_rate:float,
-        weight_decay:float,
+        learning_rate:float =None,
+        weight_decay:float =None,
     ):
+        # update model kwargs
+        model_kwargs.update({'num_labels': dataset_type.num_labels})
         # initialize trainer
         BaseTrainer.__init__(self, 
             # model
-            bert_model_type=None,   # manually initialize model
-            tokenizer_type=BertForEntityLinkingTokenizer,
-            bert_base_model=bert_base_model,
+            model_type=model_type,
+            pretrained_name=pretrained_name,
+            model_kwargs=model_kwargs,
             device=device,
             # optimizer
             learning_rate=learning_rate,
@@ -46,43 +50,22 @@ class EntityClassificationTrainer(BaseTrainer):
             seq_length=seq_length,
             batch_size=batch_size
         )
-        # create model
-        self.model = BertForEntityClassification.from_pretrained(bert_base_model, num_labels=self.train_dataloader.dataset.num_labels)
+        # update model embedding dimensions to match tokenizer
         self.model.resize_token_embeddings(len(self.tokenizer))
-        self.model.to(self.device)
-        # create optimizer
-        self.optim = transformers.AdamW(self.model.parameters(), lr=self.lr, weight_decay=self.wd)
     
-    def compute_batch_loss(self, input_ids, entity_starts, labels):
-        # move all to device and build masks
-        input_ids, entity_starts, labels = input_ids.to(self.device), entity_starts.to(self.device), labels.to(self.device)
-        attention_mask = (input_ids != self.tokenizer.pad_token_id)
-        entity_mask = (labels != -1)
+    def compute_batch_loss(self, *batch):
+        # convert dataset batch to inputs for model
+        kwargs = self.model.preprocess(*batch, self.tokenizer, self.device)
         # apply model and get loss
-        return self.model.forward(
-            input_ids, 
-            attention_mask=attention_mask, 
-            entity_starts=entity_starts, 
-            entity_mask=entity_mask, 
-            labels=labels
-        )[0]
+        return self.model.forward(**kwargs)[0]
 
-    def evaluate_batch(self, input_ids, entity_starts, labels):
-        # move all to device and build masks
-        input_ids, entity_starts, labels = input_ids.to(self.device), entity_starts.to(self.device), labels.to(self.device)
-        attention_mask = (input_ids != self.tokenizer.pad_token_id)
-        entity_mask = (labels != -1)
-        # apply model and get loss
-        loss, logits = self.model.forward(
-            input_ids, 
-            attention_mask=attention_mask, 
-            entity_starts=entity_starts, 
-            entity_mask=entity_mask, 
-            labels=labels
-        )[:2]
+    def evaluate_batch(self, *batch, labels):
+        # convert dataset batch to inputs for model and apply model
+        kwargs = self.model.preprocess(*batch, labels, self.tokenizer, self.device)
+        loss, logits = self.model.forward(**kwargs)[:2]
         # build targets and predictions
-        targets = labels[entity_mask].cpu().tolist()
-        predicts = logits[entity_mask].max(dim=-1)[1].cpu().tolist()
+        targets = labels[labels != -1].cpu().tolist()
+        predicts = logits[labels != -1].max(dim=-1)[1].cpu().tolist()
         # return loss and cache
         return loss, (targets, predicts)
 

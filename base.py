@@ -8,55 +8,90 @@ from tqdm import tqdm
 from matplotlib import pyplot as plt
 
 
-class BaseDataset(torch.utils.data.TensorDataset):
-    """ Base Class for Datasets used by Trainers """
 
-    def __init__(self, train:bool, tokenizer:transformers.BertTokenizer, seq_length:int, data_base_dir:str):
+class BaseModel(transformers.PreTrainedModel):
+    """ Base Class for Models """
+
+    # tokenizer type
+    TOKENIZER_TYPE:type = transformers.BertTokenizer
+
+    def __init__(self, config:transformers.PretrainedConfig):
         raise NotImplementedError()
+
+    def prepare(self, *item, tokenizer:transformers.PreTrainedTokenizer):
+        """ Prepare a dataset item for the model. 
+            This function is called during the dataset creation. 
+        """
+        return item
+
+    def preprocess(self, *batch, tokenizer, device:str) -> dict:
+        """ Preprocess a batch from the dataset.
+            Returns the keyword arguments for the forward call. 
+        """
+        raise NotImplementedError
+
+class BaseDataset(torch.utils.data.TensorDataset):
+    """ Base Class for Datasets """
+
+    def __init__(self, train:bool, model:BaseModel, tokenizer:transformers.BertTokenizer, seq_length:int, data_base_dir:str):
+        
+        # list of all dataset items
+        data_items = [self.build_dataset_item(*feats, seq_length, tokenizer) for feats in self.yield_item_features(train, data_base_dir)]
+        data_items = [model.prepare(*item, tokenizer=tokenizer) for item in data_items if item is not None]
+        data_items = [item for item in data_items if item is not None]
+        # separate into item features
+        features = zip(*data_items)
+        # initialize dataset
+        torch.utils.data.TensorDataset.__init__(self, *(torch.tensor(feat) for feat in features))
+
+    def build_dataset_item(self, *feats, seq_length, tokenizer) -> tuple:
+        raise NotImplementedError
+
+    def yield_item_features(self, train:bool, data_base_dir:str):
+        raise NotImplementedError
 
 
 class BaseTrainer(object):
     """ Base Class for Trainers """
 
-    # define dataset base class the trainer can use
+    # base model and dataset types
+    BASE_MODEL_TYPE = BaseModel
     BASE_DATASET_TYPE = BaseDataset
 
     def __init__(self, 
         # model and tokenizer
-        bert_model_type:type,
-        tokenizer_type:type,
-        bert_base_model:str,
-        device:str,
+        model_type:type =None,
+        pretrained_name:str =None,
+        model_kwargs:dict ={},
+        device:str ='cpu',
         # data
-        dataset_type:torch.utils.data.Dataset,
-        data_base_dir:str,
-        seq_length:int,
-        batch_size:int,
+        dataset_type:torch.utils.data.Dataset =None,
+        data_base_dir:str ='./data',
+        seq_length:int =None,
+        batch_size:int =None,
         # optimizer
-        learning_rate:float,
-        weight_decay:float,
+        learning_rate:float =None,
+        weight_decay:float =None,
     ):
         # save values
         self.device = device
-        self.bert_base_model = bert_base_model
+        self.pretrained_name = pretrained_name
         self.lr, self.wd = learning_rate, weight_decay
         # create tokenizer
-        if tokenizer_type is not None:
-            self.tokenizer = tokenizer_type.from_pretrained(bert_base_model)
+        self.tokenizer = model_type.TOKENIZER_TYPE.from_pretrained(pretrained_name)
+        # check model type
+        if not issubclass(model_type, self.__class__.BASE_MODEL_TYPE):
+            raise ValueError("Model Type %s must inherit %s!" % (model_type.__name__, self.__class__.BASE_MODEL_TYPE.__name__))
         # create model and optimizer
-        if bert_model_type is not None:
-            self.model = bert_model_type.from_pretrained(bert_base_model).to(device)
-            self.optim = transformers.AdamW(self.model.parameters(), lr=self.lr, weight_decay=self.wd)
-        # create dataloader
-        if dataset_type is not None:
-            assert tokenizer_type is not None
-            # check dataset type
-            if not issubclass(dataset_type, self.__class__.BASE_DATASET_TYPE):
-                raise ValueError("Dataset Type %s must inherit %s!" % (dataset_type.__name__, self.__class__.BASE_DATASET_TYPE.__name__))
-            # initialize dataloaders
-            self.dataset_name = dataset_type.__name__
-            self.train_dataloader = torch.utils.data.DataLoader(dataset_type(True, self.tokenizer, seq_length, data_base_dir), shuffle=True, batch_size=batch_size)
-            self.test_dataloader = torch.utils.data.DataLoader(dataset_type(False, self.tokenizer, seq_length, data_base_dir), batch_size=batch_size)
+        self.model = model_type.from_pretrained(pretrained_name, **model_kwargs).to(device)
+        self.optim = transformers.AdamW(self.model.parameters(), lr=self.lr, weight_decay=self.wd)
+        # check dataset type
+        if not issubclass(dataset_type, self.__class__.BASE_DATASET_TYPE):
+            raise ValueError("Dataset Type %s must inherit %s!" % (dataset_type.__name__, self.__class__.BASE_DATASET_TYPE.__name__))
+        # initialize dataloaders
+        self.dataset_name = dataset_type.__name__
+        self.train_dataloader = torch.utils.data.DataLoader(dataset_type(True, self.model, self.tokenizer, seq_length, data_base_dir), shuffle=True, batch_size=batch_size)
+        self.test_dataloader = torch.utils.data.DataLoader(dataset_type(False, self.model, self.tokenizer, seq_length, data_base_dir), batch_size=batch_size)
         # save training metrics
         self.metrics = None
 

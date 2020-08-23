@@ -1,4 +1,5 @@
 import os
+import re
 # import pytorch and transformers
 import torch
 import transformers
@@ -26,50 +27,38 @@ class SemEval2010Task8(RelationExtractionDataset):
         "Entity-Origin(e2,e1)",         "Entity-Origin(e1,e2)"
     ]
 
-    def __init__(self, train:bool, tokenizer:transformers.BertTokenizer, seq_length:int, data_base_dir:str ='./data'):
+    def yield_item_features(self, train:bool, data_base_dir:str ='./data'):
 
         # build path to source file
         fname = SemEval2010Task8.TRAIN_FILE if train else SemEval2010Task8.TEST_FILE
         fpath = os.path.join(data_base_dir, fname)
-
-        # build relation-to-index map
-        rel2id = {rel: i for i, rel in enumerate(SemEval2010Task8.RELATIONS)}
-
+        
         # load data
         with open(fpath, 'r', encoding='utf-8') as f:
             lines = f.read().strip().split('\n')
 
         # read examples
-        input_ids, e1_e2_starts, relation_ids = [], [], []
         for sent_line, relation_line in zip(lines[::4], lines[1::4]):
             # get text
             sent = sent_line.split('\t')[1].strip()
             # clean up sentence
             assert sent[0] == sent[-1] == '"'
             sent = sent[1:-1]
-            # mark entities and tokenize
-            sent = sent.replace('<e1>', '[e1]').replace('</e1>', '[/e1]').replace('<e2>', '[e2]').replace('</e2>', '[/e2]')
-            token_ids = tokenizer.encode(sent)[:seq_length]
-            # check if entity is out of bounds
-            if (tokenizer._entity1_token_id not in token_ids) or (tokenizer._entity2_token_id not in token_ids): 
-                continue
-            # get entity start positions
-            entity_starts = (token_ids.index(tokenizer.entity1_token_id), token_ids.index(tokenizer.entity2_token_id))
-            # read relation and get id
-            relation = relation_line.strip()
-            relation_id = rel2id[relation]
-            # update lists
-            input_ids.append(token_ids + [tokenizer.pad_token_id] * (seq_length - len(token_ids)))
-            e1_e2_starts.append(entity_starts)
-            relation_ids.append(rel2id[relation])
-    
-        # convert to tensors
-        input_ids = torch.LongTensor(input_ids)
-        e1_e2_starts = torch.LongTensor(e1_e2_starts)
-        relation_ids = torch.LongTensor(relation_ids)
-        # create dataset and dataloader
-        RelationExtractionDataset.__init__(self, input_ids, e1_e2_starts, relation_ids)
+            # find entities in sentence
+            entity_A = re.search(r'<e1>(.*)</e1>', sent)
+            entity_B = re.search(r'<e2>(.*)</e2>', sent)
+            # get spans from matches with markers
+            entity_span_A = (entity_A.start(), entity_A.end() - 4 - 5)
+            entity_span_B = (entity_B.start(), entity_B.end() - 4 - 5)
+            if entity_span_A[0] < entity_span_B[0]:
+                entity_span_B = (entity_span_B[0] - 4 - 5, entity_span_B[1] - 4 - 5)
+            else:
+                entity_span_A = (entity_span_A[0] - 4 - 5, entity_span_A[1] - 4 - 5)
+            # remove markers from text
+            sent = re.sub(r'<(/?)e1>', '', sent)
+            sent = re.sub(r'<(/?)e2>', '', sent)
+            # get label
+            label = relation_line.strip()
 
-    @property
-    def num_relations(self):
-        return len(SemEval2010Task8.RELATIONS)
+            # yield features
+            yield sent, entity_span_A, entity_span_B, label
