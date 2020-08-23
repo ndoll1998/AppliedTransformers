@@ -85,7 +85,7 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
             'attention_mask': mask,
             'e1_e2_start': e1_e2_start,
             'labels': labels
-        }
+        }, labels
 
     def forward(self, 
         input_ids,

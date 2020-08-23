@@ -58,8 +58,8 @@ class SemEval2015Task12_OpinionSentiment(EntityClassificationDataset):
         Downlaod: https://github.com/happywwy/Coupled-Multi-layer-Attentions/tree/master/util/data_semEval
     """
 
-    TRAIN_FILE = "SemEval2015-Task12/sentence_res15_op.txt"
-    TEST_FILE = "SemEval2015-Task12/sentence_restest15_op.txt"
+    TRAIN_FILE = "SemEval2015-Task12/sentence_res15_op"
+    TEST_FILE = "SemEval2015-Task12/sentence_restest15_op"
 
     LABELS = ['+1', '-1']
 

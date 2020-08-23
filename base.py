@@ -174,14 +174,14 @@ class BaseTrainer(object):
         dump_dir = os.path.join(
             dump_base_path, 
             self.model.__class__.__name__, 
-            "%s-%s" % (self.bert_base_model, self.dataset_name)
+            "%s-%s" % (self.pretrained_name, self.dataset_name)
         )
         # create directory
         os.makedirs(dump_dir, exist_ok=True)
         # save trainer setup in directory
         with open(os.path.join(dump_dir, "trainer.json"), 'w+') as f:
             f.write(json.dumps({
-                'bert-base-model': self.bert_base_model,
+                'pretrained-name': self.pretrained_name,
                 'dataset': self.dataset_name,
                 'learning-rate': self.lr,
                 'weight-decay': self.wd

@@ -55,13 +55,13 @@ class EntityClassificationTrainer(BaseTrainer):
     
     def compute_batch_loss(self, *batch):
         # convert dataset batch to inputs for model
-        kwargs = self.model.preprocess(*batch, self.tokenizer, self.device)
+        kwargs, _ = self.model.preprocess(*batch, self.tokenizer, self.device)
         # apply model and get loss
         return self.model.forward(**kwargs)[0]
 
-    def evaluate_batch(self, *batch, labels):
+    def evaluate_batch(self, *batch):
         # convert dataset batch to inputs for model and apply model
-        kwargs = self.model.preprocess(*batch, labels, self.tokenizer, self.device)
+        kwargs, labels = self.model.preprocess(*batch, self.tokenizer, self.device)
         loss, logits = self.model.forward(**kwargs)[:2]
         # build targets and predictions
         targets = labels[labels != -1].cpu().tolist()

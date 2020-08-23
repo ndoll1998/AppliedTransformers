@@ -27,7 +27,7 @@ class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenC
             'attention_mask': mask,
             'aspect_labels': labels_a,
             'opinion_labels': labels_o
-        }
+        }, labels_a, labels_o
 
     def forward(self, 
         input_ids,

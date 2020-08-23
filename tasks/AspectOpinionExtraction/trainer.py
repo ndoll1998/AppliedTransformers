@@ -18,15 +18,16 @@ class AspectOpinionExtractionTrainer(BaseTrainer):
 
     def compute_batch_loss(self, *batch):
         # preprocess batch
-        kwargs = self.model.preprocess(*batch, self.tokenizer, self.device)
+        kwargs, _, _ = self.model.preprocess(*batch, self.tokenizer, self.device)
         # apply model and get loss
         return self.model.forward(**kwargs)[0]
 
     def evaluate_batch(self, *batch):
         # preprocess batch and apply model
-        kwargs = self.model.preprocess(*batch, self.tokenizer, self.device)
+        kwargs, labels_a, labels_o = self.model.preprocess(*batch, self.tokenizer, self.device)
         loss, logits_a, logits_o = self.model.forward(**kwargs)[:3]
         # build targets
+        mask = (labels_a != -1)
         target_a = labels_a[mask].cpu().tolist()
         target_o = labels_o[mask].cpu().tolist()
         # build predictions

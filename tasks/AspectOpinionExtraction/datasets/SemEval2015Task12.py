@@ -22,11 +22,11 @@ class SemEval2015Task12(AspectOpinionExtractionDataset):
         Downlaod: https://github.com/happywwy/Coupled-Multi-layer-Attentions/tree/master/util/data_semEval
     """
 
-    TRAIN_ASPECT_TERMS_FILE = "SemEval2015-Task12/aspectTerm_res15.txt"
-    TRAIN_SENTENCE_AND_OPINIONS_FILE = "SemEval2015-Task12/sentence_res15_op.txt"
+    TRAIN_ASPECT_TERMS_FILE = "SemEval2015-Task12/aspectTerm_res15"
+    TRAIN_SENTENCE_AND_OPINIONS_FILE = "SemEval2015-Task12/sentence_res15_op"
 
-    TEST_ASPECT_TERMS_FILE = "SemEval2015-Task12/aspectTerm_restest15.txt"
-    TEST_SENTENCE_AND_OPINIONS_FILE = "SemEval2015-Task12/sentence_restest15_op.txt"
+    TEST_ASPECT_TERMS_FILE = "SemEval2015-Task12/aspectTerm_restest15"
+    TEST_SENTENCE_AND_OPINIONS_FILE = "SemEval2015-Task12/sentence_restest15_op"
     
     def yield_item_features(self, train:bool, data_base_dir:str ='./data'):
 

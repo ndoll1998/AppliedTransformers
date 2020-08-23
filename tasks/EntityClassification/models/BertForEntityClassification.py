@@ -88,7 +88,7 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
             'entity_starts': entity_starts,
             'entity_mask': entity_mask,
             'labels': labels
-        }
+        }, labels
         
     def forward(self, 
         input_ids,
