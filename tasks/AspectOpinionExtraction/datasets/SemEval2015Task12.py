@@ -5,18 +5,6 @@ import transformers
 # import base dataset
 from .AspectOpinionExtractionDataset import AspectOpinionExtractionDataset
 
-
-def mark_bio(sequence, subsequences):
-    # mark all subsequences in sequence in bio-scheme
-    marked = [0] * len(sequence)
-    for subseq in subsequences:
-        for i in range(len(sequence) - len(subseq)):
-            if sequence[i:i+len(subseq)] == subseq:
-                # mark b => 1 and i => 2
-                marked[i] = 1
-                marked[i+1:i+len(subseq)] = [2] * (len(subseq)-1)
-    return marked
-
 class SemEval2015Task12(AspectOpinionExtractionDataset):
     """ Dataset for the SemEval2014 Task4 data for Aspect-Opinion Extraction
         Downlaod: https://github.com/happywwy/Coupled-Multi-layer-Attentions/tree/master/util/data_semEval

@@ -3,7 +3,7 @@ import torch
 # import base dataset and tokenizer
 from base import BaseDataset
 # import utils
-from utils import match_2d_shape, build_token_spans
+from utils import build_token_spans
 
 class __EntityClassificationDatasetType(type):
 

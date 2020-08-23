@@ -6,8 +6,7 @@ import transformers
 import xml.etree.ElementTree as ET
 # import base dataset
 from .EntityClassificationDataset import EntityClassificationDataset
-# utils
-from utils import match_2d_shape
+
 
 class SemEval2015Task12_AspectSentiment(EntityClassificationDataset):
     """ Dataset for the SemEval2014 Task4 data for Aspect-based Sentiment Analysis
