@@ -1,4 +1,4 @@
-# BERT For Entity Classification
+# Relation Extraction
 
 The Relation Extraction task aims to predict the relationship type between two given entities.
 
