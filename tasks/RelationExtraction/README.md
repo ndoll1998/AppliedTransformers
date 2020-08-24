@@ -8,7 +8,7 @@ We use a BERT encoder with a linear classification layer after it. We apply a cu
 
 ## Datasets
 
-Datasets for this task must inherit the `RelationExtractionDataset` which specifies `input-ids`, `relation-target-A-token-spans`, `relation-target-B-spans` and `relation-labels` in that order.
+Datasets for this task must inherit the `RelationExtractionDataset` which specifies `input-ids`, `relation-target-A-spans`, `relation-target-B-spans` and `relation-labels` in that order.
 
 A custom dataset must have the following form.
 ```python
