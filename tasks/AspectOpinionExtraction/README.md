@@ -8,7 +8,7 @@ We use a basic BERT model for token classification. It outputs aspect and opinio
 
 ## Datasets
 
-Datasets for this task must inherit the `AspectOpinionExtractionDataset` which specifies `input-ids`, `aspects` and `opinions`. The `aspects` and `opinion` labels follow an begin-in-out scheme. 
+Datasets for this task must inherit the `AspectOpinionExtractionDataset` which specifies `input-ids`, `aspects` and `opinions`. The `aspects` and `opinions` fields follow an begin-in-out scheme. 
 
 A custom dataset must have the following form.
 ```python
