@@ -1,4 +1,4 @@
-# BERT For Entity Classification
+# Entity Classification
 
 The Entity Classification task aims to classify a given number of entities in a given text.
 
