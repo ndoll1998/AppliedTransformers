@@ -6,7 +6,7 @@ from .models import RelationExtractionModel
 # import datasets
 from .datasets import RelationExtractionDataset
 # import base trainer and metrics
-from base import BaseTrainer
+from core.Trainer import BaseTrainer
 from sklearn.metrics import f1_score
 # import matplotlib
 from matplotlib import pyplot as plt

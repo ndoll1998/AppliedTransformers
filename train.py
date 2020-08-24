@@ -2,7 +2,7 @@
 
 
 # Aspect Opinion Extraction imports
-# from tasks.AspectOpinionExtraction.trainer import AspectOpinionExtractionTrainer as Trainer
+# from tasks.AspectOpinionExtraction.Trainer import AspectOpinionExtractionTrainer as Trainer
 # from tasks.AspectOpinionExtraction.models import BertForAspectOpinionExtraction
 # from tasks.AspectOpinionExtraction.datasets import (
 #     SemEval2015Task12, 
@@ -10,7 +10,7 @@
 # )
 
 # Entity Classfication imports
-from tasks.EntityClassification.trainer import EntityClassificationTrainer as Trainer
+from tasks.EntityClassification.Trainer import EntityClassificationTrainer as Trainer
 from tasks.EntityClassification.models import BertForEntityClassification
 from tasks.EntityClassification.datasets import (
     SemEval2015Task12_AspectSentiment, 
@@ -19,7 +19,7 @@ from tasks.EntityClassification.datasets import (
 )
 
 # Relation Extraction imports
-# from tasks.RelationExtraction.trainer import RelationExtractionTrainer as Trainer
+# from tasks.RelationExtraction.Trainer import RelationExtractionTrainer as Trainer
 # from tasks.RelationExtraction.models import BertForRelationExtraction
 # from tasks.RelationExtraction.datasets import (
 #     SemEval2010Task8,

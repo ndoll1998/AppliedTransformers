@@ -1,11 +1,11 @@
 # import pytorch
 import torch
 # import base dataset
-from base import BaseDataset
+from core.Dataset import BaseDataset
 # import tokenizer
 from transformers import BertTokenizer
 # import utils
-from utils import build_token_spans, mark_bio_scheme
+from core.utils import build_token_spans, mark_bio_scheme
 
 class AspectOpinionExtractionDataset(BaseDataset):
     """ Base Dataset for the Aspect-Opinion Extraction Task """

@@ -6,7 +6,7 @@ import transformers
 # import base dataset
 from .AspectOpinionExtractionDataset import AspectOpinionExtractionDataset
 # utils
-from utils import build_token_spans
+from core.utils import build_token_spans
 
 
 class GermanYelpDataset(AspectOpinionExtractionDataset):

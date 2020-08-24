@@ -4,7 +4,7 @@ import torch
 from .models import AspectOpinionExtractionModel
 from .datasets import AspectOpinionExtractionDataset
 # import base trainer and metrics
-from base import BaseTrainer
+from core.Trainer import BaseTrainer
 from sklearn.metrics import f1_score
 # import matplotlib
 from matplotlib import pyplot as plt

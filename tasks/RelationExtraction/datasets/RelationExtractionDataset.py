@@ -1,10 +1,10 @@
 import torch
 # import base dataset
-from base import BaseDataset
+from core.Dataset import BaseDataset
 # import tokenizer
 from transformers import PreTrainedTokenizer
 # import utils
-from utils import build_token_spans
+from core.utils import build_token_spans
 
 class __RelationExtractionDatasetType(type):
 

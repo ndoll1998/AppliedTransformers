@@ -1,9 +1,9 @@
 # import torch
 import torch
 # import base dataset and tokenizer
-from base import BaseDataset
+from core.Dataset import BaseDataset
 # import utils
-from utils import build_token_spans
+from core.utils import build_token_spans
 
 class __EntityClassificationDatasetType(type):
 
