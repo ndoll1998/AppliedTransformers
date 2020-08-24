@@ -13,7 +13,7 @@ Datasets for this task must inherit the `RelationExtractionDataset` which specif
 A custom dataset must have the following form.
 ```python
 
-class CustomDataset(EntityClassificationDataset):
+class CustomDataset(RelationExtractionDataset):
     
     # list of all relation types in the dataset
     RELATIONS = ['YOUR', 'RELATIONS', ...]
