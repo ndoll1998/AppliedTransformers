@@ -1,6 +1,6 @@
 # Applied Transformers
 
-Applied Transformers is a project collecting state-of-the-art transformer models to tackle typical natural language processing task. It provides implementations of state-of-the-art transformer models for servel nlp tasks as well as a number of datasets.
+Applied Transformers is a project collecting state-of-the-art transformer models to tackle typical natural language processing (NLP) task. It provides model implementations as well as a number of datasets for several NLP tasks.
 
 
 
