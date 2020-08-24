@@ -1,4 +1,4 @@
-# BERT For Aspect Opinion Co-Extraction
+# Aspect Opinion Co-Extraction
 
 The Aspect Opinion Co-Extraction task aims to extraction all aspect and opinion terms in a given text.
 
