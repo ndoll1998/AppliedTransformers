@@ -42,6 +42,7 @@ class BertForSentencePairClassification(EntityClassificationModel, BertForSequen
     def preprocess(self, input_ids, token_type_ids, labels, tokenizer, device) -> dict:
         # move input ids and labels to device
         input_ids = input_ids.to(device) 
+        token_type_ids = token_type_ids.to(device)
         labels = labels.to(device)
         # build masks
         attention_mask = (input_ids != tokenizer.pad_token_id)
