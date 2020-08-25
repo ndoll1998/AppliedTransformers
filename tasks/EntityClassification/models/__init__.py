@@ -1,2 +1,3 @@
 from .EntityClassificationModel import EntityClassificationModel
 from .BertForEntityClassification import BertForEntityClassification
+from .BertForSentencePairClassification import BertForSentencePairClassification

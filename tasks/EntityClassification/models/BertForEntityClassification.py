@@ -71,7 +71,7 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
         entity_starts += [-1] * (n - len(entity_starts))
         labels += [-1] * (n - len(labels))
         # return new features
-        return input_ids, entity_starts, labels
+        return [(input_ids, entity_starts, labels)]
 
     def preprocess(self, input_ids, entity_starts, labels, tokenizer, device) -> dict:
         # move input ids and labels to device

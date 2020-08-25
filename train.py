@@ -1,5 +1,5 @@
 """ Training Script for all BERT Models """
-
+import torch
 
 # Aspect Opinion Extraction imports
 # from tasks.AspectOpinionExtraction.Trainer import AspectOpinionExtractionTrainer as Trainer
@@ -11,7 +11,7 @@
 
 # Entity Classfication imports
 from tasks.EntityClassification.Trainer import EntityClassificationTrainer as Trainer
-from tasks.EntityClassification.models import BertForEntityClassification
+from tasks.EntityClassification.models import BertForSentencePairClassification
 from tasks.EntityClassification.datasets import (
     SemEval2015Task12_AspectSentiment, 
     SemEval2015Task12_OpinionSentiment, 
@@ -33,11 +33,11 @@ if __name__ == '__main__':
     # create trainer
     trainer = Trainer(
         # model
-        model_type = BertForEntityClassification,
+        model_type = BertForSentencePairClassification,
         pretrained_name = 'bert-base-german-cased',
-        device = 'cuda:0',
+        device = 'cuda:0' if torch.cuda.is_available() else 'cpu',
         # dataset
-        dataset_type = SemEval2015Task12_OpinionSentiment,
+        dataset_type = GermanYelpSentiment,
         data_base_dir = "./data",
         seq_length = 64,
         batch_size = 8,

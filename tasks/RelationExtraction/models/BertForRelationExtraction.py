@@ -59,7 +59,7 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
 
         # check if entity would be out of bounds
         if e2[3] >= len(input_ids) - 4:
-            return None
+            return []
         # mark entities in input-ids
         marked_input_ids = input_ids[:e1[2]] + e1[0] + input_ids[e1[2]:e1[3]] + e1[1] + \
             input_ids[e1[3]:e2[2]] + e2[0] + input_ids[e2[2]:e2[3]] + e2[1] + \
@@ -70,7 +70,7 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         # create entity start positions
         e1_e2_start = (marked_input_ids.index(tokenizer.entity1_token_id), marked_input_ids.index(tokenizer.entity2_token_id))
         # return new item features
-        return marked_input_ids, e1_e2_start, label
+        return [(marked_input_ids, e1_e2_start, label)]
 
     def preprocess(self, input_ids, e1_e2_start, labels, tokenizer, device):
         # move to device
