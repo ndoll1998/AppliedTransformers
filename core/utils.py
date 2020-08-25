@@ -1,9 +1,22 @@
+import unicodedata
 
-def build_token_spans(tokens, text):
+def strip_accents(text:str) -> str:
+    """ Strips accents from a piece of text. """
+    text = unicodedata.normalize("NFD", text)
+    output = []
+    for char in text:
+        cat = unicodedata.category(char)
+        if cat == "Mn":
+            continue
+        output.append(char)
+    return "".join(output)
 
-    # not case sensitive
-    tokens = [t.lower() for t in tokens]
-    text = text.lower()
+def build_token_spans(tokens:list, text:str) -> list:
+
+    # clean text and tokens
+    # not case or accent sensitive
+    tokens = [strip_accents(t.lower()) for t in tokens]
+    text = strip_accents(text.lower())
 
     spans = []
     begin, last_was_unk = 0, False
@@ -21,6 +34,7 @@ def build_token_spans(tokens, text):
         # remove all leading whitespaces
         begin += len(text) - len(text.lstrip())
         text = text.lstrip()
+        print(text[:30], '<-', token)
         # make sure text starts with token
         assert text.startswith(token)
         spans.append((begin, begin + len(token)))
