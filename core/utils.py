@@ -34,7 +34,6 @@ def build_token_spans(tokens:list, text:str) -> list:
         # remove all leading whitespaces
         begin += len(text) - len(text.lstrip())
         text = text.lstrip()
-        print(text[:30], '<-', token)
         # make sure text starts with token
         assert text.startswith(token)
         spans.append((begin, begin + len(token)))
