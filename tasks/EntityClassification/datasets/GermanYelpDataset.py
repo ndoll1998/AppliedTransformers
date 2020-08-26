@@ -1,6 +1,4 @@
 import os
-# import pytorch
-import torch
 # import numpy and pandas
 import numpy as np
 import pandas as pd

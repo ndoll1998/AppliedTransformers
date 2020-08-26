@@ -1,12 +1,7 @@
 import os
 import pandas as pd
-# import pytorch and transformers
-import torch
-import transformers
 # import base dataset
 from .AspectOpinionExtractionDataset import AspectOpinionExtractionDataset
-# utils
-from core.utils import build_token_spans
 
 
 class GermanYelpDataset(AspectOpinionExtractionDataset):

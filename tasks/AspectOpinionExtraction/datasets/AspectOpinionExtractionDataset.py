@@ -1,8 +1,5 @@
-# import pytorch
-import torch
-# import base dataset
+# import base dataset and tokenizer
 from core.Dataset import BaseDataset
-# import tokenizer
 from transformers import BertTokenizer
 # import utils
 from core.utils import build_token_spans, mark_bio_scheme

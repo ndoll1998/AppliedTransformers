@@ -1,4 +1,4 @@
-import torch
+# import torch functionals
 import torch.nn.functional as F
 # import base model
 from .AspectOpinionExtractionModel import AspectOpinionExtractionModel

@@ -3,8 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 # import base model and tokenizer
 from .RelationExtractionModel import RelationExtractionModel
-# import Bert Config, Model and Tokenizer
-from transformers import BertConfig
+# import Bert Model and Tokenizer
 from transformers import BertModel, BertPreTrainedModel
 from transformers import BertTokenizer
 

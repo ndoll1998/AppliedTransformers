@@ -1,10 +1,6 @@
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-# import base model
-from .EntityClassificationModel import EntityClassificationModel
-# import bert model for sequence classification
+# import base models
 from transformers import BertForSequenceClassification
+from .EntityClassificationModel import EntityClassificationModel
 
 class BertForSentencePairClassification(EntityClassificationModel, BertForSequenceClassification):
     """ Implementation of "Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence" (NAACL 2019)

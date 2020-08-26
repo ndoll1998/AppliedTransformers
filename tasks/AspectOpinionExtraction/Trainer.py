@@ -1,5 +1,3 @@
-# import torch
-import torch
 # import base model and dataset
 from .models import AspectOpinionExtractionModel
 from .datasets import AspectOpinionExtractionDataset

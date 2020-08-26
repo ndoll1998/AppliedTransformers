@@ -1,7 +1,4 @@
 import os
-# import pytorch and transformers
-import torch
-import transformers
 # import base dataset
 from .AspectOpinionExtractionDataset import AspectOpinionExtractionDataset
 

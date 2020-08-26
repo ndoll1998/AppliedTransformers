@@ -1,9 +1,8 @@
+# use the same trainer as for the entity classification
+from ..EntityClassification.Trainer import EntityClassificationTrainer
 # import base model and dataset
 from .models import AspectBasedSentimentAnalysisModel
 from .datasets import AspectBasedSentimentAnalysisDataset
-# use the same trainer as for the entity classification
-from ..EntityClassification.Trainer import EntityClassificationTrainer
-
 
 class AspectBasedSentimentAnalysisTrainer(EntityClassificationTrainer):
 

@@ -1,7 +1,4 @@
 import os
-# import pytorch and transformers
-import torch
-import transformers
 # import xml parser
 import xml.etree.ElementTree as ET
 # import base dataset

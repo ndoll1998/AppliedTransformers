@@ -1,6 +1,5 @@
-# import torch and transformers
+# import torch
 import torch
-import transformers
 # import model and tokenizer
 from .models import RelationExtractionModel
 # import datasets

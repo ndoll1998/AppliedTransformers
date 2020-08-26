@@ -1,9 +1,5 @@
-# import torch
-import torch
 # import base dataset and tokenizer
 from core.Dataset import BaseDataset
-# import utils
-from core.utils import build_token_spans
 
 class __AspectBasedSentimentAnalysisDatasetType(type):
 

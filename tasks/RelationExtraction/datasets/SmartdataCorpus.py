@@ -1,8 +1,5 @@
 import os
 import json
-# import pytorch and transformers
-import torch
-import transformers
 # import base dataset
 from .RelationExtractionDataset import RelationExtractionDataset
 # utils
