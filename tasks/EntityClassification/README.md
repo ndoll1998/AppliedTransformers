@@ -8,15 +8,14 @@ We currently provide the following models for this task:
 
 - `BertForEntityClassification`
 
-    - Basically a BERT encoder with a linear classification layer after it. We apply a custom tokenizer which defines the special tokens `[e]` and `[/e]` to mark entities in a corpus. For classification, we pass the corpus through the BERT encoder and gather the outputs for all entity beginning markers (`[e]`). These will then be passed into the classification layer to compute the output logits.
+    - Basically a BERT encoder folowed by a linear classification layer. We apply a custom tokenizer which defines the special tokens `[e]` and `[/e]` to mark entities in a corpus. For classification, we pass the corpus through the BERT encoder and gather the outputs for all entity beginning markers (`[e]`). These will then be passed into the classification layer to compute the output logits.
 
 - `BertForSentencePairClassification`
 
-    - "Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence" (NAACL 2019)
-    - [Paper](https://arxiv.org/abs/1903.09588)
+    - [Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence](https://arxiv.org/abs/1903.09588)
 
 
-Models for this task must inherit the `EntityClassificationModel` type. A custom model must have the following form:
+A custom model must have the following form:
 ```python
 class CustomModel(EntityClassificationModel):
 
@@ -46,9 +45,9 @@ class CustomModel(EntityClassificationModel):
     def forward(self, **kwargs) -> (torch.tensor, torch.tensor):
         """ The forward call of the model """
         # This function receives the keyword arguments returned by the preprocess function.
-        # It needs to return the loss value and the logits of the current batch.
+        # It needs to return the logits of the current batch at first position.
         # Additional returns will be ignored.
-        return loss, logits, *additionals
+        return logits, *additionals
 
 ```
 
@@ -57,12 +56,16 @@ class CustomModel(EntityClassificationModel):
 We currently provide the following datasets for this task:
 
 - `SemEval2015Task12_AspectSentiment`
+    - [SemEval-2015 Task 12: Aspect Based Sentiment Analysis](https://www.aclweb.org/anthology/S15-2082/)
     - Language: English
     - Domain: Restaurant Reviews
     - Entity Type: Aspects
     - [Download](http://alt.qcri.org/semeval2015/task12/index.php?id=data-and-tools)
 
 - `SemEval2015Task12_OpinionSentiment`
+    - [SemEval-2015 Task 12: Aspect Based Sentiment Analysis](https://www.aclweb.org/anthology/S15-2082/)
+    - Opinion Annotations by: [Coupled Multi-Layer Attentions
+for Co-Extraction of Aspect and Opinion Terms](https://www.aaai.org/Conferences/AAAI/2017/PreliminaryPapers/15-Wang-W-14441.pdf)
     - Language: English
     - Domain: Restaurant Reviews
     - Entity Type: Opinions

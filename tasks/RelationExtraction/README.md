@@ -2,32 +2,59 @@
 
 The Relation Extraction task aims to predict the relationship type between two given entities.
 
-## Model
 
-We use a BERT encoder with a linear classification layer after it. We apply a custom tokenizer which defines special tokens `[e1]`, `[/e1]` and `[e2]`, `[/e2]` to mark both entities separately in a corpus. For classification, we pass the corpus through the BERT encoder and gather the outputs for the entity beginning markers (`[e1]`, `[e2]`). These will then be passed into the classification layer to compute the output logits.
+## Models
 
-## Datasets
+We currently provide the following models:
 
-Datasets for this task must inherit the `RelationExtractionDataset` which specifies `input-ids`, `relation-target-A-spans`, `relation-target-B-spans` and `relation-labels` in that order.
+- `BertForRelationExtraction`
 
-A custom dataset must have the following form.
+    - "Matching the Blanks: Distributional Similarity for Relation Learning"
+    - [Paper](https://arxiv.org/abs/1906.03158)
+
+
+A custom model must have the following form:
 ```python
+class CustomModel(RelationExtractionModel):
 
-class CustomDataset(RelationExtractionDataset):
+    # the tokenizer type to use
+    # set this if the model uses some special tokenizer
+    # the value will default to the standard BertTokenizer
+    TOKENIZER_TYPE = transformers.BertTokenizer
     
-    # list of all relation types in the dataset
-    RELATIONS = ['YOUR', 'RELATIONS', ...]
+    def __init__(self, config):
+        # initialize all parameters of the model
 
-    def yield_dataset_item(self, train:bool, base_data_dir:str):
-        # read and process data here
-        # yield tuples of the following form 
-        yield (text, relation_target_A_span, relation_target_B_span, relation_type)
+    def prepare(self, input_ids, entity_span_A, entity_span_B, label, tokenizer) -> list:
+        """ Prepare and extract/build all important features from a dataset item. """
+        # This function is called during the dataset creation and should handle 
+        # havier computations. It needs to return a list of items extracted from
+        # the provided features. One item is a tuple of aligned features.
+        # The function will default to return the given item (input_ids, aspect_bio, opinion_bio).
+        return [itemA, itemB, itemC, ...]
+
+    def preprocess(self, *features, tokenizer, device) -> (dict, torch.tensor):
+        """ Preprocess a batch of features from the prepare function. """
+        # This function is called immediately before the forward call
+        # and needs to return the keyword arguments for the foward call 
+        # as well as the target labels for the current batch.
+        return kwargs, labels
+
+    def forward(self, **kwargs) -> (torch.tensor, torch.tensor):
+        """ The forward call of the model """
+        # This function receives the keyword arguments returned by the preprocess function.
+        # It needs to return the logits for aspects and opinion of the current batch 
+        # separately at first two positions. Additional returns will be ignored.
+        return logits, *additionals
 
 ```
+
+## Datasets
 
 We currently provide the following datasets for this task:
 
 - `SemEval2010Task8`
+    - [SemEval-2010 Task 8: Multi-Way Classification of Semantic Relations between Pairs of Nominals](https://www.aclweb.org/anthology/S10-1006/)
     - Language: English
     - Domain: General
     - Relationship Types: 
@@ -53,6 +80,7 @@ We currently provide the following datasets for this task:
         - negative
 
 - `SmartdataCorpus`
+    - [A German Corpus for Fine-Grained Named Entity Recognition and Relation Extraction of Traffic and Industry Events](https://www.dfki.de/web/forschung/projekte-publikationen/publikationen-uebersicht/publikation/9427/)
     - Language: German
     - Domain: Company/Business
     - Relationship Types:
@@ -61,5 +89,20 @@ We currently provide the following datasets for this task:
         - OrganizationLeadership
         - etc.
     - [Download](https://github.com/DFKI-NLP/smartdata-corpus/tree/master/v2_20190802)
+
+A custom dataset must have the following form.
+```python
+
+class CustomDataset(RelationExtractionDataset):
+    
+    # list of all relation types in the dataset
+    RELATIONS = ['YOUR', 'RELATIONS', ...]
+
+    def yield_dataset_item(self, train:bool, base_data_dir:str):
+        # read and process data here
+        # yield tuples of the following form 
+        yield (text, relation_target_A_span, relation_target_B_span, relation_type)
+
+```
 
 ## Evaluation

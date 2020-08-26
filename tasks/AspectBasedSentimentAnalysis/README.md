@@ -1,19 +1,19 @@
-# Aspect Opinion Co-Extraction
+# Aspect-based Sentiment Analysis
 
-The Aspect Opinion Co-Extraction task aims to extraction all aspect and opinion terms in a given text.
+The Aspect-based Sentiment Analysis (ABSA) predicts the polarity of an aspect. In contrast to the Entity Classification Task, aspects don't have do be explicitly mentioned in the provided text.
 
 ## Models
 
 We currently provide the following models:
 
-- `BertForAspectOpinionExtraction`
+- `BertForAspectBasedSentimentAnalysis`
 
-    - Based on the BERT model for token classification. For each token, it returns aspect and opinion logits that follow the Begin-In-Out (BIO) scheme.
+    - [Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence](https://arxiv.org/abs/1903.09588)
 
 
 A custom model must have the following form:
 ```python
-class CustomModel(AspectOpinionExtractionModel):
+class CustomModel(AspectBasedSentimentAnalysisModels):
 
     # the tokenizer type to use
     # set this if the model uses some special tokenizer
@@ -23,7 +23,7 @@ class CustomModel(AspectOpinionExtractionModel):
     def __init__(self, config):
         # initialize all parameters of the model
 
-    def prepare(self, input_ids, aspect_bio, opinion_bio, tokenizer) -> list:
+    def prepare(self, input_ids, aspects_token_ids, labels, tokenizer) -> list:
         """ Prepare and extract/build all important features from a dataset item. """
         # This function is called during the dataset creation and should handle 
         # havier computations. It needs to return a list of items extracted from
@@ -51,17 +51,11 @@ class CustomModel(AspectOpinionExtractionModel):
 
 We currently provide the following datasets for this task:
 
-- `SemEval2015Task12`
-    - [SemEval-2015 Task 12: Aspect Based Sentiment Analysis](https://www.aclweb.org/anthology/S15-2082/)
-    - Opinion Annotations by: [Coupled Multi-Layer Attentions
-for Co-Extraction of Aspect and Opinion Terms](https://www.aaai.org/Conferences/AAAI/2017/PreliminaryPapers/15-Wang-W-14441.pdf)
+- `SemEval2014Task4`
+    - [SemEval-2014 Task 4: Aspect Based Sentiment Analysis](https://www.aclweb.org/anthology/S14-2004/)
     - Language: English
     - Domain: Restaurant Reviews
-    - [Download](https://github.com/happywwy/Coupled-Multi-layer-Attentions/tree/master/util/data_semEval)
-
-- `GermanYelpDataset`
-    - Language: German
-    - Domain: Restaurant Reviews
+    - [Download](http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools)
 
 A custom dataset must have the following form.
 ```python
@@ -71,7 +65,7 @@ class CustomDataset(AspectOpinionExtractionDataset):
     def yield_dataset_item(self, train:bool, base_data_dir:str):
         # read and process data here
         # yield tuples of the following form 
-        yield (text, aspect_spans, opinion_spans)
+        yield (text, aspect_terms, labels)
 
 ```
 
