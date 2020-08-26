@@ -1,3 +1,6 @@
+# import torch
+import torch
+import torch.nn.functional as F
 # import base model and dataset
 from .models import AspectOpinionExtractionModel
 from .datasets import AspectOpinionExtractionDataset
@@ -14,32 +17,26 @@ class AspectOpinionExtractionTrainer(BaseTrainer):
     BASE_MODEL_TYPE = AspectOpinionExtractionModel
     BASE_DATASET_TYPE = AspectOpinionExtractionDataset
 
-    def compute_batch_loss(self, *batch):
-        # preprocess batch
-        kwargs, _, _ = self.model.preprocess(*batch, self.tokenizer, self.device)
-        # apply model and get loss
-        return self.model.forward(**kwargs)[0]
-
-    def evaluate_batch(self, *batch):
-        # preprocess batch and apply model
-        kwargs, labels_a, labels_o = self.model.preprocess(*batch, self.tokenizer, self.device)
-        loss, logits_a, logits_o = self.model.forward(**kwargs)[:3]
-        # build targets
-        mask = (labels_a != -1)
-        target_a = labels_a[mask].cpu().tolist()
-        target_o = labels_o[mask].cpu().tolist()
-        # build predictions
-        predicts_a = logits_a[mask, :].max(dim=-1)[1].cpu().tolist()
-        predicts_o = logits_o[mask, :].max(dim=-1)[1].cpu().tolist()
-        # return loss and cache
-        return loss, (target_a, target_o, predicts_a, predicts_o)
+    def predict_batch(self, *batch) -> tuple:
+        # convert dataset batch to inputs for model and pass though model
+        kwargs, (labels_a, labels_o) = self.model.preprocess(*batch, self.tokenizer, self.device)
+        logits_a, logits_o = self.model.forward(**kwargs)[:2]
+        # get the valid labels and logits
+        mask_a, mask_o = (labels_a >= 0), (labels_o >= 0)
+        labels_a, logits_a = labels_a[mask_a], logits_a[mask_a, :]
+        labels_o, logits_o = labels_o[mask_o], logits_o[mask_o, :]
+        # compute loss
+        loss = F.cross_entropy(logits_a, labels_a) + F.cross_entropy(logits_o, labels_o)
+        # return loss and cache for metrics
+        return loss, (labels_a, labels_o, logits_a, logits_o)
 
     def compute_metrics(self, caches):
-        # combine all caches
-        targets_a, targets_o, predicts_a, predicts_o = (sum(l, []) for l in zip(*caches))
+        # concatenate tensors from caches and get predictions from logits
+        labels_a, labels_o, logits_a, logits_o = (torch.cat(l, dim=0) for l in zip(*caches))
+        predicts_a, predicts_o = logits_a.max(dim=-1)[1], logits_o.max(dim=-1)[1]
         # compute f1-scores
-        macro_f1_aspects = f1_score(predicts_a, targets_a, average='macro')
-        macro_f1_opinions = f1_score(predicts_o, targets_o, average='macro')
+        macro_f1_aspects = f1_score(predicts_a, labels_a, average='macro')
+        macro_f1_opinions = f1_score(predicts_o, labels_o, average='macro')
         # return metrics
         return macro_f1_aspects, macro_f1_opinions
 

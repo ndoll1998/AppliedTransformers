@@ -1,5 +1,3 @@
-# import torch functionals
-import torch.nn.functional as F
 # import base model
 from .AspectOpinionExtractionModel import AspectOpinionExtractionModel
 # import Bert Config and Model
@@ -24,10 +22,8 @@ class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenC
         # return kwargs for forward call
         return {
             'input_ids': input_ids,
-            'attention_mask': mask,
-            'aspect_labels': labels_a,
-            'opinion_labels': labels_o
-        }, labels_a, labels_o
+            'attention_mask': mask
+        }, (labels_a, labels_o)
 
     def forward(self, 
         input_ids,
@@ -36,8 +32,6 @@ class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenC
         position_ids=None,
         head_mask=None,
         inputs_embeds=None,
-        aspect_labels=None,
-        opinion_labels=None,
         output_attentions=None,
         output_hidden_states=None,
     ):
@@ -50,13 +44,5 @@ class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenC
         # separate aspect and opinion predictions
         aspect_logits, opinion_logits = outputs[0][..., :3], outputs[0][..., 3:]
         outputs = (aspect_logits, opinion_logits) + outputs[1:]
-        # check if any labels are passed
-        if (aspect_labels is not None) or (opinion_labels is not None):
-            # compute loss
-            aspect_loss = F.cross_entropy(aspect_logits[attention_mask], aspect_labels[attention_mask]) if aspect_labels is not None else 0.0
-            opinion_loss = F.cross_entropy(opinion_logits[attention_mask], opinion_labels[attention_mask]) if opinion_labels is not None else 0.0
-            loss = aspect_loss + opinion_loss
-            # build output tuple
-            outputs = (loss,) + outputs
         # return new outputs
         return outputs

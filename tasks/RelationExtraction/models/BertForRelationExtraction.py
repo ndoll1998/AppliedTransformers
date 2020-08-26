@@ -33,8 +33,10 @@ class BertForRelationExtractionTokenizer(BertTokenizer):
         return self.convert_tokens_to_ids('[blank]')
 
 
-
 class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
+    """ Implementation of "Matching the Blanks: Distributional Similarity for Relation Learning"
+        Paper: https://arxiv.org/abs/1906.03158
+    """
 
     # set tokenizer type
     TOKENIZER_TYPE = BertForRelationExtractionTokenizer
@@ -82,8 +84,7 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         return {
             'input_ids': input_ids,
             'attention_mask': mask,
-            'e1_e2_start': e1_e2_start,
-            'labels': labels
+            'e1_e2_start': e1_e2_start
         }, labels
 
     def forward(self, 
@@ -94,7 +95,6 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         position_ids=None,
         head_mask=None,
         inputs_embeds=None,
-        labels=None,
         output_attentions=None,
         output_hidden_states=None,
     ):
@@ -114,11 +114,6 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         logits = self.classifier(v1v2)
         # build outputs
         outputs = (logits,) + outputs[2:]
-
-        # compute loss
-        if labels is not None:
-            loss = F.cross_entropy(logits, labels)
-            outputs = (loss,) + outputs
 
         # return output
         return outputs

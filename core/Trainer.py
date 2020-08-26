@@ -1,11 +1,15 @@
 import os
 import json
-# import torch and transformers
+# import torch
 import torch
+import torch.nn.functional as F
+# import transformers
 import transformers
 # import base model and dataset
 from .Model import BaseModel
 from .Dataset import BaseDataset
+# import f1-score metric
+from sklearn.metrics import f1_score
 # import visualization tools
 from tqdm import tqdm
 from matplotlib import pyplot as plt
@@ -57,16 +61,15 @@ class BaseTrainer(object):
         # save training metrics
         self.metrics = None
 
-
-    def get_batch_loss(self, *batch) -> torch.tensor:
+    def predict_batch(self, *batch) -> tuple:
+        """ Pass a batch through the model and compute the loss.
+            Returns the loss and a cache that will be collected and passed to the compute_metrics function.
+        """
         raise NotImplementedError()
 
-    def evaluate_batch(self, *batch) -> tuple:
+    def compute_metrics(self, caches:list) -> tuple:
+        """ Compute all metrics from a list of caches collected during the evaluation. """
         raise NotImplementedError()
-
-    def compute_metrics(self, eval_caches:list) -> tuple:
-        raise NotImplementedError()
-
 
     def run_epoch(self):
 
@@ -79,7 +82,7 @@ class BaseTrainer(object):
 
             for i, batch in enumerate(self.train_dataloader, 1):
                 # get loss
-                loss = self.compute_batch_loss(*batch)
+                loss, _ = self.predict_batch(*batch)
                 train_running_loss += loss.item()
                 # backpropagate and update parameters
                 self.optim.zero_grad()
@@ -89,6 +92,7 @@ class BaseTrainer(object):
                 # update progress bar
                 pbar.set_postfix({'loss': train_running_loss / i})
                 pbar.update(1)
+                break
 
         # test model
         self.model.eval()
@@ -100,13 +104,18 @@ class BaseTrainer(object):
                 pbar.set_description("Test")
 
                 for i, batch in enumerate(self.test_dataloader, 1):
-                    # evaluate batch
-                    loss, cache = self.evaluate_batch(*batch)
+                    # evaluate batch and move all cached tensors to cpu
+                    loss, cache = self.predict_batch(*batch)
+                    cache = (t.cpu() for t in cache if isinstance(t, torch.Tensor))
+                    # update tracked values
                     test_running_loss += loss.item()
                     eval_caches.append(cache)
                     # update progress bar
                     pbar.set_postfix({'loss': test_running_loss / i})
                     pbar.update(1)
+
+                    if i == 3:
+                        break
 
         # compute metrics and stuff
         metrics = self.compute_metrics(eval_caches)
@@ -165,3 +174,47 @@ class BaseTrainer(object):
         ax.set(xlabel='Epoch', ylabel='Loss')
         # return figure
         return fig
+
+
+
+class SimpleCrossEntropyTrainer(BaseTrainer):
+    """ Basic Cross Entropy Trainer """
+    
+    def predict_batch(self, *batch) -> tuple:
+        # convert dataset batch to inputs for model and pass though model
+        kwargs, labels = self.model.preprocess(*batch, self.tokenizer, self.device)
+        logits = self.model.forward(**kwargs)[0]
+        # get the valid labels and logits
+        mask = (labels >= 0)
+        labels, logits = labels[mask], logits[mask, :]
+        # compute loss
+        loss = F.cross_entropy(logits, labels)
+        # return loss and cache for metrics
+        return loss, (labels, logits)
+
+    def compute_metrics(self, caches) -> tuple:
+        # concatenate tensors from caches and get predictions from logits
+        targets, logits = (torch.cat(l, dim=0) for l in zip(*caches))
+        predicts = logits.max(dim=-1)[1]
+        # compute f1-scores
+        micro_f1 = f1_score(predicts, targets, average='micro')
+        macro_f1 = f1_score(predicts, targets, average='macro')
+        # return metrics
+        return micro_f1, macro_f1
+
+    def plot(self, figsize=(8, 5)):
+        # create figure
+        fig, (loss_ax, f1_ax) = plt.subplots(2, 1, figsize=figsize, sharex=True)
+        # plot train and test loss
+        loss_ax.plot(self.metrics[0], label='Train')
+        loss_ax.plot(self.metrics[1], label='Test')
+        loss_ax.legend()
+        loss_ax.set(xlabel='Epoch', ylabel='Loss')
+        # plot f1-scores
+        f1_ax.plot(self.metrics[2], label='Micro')
+        f1_ax.plot(self.metrics[3], label='Macro')
+        f1_ax.legend()
+        f1_ax.set(xlabel='Epoch', ylabel='F1-Score')
+        # return figure
+        return fig
+

@@ -11,6 +11,7 @@ def strip_accents(text:str) -> str:
         output.append(char)
     return "".join(output)
 
+
 def build_token_spans(tokens:list, text:str) -> list:
 
     # clean text and tokens
