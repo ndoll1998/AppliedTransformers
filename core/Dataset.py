@@ -11,12 +11,12 @@ class BaseDataset(torch.utils.data.TensorDataset):
         
         # list of all dataset items
         data_items = [self.build_dataset_item(*feats, seq_length, tokenizer) for feats in self.yield_item_features(train, data_base_dir)]
-        data_items = sum([model.prepare(*item, tokenizer=tokenizer) for item in data_items if item is not None], [])
+        data_items = [model.prepare(*item, tokenizer=tokenizer) for item in data_items if item is not None]
         data_items = [item for item in data_items if item is not None]
         # separate into item features
         features = zip(*data_items)
         # initialize dataset
-        torch.utils.data.TensorDataset.__init__(self, *(torch.tensor(feat) for feat in features))
+        torch.utils.data.TensorDataset.__init__(self, *(torch.cat(feat, dim=0) for feat in features))
 
     def build_dataset_item(self, *feats, seq_length, tokenizer) -> tuple:
         raise NotImplementedError

@@ -1,3 +1,4 @@
+import torch
 # import base models
 from transformers import BertForSequenceClassification
 from .AspectBasedSentimentAnalysisModel import AspectBasedSentimentAnalysisModel
@@ -33,9 +34,15 @@ class BertForSentencePairClassification(AspectBasedSentimentAnalysisModel, BertF
         # build sentence pairs - ignore samples that would overflow the sequence length
         sentence_pairs = [input_ids + ids + [tokenizer.sep_token_id] for ids in aspects_token_ids if k + len(ids) + 1 <= n]
         sentence_pairs = [ids + [tokenizer.pad_token_id] * (n - len(ids)) for ids in sentence_pairs]
+        # remove labels for examples that are out of bounds
+        labels = [l for l, ids in zip(labels, aspects_token_ids) if k + len(ids) + 1 <= n]
 
+        # convert to tensors
+        sentence_pairs = torch.LongTensor(sentence_pairs)
+        token_type_ids = torch.LongTensor(token_type_ids)
+        labels = torch.LongTensor(labels)
         # return items
-        return list(zip(sentence_pairs, token_type_ids, labels))
+        return sentence_pairs, token_type_ids, labels
 
     def preprocess(self, input_ids, token_type_ids, labels, tokenizer, device) -> dict:
         # move input ids and labels to device

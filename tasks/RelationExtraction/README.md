@@ -27,10 +27,11 @@ class CustomModel(RelationExtractionModel):
 
     def prepare(self, input_ids, entity_span_A, entity_span_B, label, tokenizer) -> list:
         """ Prepare and extract/build all important features from a dataset item. """
-        # This function is called during the dataset creation and should handle 
-        # havier computations. It needs to return a list of items extracted from
-        # the provided features. One item is a tuple of aligned features.
-        # The function will default to return the given item (input_ids, aspect_bio, opinion_bio).
+        # This function is called during the dataset creation and should handle havier computations. 
+        # It needs to return tensors build from the provided features. Each tensor has to have the 
+        # shape (n, *feature-shape), where n is the number of datapoints/items.
+        # The function will default to convert the arguments into tensors and 
+        # return those as the feature tensors.
         return [itemA, itemB, itemC, ...]
 
     def preprocess(self, *features, tokenizer, device) -> (dict, torch.tensor):

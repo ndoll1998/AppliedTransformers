@@ -1,3 +1,4 @@
+import torch
 # same model as in the aspect-based sentiment analysis task
 from .EntityClassificationModel import EntityClassificationModel
 from ...AspectBasedSentimentAnalysis.models import BertForSentencePairClassification as BaseModel
@@ -31,6 +32,12 @@ class BertForSentencePairClassification(EntityClassificationModel, BaseModel):
         # build sentence pairs - ignore samples that would overflow the sequence length
         sentence_pairs = [input_ids + input_ids[s:e] + [tokenizer.sep_token_id] for s, e in entity_spans if k + e - s + 1 <= n]
         sentence_pairs = [ids + [tokenizer.pad_token_id] * (n - len(ids)) for ids in sentence_pairs]
+        # remove labels for examples that are out of bounds
+        labels = [l for l, (s, e) in zip(labels, entity_spans) if k + e - s + 1 <= n]
 
-        # return items
-        return list(zip(sentence_pairs, token_type_ids, labels))
+        # convert to tensors
+        sentence_pairs = torch.LongTensor(sentence_pairs)
+        token_type_ids = torch.LongTensor(token_type_ids)
+        labels = torch.LongTensor(labels)
+        # return feature tensors
+        return sentence_pairs, token_type_ids, labels
