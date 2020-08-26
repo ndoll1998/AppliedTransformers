@@ -42,8 +42,10 @@ class BaseTrainer(object):
         # check model type
         if not issubclass(model_type, self.__class__.BASE_MODEL_TYPE):
             raise ValueError("Model Type %s must inherit %s!" % (model_type.__name__, self.__class__.BASE_MODEL_TYPE.__name__))
-        # create model and optimizer
+        # create model and update token embeddings
         self.model = model_type.from_pretrained(pretrained_name, **model_kwargs).to(device)
+        self.model.resize_token_embeddings(len(self.tokenizer))
+        # create optimizer
         self.optim = transformers.AdamW(self.model.parameters(), lr=self.lr, weight_decay=self.wd)
         # check dataset type
         if not issubclass(dataset_type, self.__class__.BASE_DATASET_TYPE):

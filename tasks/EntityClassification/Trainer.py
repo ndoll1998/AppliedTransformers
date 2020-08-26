@@ -50,8 +50,6 @@ class EntityClassificationTrainer(BaseTrainer):
             seq_length=seq_length,
             batch_size=batch_size
         )
-        # update model embedding dimensions to match tokenizer
-        self.model.resize_token_embeddings(len(self.tokenizer))
     
     def compute_batch_loss(self, *batch):
         # convert dataset batch to inputs for model
