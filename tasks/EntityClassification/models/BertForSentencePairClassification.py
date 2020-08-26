@@ -1,8 +1,8 @@
-# import base models
-from transformers import BertForSequenceClassification
+# same model as in the aspect-based sentiment analysis task
 from .EntityClassificationModel import EntityClassificationModel
+from ...AspectBasedSentimentAnalysis.models import BertForSentencePairClassification as BaseModel
 
-class BertForSentencePairClassification(EntityClassificationModel, BertForSequenceClassification):
+class BertForSentencePairClassification(EntityClassificationModel, BaseModel):
     """ Implementation of "Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence" (NAACL 2019)
         Paper: https://arxiv.org/abs/1903.09588
     """
@@ -34,18 +34,3 @@ class BertForSentencePairClassification(EntityClassificationModel, BertForSequen
 
         # return items
         return list(zip(sentence_pairs, token_type_ids, labels))
-
-    def preprocess(self, input_ids, token_type_ids, labels, tokenizer, device) -> dict:
-        # move input ids and labels to device
-        input_ids = input_ids.to(device) 
-        token_type_ids = token_type_ids.to(device)
-        labels = labels.to(device)
-        # build masks
-        attention_mask = (input_ids != tokenizer.pad_token_id)
-        # build keyword arguments for forward call
-        return {
-            'input_ids': input_ids,
-            'attention_mask': attention_mask,
-            'token_type_ids': token_type_ids
-        }, labels
-        

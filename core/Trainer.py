@@ -92,7 +92,6 @@ class BaseTrainer(object):
                 # update progress bar
                 pbar.set_postfix({'loss': train_running_loss / i})
                 pbar.update(1)
-                break
 
         # test model
         self.model.eval()
@@ -113,9 +112,6 @@ class BaseTrainer(object):
                     # update progress bar
                     pbar.set_postfix({'loss': test_running_loss / i})
                     pbar.update(1)
-
-                    if i == 3:
-                        break
 
         # compute metrics and stuff
         metrics = self.compute_metrics(eval_caches)
