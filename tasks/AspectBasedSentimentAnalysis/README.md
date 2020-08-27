@@ -76,7 +76,6 @@ We currently provide the following datasets for this task:
     - Polarity Labels: see `SemEval2014Task4`
     - [Download](http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools)
 
-
 - `SemEval2014Task4_Category`
     - [SemEval-2014 Task 4: Aspect Based Sentiment Analysis](https://www.aclweb.org/anthology/S14-2004/)
     - Language: English
