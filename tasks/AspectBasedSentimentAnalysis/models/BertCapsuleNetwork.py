@@ -73,10 +73,11 @@ class BilinearAttention(nn.Module):
         # compute attention scores
         score = self.score(query, key)
         # apply mask and softmax
-        score = score - (10000 * mask.float()) if mask is not None else 0
+        if mask is not None:
+            score = score.masked_fill(~mask, -10000)
         weight = F.softmax(score, dim=-1)
         # apply dropout
-        return self.dropout(score)
+        return self.dropout(weight)
 
     def forward(self, query, key, value, mask=None):
         # compute attention weight
@@ -202,19 +203,20 @@ class BertCapsuleNetwork(AspectBasedSentimentAnalysisModel, BertModel):
         category_capsule = self.capsule_gruided_routing(primary_capsule, norm_weight)
         category_capsule_norm = (category_capsule * category_capsule).sum(dim=-1)
         category_capsule_norm = torch.sqrt(category_capsule_norm)
-        logits = category_capsule_norm
         # add to outputs
+        logits = category_capsule_norm
         outputs = (logits,) + outputs[1:]
 
-        # compute loss
+        # compute maximum margin loss
         if labels is not None:
-            # maximum margin loss
+            # build one-hot matrix
             one_hot = torch.zeros_like(logits).to(logits.device)
             one_hot = one_hot.scatter(1, labels.unsqueeze(-1), 1)
-            a = torch.max(torch.zeros_like(logits).to(logits.device), 1 - self.config.loss_smooth - logits)
-            b = torch.max(torch.zeros_like(logits).to(logits.device), logits - self.config.loss_smooth)
+            # compute loss
+            a = torch.relu(1 - self.config.loss_smooth - logits)
+            b = torch.relu(logits - self.config.loss_smooth)
             loss = one_hot * a * a + self.config.loss_lambda * (1 - one_hot) * b * b
-            loss = loss.sum(dim=1, keepdim=False).mean()
+            loss = loss.sum(dim=1).mean()
             # add to outputs
             outputs = (loss,) + outputs
 
