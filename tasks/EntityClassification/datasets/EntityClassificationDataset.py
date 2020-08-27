@@ -19,13 +19,14 @@ class EntityClassificationDataset(BaseDataset, metaclass=__EntityClassificationD
     def yield_item_features(self, train:bool, data_base_dir:str ='./data'):
         raise NotImplementedError()
 
-    def build_dataset_item(self, text:str, entity_spans:list, labels:list, tokenizer):
+    @classmethod
+    def build_dataset_item(cls, text:str, entity_spans:list, labels:list =None, tokenizer=None):
 
         if labels is not None:
             # exactly one label per entity
             assert len(entity_spans) == len(labels)
             # build label-to-id map
-            label2id = {l: i for i, l in enumerate(self.__class__.LABELS)}
+            label2id = {l: i for i, l in enumerate(cls.LABELS)}
         
         if len(entity_spans) == 0:
             return input_ids, [], []

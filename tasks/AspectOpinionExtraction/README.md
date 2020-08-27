@@ -27,7 +27,7 @@ class CustomModel(AspectOpinionExtractionModel):
         """ Prepare and extract/build all important features from a dataset item. """
         # This function needs to return tensors build from the provided features. 
         # Each tensor has to have the shape (n, *feature-shape), where n is the 
-        # number of datapoints/items. Note that seq_length and label will be None 
+        # number of datapoints/items. Note that seq_length will not be set 
         # when data item for prediction is passed.
         return [itemA, itemB, itemC, ...]
 

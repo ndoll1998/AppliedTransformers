@@ -14,7 +14,7 @@ class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenC
         # initialize model
         BertForTokenClassification.__init__(self, config)
 
-    def prepare(self, input_ids, aspect_bio, opinion_bio, seq_length, tokenizer):
+    def prepare(self, input_ids, aspect_bio, opinion_bio, seq_length=None, tokenizer=None):
 
         if seq_length is not None:
             # fill to reach sequence length
@@ -29,10 +29,7 @@ class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenC
         # return feature tensors
         return input_ids, aspect_bio, opinion_bio
 
-    def preprocess(self, input_ids, labels_a, labels_o, tokenizer, device) -> dict:
-        # move all to device
-        input_ids = input_ids.to(device)
-        labels_a, labels_o = labels_a.to(device), labels_o.to(device)
+    def preprocess(self, input_ids, labels_a, labels_o, tokenizer) -> dict:
         # create attention mask
         mask = (input_ids != tokenizer.pad_token_id)
         # return kwargs for forward call

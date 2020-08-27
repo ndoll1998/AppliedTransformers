@@ -8,7 +8,7 @@ class BertForSentencePairClassification(AspectBasedSentimentAnalysisModel, BertF
         Paper: https://arxiv.org/abs/1903.09588
     """
 
-    def prepare(self, input_ids, aspects_token_ids, labels, seq_length, tokenizer=None) -> list:
+    def prepare(self, input_ids, aspects_token_ids, labels, seq_length=None, tokenizer=None) -> list:
         # one label per entity span
         assert (labels is None) or (len(aspects_token_ids) == len(labels))
 
@@ -23,7 +23,7 @@ class BertForSentencePairClassification(AspectBasedSentimentAnalysisModel, BertF
 
         k = len(input_ids)
         # build overflow mask
-        mask = [(seq_length is not None) and (k + len(ids) + 1 <= seq_length) for ids in aspects_token_ids]
+        mask = [(seq_length is None) or (k + len(ids) + 1 <= seq_length) for ids in aspects_token_ids]
         # build token-type-ids and sentence pairs - ignore samples that would overflow the sequence length
         token_type_ids = [[0] * k + [1] * (len(ids) + 1) for ids, valid in zip(aspects_token_ids, mask) if valid]
         sentence_pairs = [input_ids + ids + [tokenizer.sep_token_id] for ids, valid in zip(aspects_token_ids, mask) if valid]
@@ -33,7 +33,7 @@ class BertForSentencePairClassification(AspectBasedSentimentAnalysisModel, BertF
 
         # choose minimal sequence length to fit all examples
         if seq_length is None:
-            seq_length = max((len(ids) for ids in sentence_pairs), 0)
+            seq_length = max((len(ids) for ids in sentence_pairs), default=0)
         # fill sequence length
         token_type_ids = [ids + [tokenizer.pad_token_id] * (seq_length - len(ids)) for ids in token_type_ids]
         sentence_pairs = [ids + [tokenizer.pad_token_id] * (seq_length - len(ids)) for ids in sentence_pairs]
@@ -45,11 +45,7 @@ class BertForSentencePairClassification(AspectBasedSentimentAnalysisModel, BertF
         # return items
         return sentence_pairs, token_type_ids, labels
 
-    def preprocess(self, input_ids, token_type_ids, labels, tokenizer, device) -> dict:
-        # move input ids and labels to device
-        input_ids = input_ids.to(device) 
-        token_type_ids = token_type_ids.to(device)
-        labels = labels.to(device)
+    def preprocess(self, input_ids, token_type_ids, labels, tokenizer) -> dict:
         # build masks
         attention_mask = (input_ids != tokenizer.pad_token_id)
         # build keyword arguments for forward call

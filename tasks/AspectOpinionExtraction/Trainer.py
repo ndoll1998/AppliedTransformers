@@ -18,9 +18,10 @@ class AspectOpinionExtractionTrainer(BaseTrainer):
     BASE_DATASET_TYPE = AspectOpinionExtractionDataset
 
     def predict_batch(self, *batch) -> tuple:
-        # convert dataset batch to inputs for model and pass though model
-        kwargs, (labels_a, labels_o) = self.model.preprocess(*batch, self.tokenizer, self.device)
-        logits_a, logits_o = self.model.forward(**kwargs)[:2]
+        # predict on batch
+        outputs, (labels_a, labels_o) = self.model.preprocess_and_predict(*batch, tokenizer=self.tokenizer, device=self.device)
+        logits_a, logits_o = outputs[0], outputs[1]
+        labels_a, labels_o = labels_a.to(self.device), labels_o.to(self.device)
         # get the valid labels and logits
         mask_a, mask_o = (labels_a >= 0), (labels_o >= 0)
         labels_a, logits_a = labels_a[mask_a], logits_a[mask_a, :]

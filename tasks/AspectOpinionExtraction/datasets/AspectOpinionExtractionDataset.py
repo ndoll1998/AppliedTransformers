@@ -10,7 +10,8 @@ class AspectOpinionExtractionDataset(BaseDataset):
     def yield_item_features(self, train:bool, base_data_dir:str):
         raise NotImplementedError()
 
-    def build_dataset_item(self, text:str, aspect_spans:list, opinion_spans:list, tokenizer:BertTokenizer):
+    @classmethod
+    def build_dataset_item(cls, text:str, aspect_spans:list =None, opinion_spans:list =None, tokenizer:BertTokenizer =None):
         # tokenize text and build token spans
         tokens = tokenizer.tokenize(text)
         token_ids = tokenizer.convert_tokens_to_ids(tokens)

@@ -50,7 +50,7 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         # initialize weights
         self.init_weights()
 
-    def prepare(self, input_ids:list, entity_span_A:tuple, entity_span_B:tuple, label:int, seq_length:int, tokenizer:BertForRelationExtractionTokenizer) -> tuple:
+    def prepare(self, input_ids:list, entity_span_A:tuple, entity_span_B:tuple, label:int, seq_length:int =None, tokenizer=None) -> tuple:
         # mark A as entity one and B as entity two
         entity_A = ([tokenizer.entity1_token_id], [tokenizer._entity1_token_id], *entity_span_A) 
         entity_B = ([tokenizer.entity2_token_id], [tokenizer._entity2_token_id], *entity_span_B) 
@@ -90,11 +90,7 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         # return new item features
         return marked_input_ids, e1_e2_start, label
 
-    def preprocess(self, input_ids, e1_e2_start, labels, tokenizer, device):
-        # move to device
-        input_ids = input_ids.to(device)
-        e1_e2_start = e1_e2_start.to(device)
-        labels = labels.to(device)
+    def preprocess(self, input_ids, e1_e2_start, labels, tokenizer):
         # create attention mask
         mask = (input_ids != tokenizer.pad_token_id)
         # create keyword arguments

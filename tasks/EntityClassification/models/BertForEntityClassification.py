@@ -40,7 +40,8 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
         # initialize weights
         self.init_weights()
 
-    def prepare(self, input_ids, entity_spans, labels, seq_length, max_entities=5, tokenizer=None) -> tuple:
+    # TODO: dynamically set max_entities to None when predicting
+    def prepare(self, input_ids, entity_spans, labels, seq_length=None, max_entities=5, tokenizer=None) -> tuple:
 
         if seq_length is not None:
             # remove entities that will be out of bounds after markers are added
@@ -75,11 +76,7 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
         # return features tensors
         return input_ids, entity_starts, labels
 
-    def preprocess(self, input_ids, entity_starts, labels, tokenizer, device) -> dict:
-        # move input ids and labels to device
-        input_ids = input_ids.to(device) 
-        labels = labels.to(device)
-        entity_starts = entity_starts.to(device)
+    def preprocess(self, input_ids, entity_starts, labels, tokenizer) -> dict:
         # build masks
         attention_mask = (input_ids != tokenizer.pad_token_id)
         entity_mask = (labels != -1)

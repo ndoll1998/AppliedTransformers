@@ -27,11 +27,10 @@ class CustomModel(RelationExtractionModel):
 
     def prepare(self, input_ids, entity_span_A, entity_span_B, label, seq_length, tokenizer) -> list:
         """ Prepare and extract/build all important features from a dataset item. """
-        # This function needs to return tensors build from the provided features. Each tensor has to have the 
-        # shape (n, *feature-shape), where n is the number of datapoints/items.
-        # seq_length and label will be None when predicting.
-        # The function will default to convert the arguments into tensors and 
-        # return those as the feature tensors.
+        # This function needs to return tensors build from the provided features. 
+        # Each tensor has to have the shape (n, *feature-shape), where n is the
+        # number of datapoints/items. Not that seq_length, entity_span_A and entity_span_B 
+        # will not be set when data item for prediction is passed.
         return [itemA, itemB, itemC, ...]
 
     def preprocess(self, *features, tokenizer, device) -> (dict, torch.tensor):

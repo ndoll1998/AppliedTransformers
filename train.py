@@ -2,12 +2,12 @@
 import torch
 
 # Aspect Opinion Extraction imports
-from tasks.AspectOpinionExtraction.Trainer import AspectOpinionExtractionTrainer as Trainer
-from tasks.AspectOpinionExtraction.models import BertForAspectOpinionExtraction
-from tasks.AspectOpinionExtraction.datasets import (
-    SemEval2015Task12, 
-    GermanYelpDataset
-)
+# from tasks.AspectOpinionExtraction.Trainer import AspectOpinionExtractionTrainer as Trainer
+# from tasks.AspectOpinionExtraction.models import BertForAspectOpinionExtraction
+# from tasks.AspectOpinionExtraction.datasets import (
+#     SemEval2015Task12, 
+#     GermanYelpDataset
+# )
 
 # Aspect-based Sentiment Analysis imports
 # from tasks.AspectBasedSentimentAnalysis.Trainer import AspectBasedSentimentAnalysisTrainer as Trainer
@@ -26,25 +26,25 @@ from tasks.AspectOpinionExtraction.datasets import (
 # )
 
 # Relation Extraction imports
-# from tasks.RelationExtraction.Trainer import RelationExtractionTrainer as Trainer
-# from tasks.RelationExtraction.models import BertForRelationExtraction
-# from tasks.RelationExtraction.datasets import (
-#     SemEval2010Task8,
-#     GermanYelpRelation,
-#     GermanYelpPolarity,
-#     SmartdataCorpus,
-# )
+from tasks.RelationExtraction.Trainer import RelationExtractionTrainer as Trainer
+from tasks.RelationExtraction.models import BertForRelationExtraction
+from tasks.RelationExtraction.datasets import (
+    SemEval2010Task8,
+    GermanYelpRelation,
+    GermanYelpPolarity,
+    SmartdataCorpus,
+)
 
 if __name__ == '__main__':
 
     # create trainer
     trainer = Trainer(
         # model
-        model_type = BertForAspectOpinionExtraction,
+        model_type = BertForRelationExtraction,
         pretrained_name = 'bert-base-german-cased',
         device = 'cpu',
         # dataset
-        dataset_type = SemEval2015Task12,
+        dataset_type = SemEval2010Task8,
         data_base_dir = "./data",
         seq_length = 64,
         batch_size = 8,

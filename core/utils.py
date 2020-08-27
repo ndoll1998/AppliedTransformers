@@ -1,5 +1,8 @@
 import unicodedata
 
+
+""" Word-Piece Token Helpers """
+
 def strip_accents(text:str) -> str:
     """ Strips accents from a piece of text. """
     text = unicodedata.normalize("NFD", text)
@@ -44,6 +47,8 @@ def build_token_spans(tokens:list, text:str) -> list:
     return spans
 
 
+""" Begin-In-Out Scheme Helpers """
+
 def mark_bio_scheme(token_spans:list, entity_spans:list) -> list:
 
     # no entities provided
@@ -73,3 +78,24 @@ def mark_bio_scheme(token_spans:list, entity_spans:list) -> list:
             bio.append(0)
 
     return bio
+
+
+def get_spans_from_bio_scheme(bio:list):
+    
+    spans, in_entity = [], False
+    for i, l in enumerate(bio):
+
+        if l == 1:
+            # new entity starts
+            spans.append((i, i + 1))
+            in_entity = True
+
+        elif (l == 2) and in_entity:
+            # in entity
+            spans[-1] = (spans[-1][0], i + 1)
+
+        elif l == 0:
+            # entity done
+            in_entity = False
+
+    return spans

@@ -17,7 +17,8 @@ class AspectBasedSentimentAnalysisDataset(BaseDataset, metaclass=__AspectBasedSe
     def yield_item_features(self, train:bool, data_base_dir:str ='./data'):
         raise NotImplementedError()
 
-    def build_dataset_item(self, text:str, aspect_terms:list, labels:list, tokenizer):
+    @classmethod
+    def build_dataset_item(cls, text:str, aspect_terms:list, labels:list =None, tokenizer=None):
             
         # tokenize text and aspect terms
         input_ids = tokenizer.encode(text)
@@ -28,7 +29,7 @@ class AspectBasedSentimentAnalysisDataset(BaseDataset, metaclass=__AspectBasedSe
             # exactly one label per entity
             assert len(aspect_terms) == len(labels)
             # map labels to ids
-            label2id = {l: i for i, l in enumerate(self.__class__.LABELS)}
+            label2id = {l: i for i, l in enumerate(cls.LABELS)}
             labels = [label2id[l] for l in labels]
 
         # return item

@@ -19,9 +19,10 @@ class RelationExtractionDataset(BaseDataset, metaclass=__RelationExtractionDatas
     def yield_item_features(self, train:bool, data_base_dir:str ='./data') -> iter:
         raise NotImplementedError()
 
-    def build_dataset_item(self, text:str, entity_span_A:tuple, entity_span_B:tuple, label:str, tokenizer:PreTrainedTokenizer):
+    @classmethod
+    def build_dataset_item(cls, text:str, entity_span_A:tuple, entity_span_B:tuple, label:str =None, tokenizer:PreTrainedTokenizer =None):
         # get label id
-        label = self.__class__.RELATIONS.index(label) if label is not None else None
+        label = cls.RELATIONS.index(label) if label is not None else None
         # tokenize text and build token spans
         tokens = tokenizer.tokenize(text)
         token_spans = build_token_spans(tokens, text)

@@ -178,9 +178,9 @@ class SimpleCrossEntropyTrainer(BaseTrainer):
     """ Basic Cross Entropy Trainer """
     
     def predict_batch(self, *batch) -> tuple:
-        # convert dataset batch to inputs for model and pass though model
-        kwargs, labels = self.model.preprocess(*batch, self.tokenizer, self.device)
-        logits = self.model.forward(**kwargs)[0]
+        # predict on batch
+        outputs, labels = self.model.preprocess_and_predict(*batch, tokenizer=self.tokenizer, device=self.device)
+        logits, labels = outputs[0], labels.to(self.device)
         # get the valid labels and logits
         mask = (labels >= 0)
         labels, logits = labels[mask], logits[mask, :]
