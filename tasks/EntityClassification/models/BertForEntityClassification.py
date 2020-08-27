@@ -7,7 +7,8 @@ from .EntityClassificationModel import EntityClassificationModel
 # import Bert Model and Tokenizer
 from transformers import BertModel, BertPreTrainedModel
 from transformers import BertTokenizer
-
+# import utils
+from core.utils import align_shape
 
 class BertForEntityClassificationTokenizer(BertTokenizer):
     """ Tokenizer for the Bert Entity Classification Model """
@@ -58,17 +59,10 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
             # get entity start id
             entity_starts.insert(0, b + 2 * i)
 
-        if seq_length is not None:
-            # fill sequence length
-            input_ids = input_ids[:seq_length]
-            input_ids += [tokenizer.pad_token_id] * (seq_length - len(input_ids))
-        
-        # pad to fill tensors
-        if max_entities is not None:
-            entity_starts = entity_starts[:max_entities] + [-1] * (max_entities - len(entity_starts))
-        if labels is not None:
-            labels = labels[:max_entities] + [-1] * (max_entities - len(labels))
-
+        # fill tensors
+        input_ids = align_shape(input_ids, (seq_length,), tokenizer.pad_token_id) if seq_length is not None else input_ids
+        entity_starts = align_shape(entity_starts, (max_entities,), -1) if max_entities is not None else entity_starts
+        labels = align_shape(labels, (max_entities,), -1) if labels is not None else None
         # convert to tensors
         input_ids = torch.LongTensor([input_ids])
         entity_starts = torch.LongTensor([entity_starts])

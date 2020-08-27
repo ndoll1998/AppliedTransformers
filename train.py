@@ -1,19 +1,20 @@
 """ Training Script for all BERT Models """
 import torch
 
-# Aspect Opinion Extraction imports
-# from tasks.AspectOpinionExtraction.Trainer import AspectOpinionExtractionTrainer as Trainer
-# from tasks.AspectOpinionExtraction.models import BertForAspectOpinionExtraction
-# from tasks.AspectOpinionExtraction.datasets import (
-#     SemEval2015Task12, 
-#     GermanYelpDataset
-# )
 
 # Aspect-based Sentiment Analysis imports
 # from tasks.AspectBasedSentimentAnalysis.Trainer import AspectBasedSentimentAnalysisTrainer as Trainer
 # from tasks.AspectBasedSentimentAnalysis.models import BertForSentencePairClassification
 # from tasks.AspectBasedSentimentAnalysis.datasets import (
 #     SemEval2014Task4
+# )
+
+# Aspect Opinion Extraction imports
+# from tasks.AspectOpinionExtraction.Trainer import AspectOpinionExtractionTrainer as Trainer
+# from tasks.AspectOpinionExtraction.models import BertForAspectOpinionExtraction
+# from tasks.AspectOpinionExtraction.datasets import (
+#     SemEval2015Task12, 
+#     GermanYelpDataset
 # )
 
 # Entity Classfication imports
@@ -44,7 +45,7 @@ if __name__ == '__main__':
         pretrained_name = 'bert-base-german-cased',
         device = 'cpu',
         # dataset
-        dataset_type = SemEval2010Task8,
+        dataset_type = GermanYelpRelation,
         data_base_dir = "./data",
         seq_length = 64,
         batch_size = 8,

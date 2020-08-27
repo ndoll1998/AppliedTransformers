@@ -2,6 +2,8 @@ import torch
 # import base models
 from transformers import BertForSequenceClassification
 from .AspectBasedSentimentAnalysisModel import AspectBasedSentimentAnalysisModel
+# import utils
+from core.utils import align_shape
 
 class BertForSentencePairClassification(AspectBasedSentimentAnalysisModel, BertForSequenceClassification):
     """ Implementation of "Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence" (NAACL 2019)
@@ -34,13 +36,9 @@ class BertForSentencePairClassification(AspectBasedSentimentAnalysisModel, BertF
         # choose minimal sequence length to fit all examples
         if seq_length is None:
             seq_length = max((len(ids) for ids in sentence_pairs), default=0)
-        # fill sequence length
-        token_type_ids = [ids + [tokenizer.pad_token_id] * (seq_length - len(ids)) for ids in token_type_ids]
-        sentence_pairs = [ids + [tokenizer.pad_token_id] * (seq_length - len(ids)) for ids in sentence_pairs]
-
         # convert to tensors
-        sentence_pairs = torch.LongTensor(sentence_pairs)
-        token_type_ids = torch.LongTensor(token_type_ids)
+        sentence_pairs = torch.LongTensor(align_shape(sentence_pairs, (len(sentence_pairs), seq_length), tokenizer.pad_token_id))
+        token_type_ids = torch.LongTensor(align_shape(token_type_ids, (len(token_type_ids), seq_length), tokenizer.pad_token_id))
         labels = torch.LongTensor(labels) if labels is not None else None
         # return items
         return sentence_pairs, token_type_ids, labels

@@ -4,6 +4,8 @@ from .AspectOpinionExtractionModel import AspectOpinionExtractionModel
 # import Bert Config and Model
 from transformers import BertConfig
 from transformers import BertForTokenClassification
+# import utils
+from core.utils import align_shape
 
 class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenClassification):
 
@@ -17,10 +19,9 @@ class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenC
     def prepare(self, input_ids, aspect_bio, opinion_bio, seq_length=None, tokenizer=None):
 
         if seq_length is not None:
-            # fill to reach sequence length
-            input_ids = input_ids[:seq_length] + [tokenizer.pad_token_id] * max(0, seq_length - len(input_ids))
-            aspect_bio = aspect_bio[:seq_length] + [-1] * max(0, seq_length - len(aspect_bio)) if aspect_bio is not None else None
-            opinion_bio = opinion_bio[:seq_length] + [-1] * max(0, seq_length - len(opinion_bio)) if opinion_bio is not None else None
+            input_ids = align_shape(input_ids, (seq_length,), tokenizer.pad_token_id)
+            aspect_bio = align_shape(aspect_bio, (seq_length,), -1) if aspect_bio is not None else None
+            opinion_bio = align_shape(opinion_bio, (seq_length,), -1) if opinion_bio is not None else None
 
         # convert to tensors
         input_ids = torch.LongTensor([input_ids])

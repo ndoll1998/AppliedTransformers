@@ -6,6 +6,8 @@ from .RelationExtractionModel import RelationExtractionModel
 # import Bert Model and Tokenizer
 from transformers import BertModel, BertPreTrainedModel
 from transformers import BertTokenizer
+# import utils
+from core.utils import align_shape
 
 class BertForRelationExtractionTokenizer(BertTokenizer):
     """ Tokenizer for the Bert Entity Classification Model """
@@ -81,7 +83,7 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         if seq_length is not None:
             # fill input ids to reach sequence length
             assert len(marked_input_ids) <= seq_length
-            marked_input_ids += [tokenizer.pad_token_id] * (seq_length - len(marked_input_ids))
+            marked_input_ids = align_shape(marked_input_ids, (seq_length,), tokenizer.pad_token_id)
 
         # convert to tensors
         marked_input_ids = torch.LongTensor([marked_input_ids])
