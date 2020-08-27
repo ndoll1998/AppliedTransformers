@@ -1,2 +1,3 @@
 from .AspectBasedSentimentAnalysisModel import AspectBasedSentimentAnalysisModel
 from .BertForSentencePairClassification import BertForSentencePairClassification
+from .BertCapsuleNetwork import BertCapsuleNetwork

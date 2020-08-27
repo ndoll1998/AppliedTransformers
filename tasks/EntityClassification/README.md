@@ -14,6 +14,10 @@ We currently provide the following models for this task:
 
     - [Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence](https://arxiv.org/abs/1903.09588)
 
+- `BertCapsuleNetwork`
+    
+    - [A Challenge Dataset and Effective Models for Aspect-Based Sentiment Analysis](https://www.aclweb.org/anthology/D19-1654/)
+
 
 A custom model must have the following form:
 ```python

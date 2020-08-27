@@ -4,7 +4,7 @@ import torch
 
 # Aspect-based Sentiment Analysis imports
 # from tasks.AspectBasedSentimentAnalysis.Trainer import AspectBasedSentimentAnalysisTrainer as Trainer
-# from tasks.AspectBasedSentimentAnalysis.models import BertForSentencePairClassification
+# from tasks.AspectBasedSentimentAnalysis.models import BertForSentencePairClassification, BertCapsuleNetwork
 # from tasks.AspectBasedSentimentAnalysis.datasets import (
 #     SemEval2014Task4,
 #     SemEval2014Task4_Laptops,
@@ -22,7 +22,11 @@ import torch
 
 # Entity Classfication imports
 from tasks.EntityClassification.Trainer import EntityClassificationTrainer as Trainer
-from tasks.EntityClassification.models import BertForEntityClassification, BertForSentencePairClassification
+from tasks.EntityClassification.models import (
+    BertForEntityClassification, 
+    BertForSentencePairClassification,
+    BertCapsuleNetwork
+)
 from tasks.EntityClassification.datasets import (
     SemEval2015Task12_AspectSentiment, 
     SemEval2015Task12_OpinionSentiment, 
@@ -47,11 +51,11 @@ if __name__ == '__main__':
     # create trainer
     trainer = Trainer(
         # model
-        model_type = BertForSentencePairClassification,
+        model_type = BertCapsuleNetwork,
         pretrained_name = 'bert-base-german-cased',
         device = 'cpu',
         # dataset
-        dataset_type = SemEval2015Task12_OpinionSentiment,
+        dataset_type = SemEval2014Task4_Laptops,
         data_base_dir = "./data",
         seq_length = 64,
         batch_size = 8,
