@@ -2,9 +2,9 @@ import os
 # import xml parser
 import xml.etree.ElementTree as ET
 # import base dataset
-from .AspectBasedSentimentAnalysisDataset import AspectBasedSentimentAnalysisDataset
+from .EntityClassificationDataset import EntityClassificationDataset
 
-class __SemEval2014Task4(AspectBasedSentimentAnalysisDataset):
+class __SemEval2014Task4(EntityClassificationDataset):
 
     LABELS = ['positive', 'neutral', 'negative', 'conflict']
 
@@ -27,9 +27,9 @@ class __SemEval2014Task4(AspectBasedSentimentAnalysisDataset):
             text = sentence.find('text').text
             # get aspect terms and labels
             aspect_label_pairs = self.get_aspect_label_pairs(sentence)
-            aspect_terms, labels = zip(*aspect_label_pairs) if len(aspect_label_pairs) > 0 else ([], [])
+            aspect_spans, labels = zip(*aspect_label_pairs) if len(aspect_label_pairs) > 0 else ([], [])
             # yield item
-            yield text, aspect_terms, labels
+            yield text, aspect_spans, labels
 
     def get_aspect_label_pairs(self, sentence):
         raise NotImplementedError()
@@ -44,15 +44,14 @@ class SemEval2014Task4_Restaurants(__SemEval2014Task4):
 
     def get_aspect_label_pairs(self, sentence):
         # get aspect categories and terms
-        aspect_categories, aspect_terms = sentence.find('aspectCategories'), sentence.find('aspectTerms')
+        aspect_terms = sentence.find('aspectTerms')
         # load aspect label pairs
         aspect_label_pairs = []
-        if aspect_categories is not None:
-            aspect_label_pairs += [(aspect.attrib['category'], aspect.attrib['polarity']) for aspect in aspect_categories]
         if aspect_terms is not None:
-            aspect_label_pairs += [(aspect.attrib['term'], aspect.attrib['polarity']) for aspect in aspect_terms]
+            aspect_label_pairs += [((int(aspect.attrib['from']), int(aspect.attrib['to'])), aspect.attrib['polarity']) for aspect in aspect_terms]
         # return
         return aspect_label_pairs
+
 
 class SemEval2014Task4_Laptops(__SemEval2014Task4):
     """ SemEval 2014 Task 4 Laptop Dataset for Aspect based Sentiment Analysis.
@@ -64,13 +63,14 @@ class SemEval2014Task4_Laptops(__SemEval2014Task4):
 
     def get_aspect_label_pairs(self, sentence):
         # get aspect categories and terms
-        aspect_categories = sentence.find('aspectCategories')
+        aspect_terms = sentence.find('aspectTerms')
         # load aspect label pairs
         aspect_label_pairs = []
         if aspect_terms is not None:
-            aspect_label_pairs += [(aspect.attrib['term'], aspect.attrib['polarity']) for aspect in aspect_terms]
+            aspect_label_pairs += [((int(aspect.attrib['from']), int(aspect.attrib['to'])), aspect.attrib['polarity']) for aspect in aspect_terms]
         # return
         return aspect_label_pairs
+
 
 class SemEval2014Task4(SemEval2014Task4_Restaurants, SemEval2014Task4_Laptops):
     """ SemEval 2014 Task 4 Dataset for Aspect based Sentiment Analysis.
@@ -81,22 +81,3 @@ class SemEval2014Task4(SemEval2014Task4_Restaurants, SemEval2014Task4_Laptops):
         # yield from restaurant and from laptop dataset
         yield from SemEval2014Task4_Restaurants.yield_item_features(self, train, data_base_dir)
         yield from SemEval2014Task4_Laptops.yield_item_features(self, train, data_base_dir)
-
-class SemEval2014Task4_Category(__SemEval2014Task4):
-    """ SemEval 2014 Task 4 Aspect-Category Dataset for Aspect based Sentiment Analysis.
-        Only provides examples for aspect-categories (not explicitly mentioned in the text).
-        Download: http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools
-    """
-    # files - only restaurant dataset provides aspect categories
-    TRAIN_FILE = "SemEval2014-Task4/Restaurants_Train.xml"
-    TEST_FILE = "SemEval2014-Task4/restaurants-trial.xml"
-
-    def get_aspect_label_pairs(self, sentence):
-        # only get categories
-        aspect_categories = sentence.find('aspectCategories')
-        # build aspect label pairs
-        aspect_label_pairs = []
-        if aspect_categories is not None:
-            aspect_label_pairs += [(aspect.attrib['category'], aspect.attrib['polarity']) for aspect in sentence.find('aspectCategories') if aspect is not None]
-        # return
-        return aspect_label_pairs

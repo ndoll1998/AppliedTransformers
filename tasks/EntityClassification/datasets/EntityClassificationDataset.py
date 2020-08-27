@@ -28,12 +28,12 @@ class EntityClassificationDataset(BaseDataset, metaclass=__EntityClassificationD
             # build label-to-id map
             label2id = {l: i for i, l in enumerate(cls.LABELS)}
         
-        if len(entity_spans) == 0:
-            return input_ids, [], []
-
         # tokenize text
         tokens = tokenizer.tokenize(text)
         input_ids = tokenizer.convert_tokens_to_ids(tokens)
+
+        if len(entity_spans) == 0:
+            return input_ids, [], []
         
         # sort entities by occurance in text
         sort_idx = sorted(range(len(entity_spans)), key=lambda i: entity_spans[i][0])

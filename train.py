@@ -3,14 +3,14 @@ import torch
 
 
 # Aspect-based Sentiment Analysis imports
-from tasks.AspectBasedSentimentAnalysis.Trainer import AspectBasedSentimentAnalysisTrainer as Trainer
-from tasks.AspectBasedSentimentAnalysis.models import BertForSentencePairClassification
-from tasks.AspectBasedSentimentAnalysis.datasets import (
-    SemEval2014Task4,
-    SemEval2014Task4_Laptops,
-    SemEval2014Task4_Restaurants,
-    SemEval2014Task4_Category,
-)
+# from tasks.AspectBasedSentimentAnalysis.Trainer import AspectBasedSentimentAnalysisTrainer as Trainer
+# from tasks.AspectBasedSentimentAnalysis.models import BertForSentencePairClassification
+# from tasks.AspectBasedSentimentAnalysis.datasets import (
+#     SemEval2014Task4,
+#     SemEval2014Task4_Laptops,
+#     SemEval2014Task4_Restaurants,
+#     SemEval2014Task4_Category,
+# )
 
 # Aspect Opinion Extraction imports
 # from tasks.AspectOpinionExtraction.Trainer import AspectOpinionExtractionTrainer as Trainer
@@ -21,13 +21,16 @@ from tasks.AspectBasedSentimentAnalysis.datasets import (
 # )
 
 # Entity Classfication imports
-# from tasks.EntityClassification.Trainer import EntityClassificationTrainer as Trainer
-# from tasks.EntityClassification.models import BertForEntityClassification, BertForSentencePairClassification
-# from tasks.EntityClassification.datasets import (
-#     SemEval2015Task12_AspectSentiment, 
-#     SemEval2015Task12_OpinionSentiment, 
-#     GermanYelpSentiment
-# )
+from tasks.EntityClassification.Trainer import EntityClassificationTrainer as Trainer
+from tasks.EntityClassification.models import BertForEntityClassification, BertForSentencePairClassification
+from tasks.EntityClassification.datasets import (
+    SemEval2015Task12_AspectSentiment, 
+    SemEval2015Task12_OpinionSentiment, 
+    GermanYelpSentiment,
+    SemEval2014Task4,
+    SemEval2014Task4_Laptops,
+    SemEval2014Task4_Restaurants
+)
 
 # Relation Extraction imports
 # from tasks.RelationExtraction.Trainer import RelationExtractionTrainer as Trainer
