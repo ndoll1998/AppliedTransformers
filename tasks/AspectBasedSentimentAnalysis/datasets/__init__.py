@@ -1,2 +1,2 @@
 from .AspectBasedSentimentAnalysisDataset import AspectBasedSentimentAnalysisDataset
-from .SemEval2014Task4 import SemEval2014Task4
+from .SemEval2014Task4 import *
