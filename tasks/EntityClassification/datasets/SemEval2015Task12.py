@@ -57,7 +57,7 @@ class SemEval2015Task12_OpinionSentiment(EntityClassificationDataset):
     TRAIN_FILE = "SemEval2015-Task12/sentence_res15_op"
     TEST_FILE = "SemEval2015-Task12/sentence_restest15_op"
 
-    LABELS = ['+1', '-1']
+    LABELS = ['positive', 'negative']
 
     def yield_item_features(self, train:bool, data_base_dir:str ='./data'):
 
@@ -82,6 +82,8 @@ class SemEval2015Task12_OpinionSentiment(EntityClassificationDataset):
             # build opinion spans
             opinion_pos = [sent.find(o) for o in opinions]
             opinion_spans = [(i, i + len(o)) for i, o in zip(opinion_pos, opinions)]
+            # get sentiment labels
+            sentiments = [SemEval2015Task12_OpinionSentiment.LABELS[(-int(i) + 1) // 2] for i in sentiments]
             
             yield sent, opinion_spans, sentiments
             

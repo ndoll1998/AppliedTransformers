@@ -60,6 +60,10 @@ We currently provide the following datasets for this task:
     - Language: English
     - Domain: Restaurant Reviews
     - Entity Type: Aspects
+    - Entity Labels:
+        - positive
+        - neutral
+        - negative
     - [Download](http://alt.qcri.org/semeval2015/task12/index.php?id=data-and-tools)
 
 - `SemEval2015Task12_OpinionSentiment`
@@ -69,7 +73,38 @@ for Co-Extraction of Aspect and Opinion Terms](https://www.aaai.org/Conferences/
     - Language: English
     - Domain: Restaurant Reviews
     - Entity Type: Opinions
+    - Entity Labels:
+        - positive
+        - negative
     - [Download](https://github.com/happywwy/Coupled-Multi-layer-Attentions/tree/master/util/data_semEval)
+
+- `SemEval2014Task4`
+    - [SemEval-2014 Task 4: Aspect Based Sentiment Analysis](https://www.aclweb.org/anthology/S14-2004/)
+    - Language: English
+    - Domain: Restaurant + Laptop Reviews
+    - Entity Type: Aspects
+    - Polarity Labels:
+        - positive
+        - neutral
+        - negative
+        - conflict
+    - [Download](http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools)
+
+- `SemEval2014Task4_Restaurants`
+    - [SemEval-2014 Task 4: Aspect Based Sentiment Analysis](https://www.aclweb.org/anthology/S14-2004/)
+    - Language: English
+    - Domain: Restaurant Reviews
+    - Entity Type: Aspects
+    - Polarity Labels: see `SemEval2014Task4`
+    - [Download](http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools)
+
+- `SemEval2014Task4_Laptops`
+    - [SemEval-2014 Task 4: Aspect Based Sentiment Analysis](https://www.aclweb.org/anthology/S14-2004/)
+    - Language: English
+    - Domain: Laptop Reviews
+    - Entity Type: Aspects
+    - Polarity Labels: see `SemEval2014Task4`
+    - [Download](http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools)
 
 - `GermanYelpSentiment`
     - Language: German

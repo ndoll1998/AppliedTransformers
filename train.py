@@ -51,7 +51,7 @@ if __name__ == '__main__':
         pretrained_name = 'bert-base-german-cased',
         device = 'cpu',
         # dataset
-        dataset_type = SemEval2014Task4,
+        dataset_type = SemEval2015Task12_OpinionSentiment,
         data_base_dir = "./data",
         seq_length = 64,
         batch_size = 8,
