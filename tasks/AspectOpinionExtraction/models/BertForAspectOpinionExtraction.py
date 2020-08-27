@@ -1,3 +1,4 @@
+import torch
 # import base model
 from .AspectOpinionExtractionModel import AspectOpinionExtractionModel
 # import Bert Config and Model
@@ -12,6 +13,21 @@ class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenC
         config.num_labels = 6
         # initialize model
         BertForTokenClassification.__init__(self, config)
+
+    def prepare(self, input_ids, aspect_bio, opinion_bio, seq_length, tokenizer):
+
+        if seq_length is not None:
+            # fill to reach sequence length
+            input_ids = input_ids[:seq_length] + [tokenizer.pad_token_id] * max(0, seq_length - len(input_ids))
+            aspect_bio = aspect_bio[:seq_length] + [-1] * max(0, seq_length - len(aspect_bio)) if aspect_bio is not None else None
+            opinion_bio = opinion_bio[:seq_length] + [-1] * max(0, seq_length - len(opinion_bio)) if opinion_bio is not None else None
+
+        # convert to tensors
+        input_ids = torch.LongTensor([input_ids])
+        aspect_bio = torch.LongTensor([aspect_bio]) if aspect_bio is not None else None
+        opinion_bio = torch.LongTensor([opinion_bio]) if opinion_bio is not None else None
+        # return feature tensors
+        return input_ids, aspect_bio, opinion_bio
 
     def preprocess(self, input_ids, labels_a, labels_o, tokenizer, device) -> dict:
         # move all to device

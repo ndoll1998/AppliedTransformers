@@ -8,15 +8,9 @@ class BertForSentencePairClassification(AspectBasedSentimentAnalysisModel, BertF
         Paper: https://arxiv.org/abs/1903.09588
     """
 
-    def prepare(self, input_ids, aspects_token_ids, labels, tokenizer) -> list:
-        n = len(input_ids)
-        # remove padding tokens, entity spans and labels
-        input_ids = [i for i in input_ids if i != tokenizer.pad_token_id]
-        aspects_token_ids = [[t for t in tokens if t != tokenizer.pad_token_id] for tokens in aspects_token_ids]
-        aspects_token_ids = [ids for ids in aspects_token_ids if len(ids) > 0]
-        labels = [l for l in labels if l != -1]
-        # check lengths
-        assert len(aspects_token_ids) == len(labels)
+    def prepare(self, input_ids, aspects_token_ids, labels, seq_length, tokenizer=None) -> list:
+        # one label per entity span
+        assert (labels is None) or (len(aspects_token_ids) == len(labels))
 
         # add special tokens
         if input_ids[0] != tokenizer.cls_token_id:
@@ -28,19 +22,26 @@ class BertForSentencePairClassification(AspectBasedSentimentAnalysisModel, BertF
         aspects_token_ids = [ids[:-1] if ids[-1] == tokenizer.sep_token_id else ids for ids in aspects_token_ids]
 
         k = len(input_ids)
-        # build token-type-ids - ignore samples that would overflow the sequence length
-        token_type_ids = [[0] * k + [1] * (len(ids) + 1) for ids in aspects_token_ids if k + len(ids) + 1 <= n]
-        token_type_ids = [ids + [tokenizer.pad_token_id] * (n - len(ids)) for ids in token_type_ids]
-        # build sentence pairs - ignore samples that would overflow the sequence length
-        sentence_pairs = [input_ids + ids + [tokenizer.sep_token_id] for ids in aspects_token_ids if k + len(ids) + 1 <= n]
-        sentence_pairs = [ids + [tokenizer.pad_token_id] * (n - len(ids)) for ids in sentence_pairs]
+        # build overflow mask
+        mask = [(seq_length is not None) and (k + len(ids) + 1 <= seq_length) for ids in aspects_token_ids]
+        # build token-type-ids and sentence pairs - ignore samples that would overflow the sequence length
+        token_type_ids = [[0] * k + [1] * (len(ids) + 1) for ids, valid in zip(aspects_token_ids, mask) if valid]
+        sentence_pairs = [input_ids + ids + [tokenizer.sep_token_id] for ids, valid in zip(aspects_token_ids, mask) if valid]
         # remove labels for examples that are out of bounds
-        labels = [l for l, ids in zip(labels, aspects_token_ids) if k + len(ids) + 1 <= n]
+        if labels is not None:
+            labels = [l for l, valid in zip(labels, mask) if valid]
+
+        # choose minimal sequence length to fit all examples
+        if seq_length is None:
+            seq_length = max((len(ids) for ids in sentence_pairs), 0)
+        # fill sequence length
+        token_type_ids = [ids + [tokenizer.pad_token_id] * (seq_length - len(ids)) for ids in token_type_ids]
+        sentence_pairs = [ids + [tokenizer.pad_token_id] * (seq_length - len(ids)) for ids in sentence_pairs]
 
         # convert to tensors
         sentence_pairs = torch.LongTensor(sentence_pairs)
         token_type_ids = torch.LongTensor(token_type_ids)
-        labels = torch.LongTensor(labels)
+        labels = torch.LongTensor(labels) if labels is not None else None
         # return items
         return sentence_pairs, token_type_ids, labels
 

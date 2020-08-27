@@ -24,6 +24,7 @@ class EntityClassificationTrainer(SimpleCrossEntropyTrainer):
         # data
         dataset_type:torch.utils.data.Dataset =None,
         data_base_dir:str ='./data',
+        dataset_kwargs:dict ={},
         seq_length:int =None,
         batch_size:int =None,
         # optimizer
@@ -45,6 +46,7 @@ class EntityClassificationTrainer(SimpleCrossEntropyTrainer):
             # data
             dataset_type=dataset_type,
             data_base_dir=data_base_dir,
+            dataset_kwargs=dataset_kwargs,
             seq_length=seq_length,
             batch_size=batch_size
         )

@@ -27,13 +27,12 @@ class CustomModel(EntityClassificationModel):
     def __init__(self, config):
         # initialize all parameters of the model
 
-    def prepare(self, input_ids, entity_spans, labels, tokenizer) -> list:
+    def prepare(self, input_ids, entity_spans, labels, max_entities, tokenizer) -> list:
         """ Prepare and extract/build all important features from a dataset item. """
-        # This function is called during the dataset creation and should handle havier computations. 
-        # It needs to return tensors build from the provided features. Each tensor has to have the 
-        # shape (n, *feature-shape), where n is the number of datapoints/items.
-        # The function will default to convert the arguments into tensors and 
-        # return those as the feature tensors.
+        # This function needs to return tensors build from the provided features. 
+        # Each tensor has to have the shape (n, *feature-shape), where n is the 
+        # number of datapoints/items. Note that seq_length, max_entities and label will be None 
+        # when data item for prediction is passed.
         return [itemA, itemB, itemC, ...]
 
     def preprocess(self, *features, tokenizer, device) -> (dict, torch.tensor):

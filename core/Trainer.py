@@ -31,6 +31,7 @@ class BaseTrainer(object):
         # data
         dataset_type:torch.utils.data.Dataset =None,
         data_base_dir:str ='./data',
+        dataset_kwargs:dict ={},
         seq_length:int =None,
         batch_size:int =None,
         # optimizer
@@ -56,8 +57,8 @@ class BaseTrainer(object):
             raise ValueError("Dataset Type %s must inherit %s!" % (dataset_type.__name__, self.__class__.BASE_DATASET_TYPE.__name__))
         # initialize dataloaders
         self.dataset_name = dataset_type.__name__
-        self.train_dataloader = torch.utils.data.DataLoader(dataset_type(True, self.model, self.tokenizer, seq_length, data_base_dir), shuffle=True, batch_size=batch_size)
-        self.test_dataloader = torch.utils.data.DataLoader(dataset_type(False, self.model, self.tokenizer, seq_length, data_base_dir), batch_size=batch_size)
+        self.train_dataloader = torch.utils.data.DataLoader(dataset_type(True, self.model, self.tokenizer, seq_length, data_base_dir, **dataset_kwargs), shuffle=True, batch_size=batch_size)
+        self.test_dataloader = torch.utils.data.DataLoader(dataset_type(False, self.model, self.tokenizer, seq_length, data_base_dir, **dataset_kwargs), batch_size=batch_size)
         # save training metrics
         self.metrics = None
 

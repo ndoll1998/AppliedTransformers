@@ -40,23 +40,15 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
         # initialize weights
         self.init_weights()
 
-    def prepare(self, input_ids, entity_spans, labels, tokenizer) -> tuple:
+    def prepare(self, input_ids, entity_spans, labels, seq_length, max_entities=5, tokenizer=None) -> tuple:
 
-        n = len(entity_spans)
-        # ignore unvalid entity spans
-        entity_spans = [(b, e) for b, e in entity_spans if b != -1]
-        labels = [l for l in labels if l != -1]
-        assert len(entity_spans) == len(labels)
+        if seq_length is not None:
+            # remove entities that will be out of bounds after markers are added
+            # entities are ordered by their occurances in the text (see EntityClassificationDataset)
+            entity_spans = [(b, e) for i, (b, e) in enumerate(entity_spans, 1) if e + 2 * i < seq_length]
+            labels = labels[:len(entity_spans)]
 
-        # sort entities
-        sort_idx = sorted(range(len(entity_spans)), key=lambda i: entity_spans[i][0])
-        entity_spans = [entity_spans[i] for i in sort_idx]
-        labels = [labels[i] for i in sort_idx]
-        # remove entities that will be out of bounds after markers are added
-        entity_spans = [(b, e) for i, (b, e) in enumerate(entity_spans, 1) if e + 2 * i < len(input_ids)]
-        labels = labels[:len(entity_spans)]
-
-        # mark entities in reverse order and build entity starts
+        # mark entities and build entity starts
         entity_starts = []
         for i in range(len(entity_spans) - 1, -1, -1):
             # mark current entity
@@ -65,16 +57,21 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
             # get entity start id
             entity_starts.insert(0, b + 2 * i)
 
-        # truncate to keep sequence length
-        input_ids = input_ids[:-2 * len(entity_starts)] if len(entity_starts) > 0 else input_ids
+        if seq_length is not None:
+            # fill sequence length
+            input_ids = input_ids[:seq_length]
+            input_ids += [tokenizer.pad_token_id] * (seq_length - len(input_ids))
+        
         # pad to fill tensors
-        entity_starts += [-1] * (n - len(entity_starts))
-        labels += [-1] * (n - len(labels))
+        if max_entities is not None:
+            entity_starts = entity_starts[:max_entities] + [-1] * (max_entities - len(entity_starts))
+        if labels is not None:
+            labels = labels[:max_entities] + [-1] * (max_entities - len(labels))
 
         # convert to tensors
         input_ids = torch.LongTensor([input_ids])
         entity_starts = torch.LongTensor([entity_starts])
-        labels = torch.LongTensor([labels])
+        labels = torch.LongTensor([labels]) if labels is not None else None
         # return features tensors
         return input_ids, entity_starts, labels
 

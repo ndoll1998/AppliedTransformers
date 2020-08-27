@@ -25,11 +25,10 @@ class CustomModel(AspectBasedSentimentAnalysisModels):
 
     def prepare(self, input_ids, aspects_token_ids, labels, tokenizer) -> list:
         """ Prepare and extract/build all important features from a dataset item. """
-        # This function is called during the dataset creation and should handle havier computations. 
-        # It needs to return tensors build from the provided features. Each tensor has to have the 
-        # shape (n, *feature-shape), where n is the number of datapoints/items.
-        # The function will default to convert the arguments into tensors and 
-        # return those as the feature tensors.
+        # This function needs to return tensors build from the provided features. 
+        # Each tensor has to have the shape (n, *feature-shape), where n is the 
+        # number of datapoints/items. Note that seq_length and label will be None 
+        # when data item for prediction is passed.
         return featureTensorA, featureTensorB, ...
 
     def preprocess(self, *features, tokenizer, device) -> (dict, torch.tensor):

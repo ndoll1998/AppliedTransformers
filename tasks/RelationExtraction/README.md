@@ -25,11 +25,11 @@ class CustomModel(RelationExtractionModel):
     def __init__(self, config):
         # initialize all parameters of the model
 
-    def prepare(self, input_ids, entity_span_A, entity_span_B, label, tokenizer) -> list:
+    def prepare(self, input_ids, entity_span_A, entity_span_B, label, seq_length, tokenizer) -> list:
         """ Prepare and extract/build all important features from a dataset item. """
-        # This function is called during the dataset creation and should handle havier computations. 
-        # It needs to return tensors build from the provided features. Each tensor has to have the 
+        # This function needs to return tensors build from the provided features. Each tensor has to have the 
         # shape (n, *feature-shape), where n is the number of datapoints/items.
+        # seq_length and label will be None when predicting.
         # The function will default to convert the arguments into tensors and 
         # return those as the feature tensors.
         return [itemA, itemB, itemC, ...]

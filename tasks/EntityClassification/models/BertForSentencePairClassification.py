@@ -8,14 +8,9 @@ class BertForSentencePairClassification(EntityClassificationModel, BaseModel):
         Paper: https://arxiv.org/abs/1903.09588
     """
 
-    def prepare(self, input_ids, entity_spans, labels, tokenizer) -> list:
-
-        n = len(input_ids)
-        # remove padding tokens, entity spans and labels
-        input_ids = [i for i in input_ids if i != tokenizer.pad_token_id]
-        entity_spans = [(s, e) for s, e in entity_spans if s < e]
-        labels = [l for l in labels if l != -1]
-        assert len(entity_spans) == len(labels)
+    def prepare(self, input_ids, entity_spans, labels, seq_length, tokenizer) -> list:
+        # one label per entity span
+        assert (labels is None) or (len(entity_spans) == len(labels))
 
         # add special tokens
         if input_ids[0] != tokenizer.cls_token_id:
@@ -26,18 +21,25 @@ class BertForSentencePairClassification(EntityClassificationModel, BaseModel):
             input_ids.append(tokenizer.sep_token_id)
 
         k = len(input_ids)
-        # build token-type-ids - ignore samples that would overflow the sequence length
-        token_type_ids = [[0] * k + [1] * (e - s + 1) for s, e in entity_spans if k + e - s + 1 <= n]
-        token_type_ids = [ids + [tokenizer.pad_token_id] * (n - len(ids)) for ids in token_type_ids]
-        # build sentence pairs - ignore samples that would overflow the sequence length
-        sentence_pairs = [input_ids + input_ids[s:e] + [tokenizer.sep_token_id] for s, e in entity_spans if k + e - s + 1 <= n]
-        sentence_pairs = [ids + [tokenizer.pad_token_id] * (n - len(ids)) for ids in sentence_pairs]
+        # build overflow mask
+        mask = [(seq_length is None) or (k + e - s + 1 <= seq_length) for s, e in entity_spans]
+        # build token-type-ids and sentence pairs - ignore samples that would overflow the sequence length
+        token_type_ids = [[0] * k + [1] * (e - s + 1) for (s, e), valid in zip(entity_spans, mask) if valid]
+        sentence_pairs = [input_ids + input_ids[s:e] + [tokenizer.sep_token_id] for (s, e), valid in zip(entity_spans, mask) if valid]
         # remove labels for examples that are out of bounds
-        labels = [l for l, (s, e) in zip(labels, entity_spans) if k + e - s + 1 <= n]
+        if labels is not None:
+            labels = [l for l, valid in zip(labels, mask) if valid]
+
+        # choose minimal sequence length to fit all examples
+        if seq_length is None:
+            seq_length = max((len(ids) for ids in sentence_pairs), default=0)
+        # fill sequence length
+        token_type_ids = [ids + [tokenizer.pad_token_id] * (seq_length - len(ids)) for ids in token_type_ids]
+        sentence_pairs = [ids + [tokenizer.pad_token_id] * (seq_length - len(ids)) for ids in sentence_pairs]
 
         # convert to tensors
         sentence_pairs = torch.LongTensor(sentence_pairs)
         token_type_ids = torch.LongTensor(token_type_ids)
-        labels = torch.LongTensor(labels)
-        # return feature tensors
+        labels = torch.LongTensor(labels) if labels is not None else None
+        # return items
         return sentence_pairs, token_type_ids, labels

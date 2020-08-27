@@ -50,7 +50,7 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         # initialize weights
         self.init_weights()
 
-    def prepare(self, input_ids:list, entity_span_A:tuple, entity_span_B:tuple, label:int, tokenizer:BertForRelationExtractionTokenizer) -> tuple:
+    def prepare(self, input_ids:list, entity_span_A:tuple, entity_span_B:tuple, label:int, seq_length:int, tokenizer:BertForRelationExtractionTokenizer) -> tuple:
         # mark A as entity one and B as entity two
         entity_A = ([tokenizer.entity1_token_id], [tokenizer._entity1_token_id], *entity_span_A) 
         entity_B = ([tokenizer.entity2_token_id], [tokenizer._entity2_token_id], *entity_span_B) 
@@ -58,23 +58,35 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         e1, e2 = sorted([entity_A, entity_B], key=lambda e: e[2])
         assert e1[3] <= e2[2]    # no overlap between entities
 
-        # check if entity would be out of bounds
-        if e2[3] >= len(input_ids) - 4:
-            return None
+        # use sequence length
+        if seq_length is not None:
+            # check if entities are to far apart for sequence length
+            if e2[3] - e1[2] >= seq_length - 4:
+                return None
+            # truncate input ids such that both entities are in bounds
+            off = max(0, e2[3] - seq_length + 4)
+            input_ids = input_ids[off:off + seq_length - 4]
+            # update entity marker positions
+            e1 = e1[:2] + (e1[2] - off, e1[3] - off)
+            e2 = e2[:2] + (e2[2] - off, e2[3] - off)
+
         # mark entities in input-ids
         marked_input_ids = input_ids[:e1[2]] + e1[0] + input_ids[e1[2]:e1[3]] + e1[1] + \
             input_ids[e1[3]:e2[2]] + e2[0] + input_ids[e2[2]:e2[3]] + e2[1] + \
             input_ids[e2[3]:]
-        # truncate input ids to keep sequence length
-        marked_input_ids = marked_input_ids[:-4]
-        assert len(marked_input_ids) == len(input_ids)
-        # create entity start positions
+
+        # get entity start positions
         e1_e2_start = (marked_input_ids.index(tokenizer.entity1_token_id), marked_input_ids.index(tokenizer.entity2_token_id))
+
+        if seq_length is not None:
+            # fill input ids to reach sequence length
+            assert len(marked_input_ids) <= seq_length
+            marked_input_ids += [tokenizer.pad_token_id] * (seq_length - len(marked_input_ids))
 
         # convert to tensors
         marked_input_ids = torch.LongTensor([marked_input_ids])
         e1_e2_start = torch.LongTensor([e1_e2_start])
-        label = torch.LongTensor([label])
+        label = torch.LongTensor([label]) if label is not None else None
         # return new item features
         return marked_input_ids, e1_e2_start, label
 
