@@ -99,7 +99,8 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         return {
             'input_ids': input_ids,
             'attention_mask': mask,
-            'e1_e2_start': e1_e2_start
+            'e1_e2_start': e1_e2_start,
+            'labels': labels
         }, labels
 
     def forward(self, 
@@ -110,6 +111,7 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         position_ids=None,
         head_mask=None,
         inputs_embeds=None,
+        labels=None,
         output_attentions=None,
         output_hidden_states=None,
     ):
@@ -129,6 +131,11 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         logits = self.classifier(v1v2)
         # build outputs
         outputs = (logits,) + outputs[2:]
+
+        # compute the loss
+        if labels is not None:
+            loss = F.cross_entropy(logits, labels)
+            outputs = (loss,) + outputs
 
         # return output
         return outputs

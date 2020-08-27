@@ -5,12 +5,12 @@ from .models import RelationExtractionModel
 # import datasets
 from .datasets import RelationExtractionDataset
 # import base trainer and metrics
-from core.Trainer import SimpleCrossEntropyTrainer
+from core.Trainer import SimpleTrainer
 from sklearn.metrics import f1_score
 # import matplotlib
 from matplotlib import pyplot as plt
 
-class RelationExtractionTrainer(SimpleCrossEntropyTrainer):
+class RelationExtractionTrainer(SimpleTrainer):
 
     BASE_MODEL_TYPE = RelationExtractionModel
     BASE_DATASET_TYPE = RelationExtractionDataset
@@ -33,7 +33,7 @@ class RelationExtractionTrainer(SimpleCrossEntropyTrainer):
         # update model kwargs
         model_kwargs.update({'num_labels': dataset_type.num_relations})
         # initialize trainer
-        SimpleCrossEntropyTrainer.__init__(self, 
+        SimpleTrainer.__init__(self, 
             # model
             model_type=model_type,
             pretrained_name=pretrained_name,

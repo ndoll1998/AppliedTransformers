@@ -4,12 +4,12 @@ import torch
 from .models import EntityClassificationModel
 from .datasets import EntityClassificationDataset
 # import base trainer and metrics
-from core.Trainer import SimpleCrossEntropyTrainer
+from core.Trainer import SimpleTrainer
 from sklearn.metrics import f1_score
 # import matplotlib
 from matplotlib import pyplot as plt
 
-class EntityClassificationTrainer(SimpleCrossEntropyTrainer):
+class EntityClassificationTrainer(SimpleTrainer):
 
     # set base types for model and dataset
     BASE_MODEL_TYPE = EntityClassificationModel
@@ -34,7 +34,7 @@ class EntityClassificationTrainer(SimpleCrossEntropyTrainer):
         # update model kwargs
         model_kwargs.update({'num_labels': dataset_type.num_labels})
         # initialize trainer
-        SimpleCrossEntropyTrainer.__init__(self, 
+        SimpleTrainer.__init__(self, 
             # model
             model_type=model_type,
             pretrained_name=pretrained_name,

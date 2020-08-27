@@ -3,14 +3,14 @@ import torch
 
 
 # Aspect-based Sentiment Analysis imports
-# from tasks.AspectBasedSentimentAnalysis.Trainer import AspectBasedSentimentAnalysisTrainer as Trainer
-# from tasks.AspectBasedSentimentAnalysis.models import BertForSentencePairClassification, BertCapsuleNetwork
-# from tasks.AspectBasedSentimentAnalysis.datasets import (
-#     SemEval2014Task4,
-#     SemEval2014Task4_Laptops,
-#     SemEval2014Task4_Restaurants,
-#     SemEval2014Task4_Category,
-# )
+from tasks.AspectBasedSentimentAnalysis.Trainer import AspectBasedSentimentAnalysisTrainer as Trainer
+from tasks.AspectBasedSentimentAnalysis.models import BertForSentencePairClassification, BertCapsuleNetwork
+from tasks.AspectBasedSentimentAnalysis.datasets import (
+    SemEval2014Task4,
+    SemEval2014Task4_Laptops,
+    SemEval2014Task4_Restaurants,
+    SemEval2014Task4_Category,
+)
 
 # Aspect Opinion Extraction imports
 # from tasks.AspectOpinionExtraction.Trainer import AspectOpinionExtractionTrainer as Trainer
@@ -21,20 +21,20 @@ import torch
 # )
 
 # Entity Classfication imports
-from tasks.EntityClassification.Trainer import EntityClassificationTrainer as Trainer
-from tasks.EntityClassification.models import (
-    BertForEntityClassification, 
-    BertForSentencePairClassification,
-    BertCapsuleNetwork
-)
-from tasks.EntityClassification.datasets import (
-    SemEval2015Task12_AspectSentiment, 
-    SemEval2015Task12_OpinionSentiment, 
-    GermanYelpSentiment,
-    SemEval2014Task4,
-    SemEval2014Task4_Laptops,
-    SemEval2014Task4_Restaurants
-)
+# from tasks.EntityClassification.Trainer import EntityClassificationTrainer as Trainer
+# from tasks.EntityClassification.models import (
+#     BertForEntityClassification, 
+#     BertForSentencePairClassification,
+#     BertCapsuleNetwork
+# )
+# from tasks.EntityClassification.datasets import (
+#     SemEval2015Task12_AspectSentiment, 
+#     SemEval2015Task12_OpinionSentiment, 
+#     GermanYelpSentiment,
+#     SemEval2014Task4,
+#     SemEval2014Task4_Laptops,
+#     SemEval2014Task4_Restaurants
+# )
 
 # Relation Extraction imports
 # from tasks.RelationExtraction.Trainer import RelationExtractionTrainer as Trainer
@@ -55,7 +55,7 @@ if __name__ == '__main__':
         pretrained_name = 'bert-base-german-cased',
         device = 'cpu',
         # dataset
-        dataset_type = SemEval2014Task4_Laptops,
+        dataset_type = SemEval2014Task4,
         data_base_dir = "./data",
         seq_length = 64,
         batch_size = 8,

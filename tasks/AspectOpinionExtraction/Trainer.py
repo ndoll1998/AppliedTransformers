@@ -1,6 +1,5 @@
 # import torch
 import torch
-import torch.nn.functional as F
 # import base model and dataset
 from .models import AspectOpinionExtractionModel
 from .datasets import AspectOpinionExtractionDataset
@@ -20,14 +19,12 @@ class AspectOpinionExtractionTrainer(BaseTrainer):
     def predict_batch(self, *batch) -> tuple:
         # predict on batch
         outputs, (labels_a, labels_o) = self.model.preprocess_and_predict(*batch, tokenizer=self.tokenizer, device=self.device)
-        logits_a, logits_o = outputs[0], outputs[1]
+        loss, logits_a, logits_o = outputs[0], outputs[1], outputs[2]
         labels_a, labels_o = labels_a.to(self.device), labels_o.to(self.device)
         # get the valid labels and logits
         mask_a, mask_o = (labels_a >= 0), (labels_o >= 0)
         labels_a, logits_a = labels_a[mask_a], logits_a[mask_a, :]
         labels_o, logits_o = labels_o[mask_o], logits_o[mask_o, :]
-        # compute loss
-        loss = F.cross_entropy(logits_a, labels_a) + F.cross_entropy(logits_o, labels_o)
         # return loss and cache for metrics
         return loss, (labels_a, labels_o, logits_a, logits_o)
 

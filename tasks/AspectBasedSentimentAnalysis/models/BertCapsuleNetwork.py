@@ -28,6 +28,8 @@ class BertCapsuleNetworkConfig(BertConfig):
         pad_token_id=0,
         gradient_checkpointing=False,
         capsule_size=300,
+        loss_smooth=0.1,
+        loss_lambda=0.6,
         **kwargs
     ):
         # initialize config
@@ -50,6 +52,9 @@ class BertCapsuleNetworkConfig(BertConfig):
         )
         # save capsule size
         self.capsule_size = capsule_size
+        # save loss parameters
+        self.loss_smooth = loss_smooth
+        self.loss_lambda = loss_lambda
 
 
 """ Bilinear Attention Module """
@@ -169,10 +174,11 @@ class BertCapsuleNetwork(AspectBasedSentimentAnalysisModel, BertModel):
         return {
             'input_ids': input_ids,
             'attention_mask': attention_mask,
-            'token_type_ids': token_type_ids
+            'token_type_ids': token_type_ids,
+            'labels': labels
         }, labels
         
-    def forward(self, input_ids, attention_mask, token_type_ids, *args, **kwargs):
+    def forward(self, input_ids, attention_mask, token_type_ids, *args, labels=None, **kwargs):
         # encode 
         outputs = BertModel.forward(self, input_ids, attention_mask, token_type_ids, *args, **kwargs)
         sequence_output = outputs[0]
@@ -196,8 +202,24 @@ class BertCapsuleNetwork(AspectBasedSentimentAnalysisModel, BertModel):
         category_capsule = self.capsule_gruided_routing(primary_capsule, norm_weight)
         category_capsule_norm = (category_capsule * category_capsule).sum(dim=-1)
         category_capsule_norm = torch.sqrt(category_capsule_norm)
+        logits = category_capsule_norm
+        # add to outputs
+        outputs = (logits,) + outputs[1:]
+
+        # compute loss
+        if labels is not None:
+            # maximum margin loss
+            one_hot = torch.zeros_like(logits).to(logits.device)
+            one_hot = one_hot.scatter(1, labels.unsqueeze(-1), 1)
+            a = torch.max(torch.zeros_like(logits).to(logits.device), 1 - self.config.loss_smooth - logits)
+            b = torch.max(torch.zeros_like(logits).to(logits.device), logits - self.config.loss_smooth)
+            loss = one_hot * a * a + self.config.loss_lambda * (1 - one_hot) * b * b
+            loss = loss.sum(dim=1, keepdim=False).mean()
+            # add to outputs
+            outputs = (loss,) + outputs
+
         # return
-        return (category_capsule_norm,) + outputs[1:]
+        return outputs
 
     def capsule_gruided_routing(self, primary_capsule, norm_weight):
         # build guide matrix

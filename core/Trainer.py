@@ -174,18 +174,16 @@ class BaseTrainer(object):
 
 
 
-class SimpleCrossEntropyTrainer(BaseTrainer):
-    """ Basic Cross Entropy Trainer """
+class SimpleTrainer(BaseTrainer):
+    """ Simple Trainer for Models that return their loss """
     
     def predict_batch(self, *batch) -> tuple:
         # predict on batch
         outputs, labels = self.model.preprocess_and_predict(*batch, tokenizer=self.tokenizer, device=self.device)
-        logits, labels = outputs[0], labels.to(self.device)
+        loss, logits, labels = outputs[0], outputs[1], labels.to(self.device)
         # get the valid labels and logits
         mask = (labels >= 0)
         labels, logits = labels[mask], logits[mask, :]
-        # compute loss
-        loss = F.cross_entropy(logits, labels)
         # return loss and cache for metrics
         return loss, (labels, logits)
 

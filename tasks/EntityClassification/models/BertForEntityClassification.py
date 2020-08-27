@@ -79,7 +79,8 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
             'input_ids': input_ids,
             'attention_mask': attention_mask,
             'entity_starts': entity_starts,
-            'entity_mask': entity_mask
+            'entity_mask': entity_mask,
+            'labels': labels
         }, labels
         
     def forward(self, 
@@ -91,6 +92,7 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
         position_ids=None,
         head_mask=None,
         inputs_embeds=None,
+        labels=None,
         output_attentions=None,
         output_hidden_states=None,
     ):
@@ -109,5 +111,14 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
         logits = self.classifier(feats)
         # build outputs
         outputs = (logits,) + output[2:]
+
+        # compute loss
+        if labels is not None:
+            # get valid labels and logits
+            mask = labels >= 0
+            logits, labels = logits[mask], labels[mask]
+            # compute loss and add it to outputs
+            loss = F.cross_entropy(logits, labels)
+            outputs = (loss,) + outputs
         
         return outputs
