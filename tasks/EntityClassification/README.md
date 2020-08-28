@@ -37,7 +37,7 @@ class CustomModel(EntityClassificationModel):
         # Each tensor has to have the shape (n, *feature-shape), where n is the 
         # number of datapoints/items. Note that seq_length will not be set 
         # when data item for prediction is passed.
-        return [itemA, itemB, itemC, ...]
+        return featureTensorA, featureTensorB, ...
 
     def preprocess(self, *features, tokenizer, device) -> (dict, torch.tensor):
         """ Preprocess a batch of features from the prepare function. """
