@@ -23,8 +23,8 @@ class CustomModel(AspectOpinionExtractionModel):
     def __init__(self, config):
         # initialize all parameters of the model
 
-    def prepare(self, input_ids, aspect_bio, opinion_bio, tokenizer) -> list:
-        """ Prepare and extract/build all important features from a dataset item. """
+    def build_feature_tensors(self, input_ids, aspect_bio, opinion_bio, tokenizer) -> list:
+        """ Build all feature tensors from a data item. """
         # This function needs to return tensors build from the provided features. 
         # Each tensor has to have the shape (n, *feature-shape), where n is the 
         # number of datapoints/items. Note that seq_length will not be set 

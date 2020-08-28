@@ -46,7 +46,7 @@ class BasePredictor(object):
     def predict(self, text, *args, **kwargs):
         # build and prepare item
         item = self.dataset_type.build_dataset_item(text, *args, **kwargs, tokenizer=self.tokenizer)
-        item = self.model.prepare(*item, tokenizer=self.tokenizer)
+        item = self.model.build_feature_tensors(*item, tokenizer=self.tokenizer)
         # predict and postprocess
         outputs, _ = self.model.preprocess_and_predict(*item, tokenizer=self.tokenizer, device=self.device)
         return self.postprocess(*outputs)

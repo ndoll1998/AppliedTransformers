@@ -10,7 +10,7 @@ class BertForSentencePairClassification(AspectBasedSentimentAnalysisModel, BertF
         Paper: https://arxiv.org/abs/1903.09588
     """
 
-    def prepare(self, input_ids, aspects_token_ids, labels, seq_length=None, tokenizer=None) -> list:
+    def build_feature_tensors(self, input_ids, aspects_token_ids, labels, seq_length=None, tokenizer=None) -> list:
         # one label per entity span
         assert (labels is None) or (len(aspects_token_ids) == len(labels))
 

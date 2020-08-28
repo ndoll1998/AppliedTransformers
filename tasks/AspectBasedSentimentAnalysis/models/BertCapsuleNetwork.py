@@ -135,7 +135,7 @@ class BertCapsuleNetwork(AspectBasedSentimentAnalysisModel, BertModel):
         nn.init.xavier_uniform_(self.guide_capsule)
         nn.init.xavier_uniform_(self.guide_weight)
 
-    def prepare(self, input_ids, aspects_token_ids, labels, seq_length=None, tokenizer=None) -> list:
+    def build_feature_tensors(self, input_ids, aspects_token_ids, labels, seq_length=None, tokenizer=None) -> list:
         # one label per entity span
         assert (labels is None) or (len(aspects_token_ids) == len(labels))
 

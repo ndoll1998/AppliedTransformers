@@ -17,7 +17,7 @@ class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenC
         # initialize model
         BertForTokenClassification.__init__(self, config)
 
-    def prepare(self, input_ids, aspect_bio, opinion_bio, seq_length=None, tokenizer=None):
+    def build_feature_tensors(self, input_ids, aspect_bio, opinion_bio, seq_length=None, tokenizer=None):
 
         # fill sequence length
         if seq_length is not None:

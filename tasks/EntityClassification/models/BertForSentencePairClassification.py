@@ -10,7 +10,7 @@ class BertForSentencePairClassification(EntityClassificationModel, BaseModel):
         Paper: https://arxiv.org/abs/1903.09588
     """
 
-    def prepare(self, input_ids, entity_spans, labels, seq_length=None, tokenizer=None) -> list:
+    def build_feature_tensors(self, input_ids, entity_spans, labels, seq_length=None, tokenizer=None) -> list:
         # one label per entity span
         assert (labels is None) or (len(entity_spans) == len(labels))
 

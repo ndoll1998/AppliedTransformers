@@ -52,7 +52,7 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         # initialize weights
         self.init_weights()
 
-    def prepare(self, input_ids:list, entity_span_A:tuple, entity_span_B:tuple, label:int, seq_length:int =None, tokenizer=None) -> tuple:
+    def build_feature_tensors(self, input_ids:list, entity_span_A:tuple, entity_span_B:tuple, label:int, seq_length:int =None, tokenizer=None) -> tuple:
         # mark A as entity one and B as entity two
         entity_A = ([tokenizer.entity1_token_id], [tokenizer._entity1_token_id], *entity_span_A) 
         entity_B = ([tokenizer.entity2_token_id], [tokenizer._entity2_token_id], *entity_span_B) 

@@ -10,7 +10,7 @@ from functools import wraps
 """ Tensor Helpers """
 
 def align_shape(L:list, shape:tuple, fill_value:float =0) -> np.ndarray:
-    """ Fill/Cut a arbitary deep nested list L to match the given shape """
+    """ Fill/Cut an arbitary deep nested list L to match the given shape. """
     assert (len(shape) > 0)
 
     # special case

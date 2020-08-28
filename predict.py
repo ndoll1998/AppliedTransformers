@@ -117,7 +117,7 @@ def AspectBasedSentimentAnalysis():
 
 if __name__ == '__main__':
 
-    # RelationExtraction()
+    RelationExtraction()
     EntityClassification()
-    # AspectOpinionExtraction()
-    # AspectBasedSentimentAnalysis()
+    AspectOpinionExtraction()
+    AspectBasedSentimentAnalysis()

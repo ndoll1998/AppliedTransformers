@@ -27,8 +27,8 @@ class CustomModel(AspectBasedSentimentAnalysisModels):
     def __init__(self, config):
         # initialize all parameters of the model
 
-    def prepare(self, input_ids, aspects_token_ids, labels, tokenizer) -> list:
-        """ Prepare and extract/build all important features from a dataset item. """
+    def build_feature_tensors(self, input_ids, aspects_token_ids, labels, tokenizer) -> list:
+        """ Build all important feature tensors from a data item. """
         # This function needs to return tensors build from the provided features. 
         # Each tensor has to have the shape (n, *feature-shape), where n is the 
         # number of datapoints/items. Note that seq_length will not be set 

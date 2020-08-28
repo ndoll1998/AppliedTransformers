@@ -11,7 +11,7 @@ class BaseDataset(torch.utils.data.TensorDataset):
         
         # list of all dataset items
         data_items = [self.__class__.build_dataset_item(*feats, tokenizer) for feats in self.yield_item_features(train, data_base_dir)]
-        data_items = [model.prepare(*item, seq_length=seq_length, **kwargs, tokenizer=tokenizer) for item in data_items if item is not None]
+        data_items = [model.build_feature_tensors(*item, seq_length=seq_length, **kwargs, tokenizer=tokenizer) for item in data_items if item is not None]
         data_items = [item for item in data_items if item is not None]
         # separate into item features
         features = zip(*data_items)

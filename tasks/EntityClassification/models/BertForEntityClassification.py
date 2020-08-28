@@ -43,7 +43,7 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
 
     @train_default_kwargs(max_entities=5)
     @eval_default_kwargs(seq_length=None, max_entities=None)
-    def prepare(self, input_ids, entity_spans, labels, seq_length, max_entities, tokenizer=None) -> tuple:
+    def build_feature_tensors(self, input_ids, entity_spans, labels, seq_length, max_entities, tokenizer=None) -> tuple:
 
         if seq_length is not None:
             # remove entities that will be out of bounds after markers are added
