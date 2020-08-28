@@ -47,7 +47,7 @@ class CustomModel(AspectBasedSentimentAnalysisModels):
         # This function receives the keyword arguments returned by the preprocess function.
         # It needs to return the loss and polarity logits of the current batch 
         # at first two positions. Additional returns will be ignored.
-        return logits, *additionals
+        return loss, logits, *additionals
 
 ```
 
