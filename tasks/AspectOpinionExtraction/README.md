@@ -36,7 +36,7 @@ class CustomModel(AspectOpinionExtractionModel):
         # This function is called immediately before the forward call
         # and needs to return the keyword arguments for the foward call 
         # as well as the target labels for the current batch.
-        return kwargs, labels
+        return kwargs, (aspect_bio_labels, opinion_bio_labels)
 
     def forward(self, **kwargs) -> (torch.tensor, torch.tensor):
         """ The forward call of the model """
