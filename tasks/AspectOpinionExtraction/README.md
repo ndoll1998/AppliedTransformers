@@ -76,3 +76,15 @@ class CustomDataset(AspectOpinionExtractionDataset):
 ```
 
 ## Evaluation
+
+- `SemEval2015Task12`
+
+    |                 Model                |  Aspect-F1  |  Opinion-F1  | Epochs |
+    | :----------------------------------- | :---------: | :----------: | :----: |
+    | `BertForAspectOpinionExtraction`     |   **81.0**  |   **79.3**   |   29   |
+
+- `GermanYelpSentiment`
+
+    |                 Model                |  Aspect-F1  |  Opinion-F1  | Epochs |
+    | :----------------------------------- | :---------: | :----------: | :----: |
+    | `BertForAspectOpinionExtraction`     |   **81.4**  |   **77.3**   |   34   |

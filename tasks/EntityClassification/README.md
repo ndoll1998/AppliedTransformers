@@ -131,3 +131,36 @@ class CustomDataset(EntityClassificationDataset):
 
 ```
 
+## Evaluation
+
+- `SemEval2015Task12_AspectSentiment`
+    
+    |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |
+    | :----------------------------------- | :--------: | :--------: | :----: |
+    | `BertForEntityClassification`        |  **82.7**  |  **63.5**  |   NA   |
+    | `BertForSentencePairClassification`  |    81.6    |    60.2    |   NA   |
+    | `BertCapsuleNetwork`                 |    75.0    |    49.3    |   NA   |
+
+- `SemEval2015Task12_OpinionSentiment`
+    
+    |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |
+    | :----------------------------------- | :--------: | :--------: | :----: |
+    | `BertForEntityClassification`        |  **96.5**  |  **95.3**  |   NA   |
+    | `BertForSentencePairClassification`  |    96.0    |    94.8    |   NA   |
+    | `BertCapsuleNetwork`                 |    94.1    |    92.1    |   NA   |
+
+- `SemEval2014Task4`
+
+    |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |
+    | :----------------------------------- | :--------: | :--------: | :----: |
+    | `BertForEntityClassification`        |    100.0   |    100.0   |   3    |
+    | `BertForSentencePairClassification`  |    100.0   |    100.0   |   2    |
+    | `BertCapsuleNetwork`                 |    100.0   |    100.0   |   5    |
+
+- `GermanYelpSentiment`
+
+    |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |
+    | :----------------------------------- | :--------: | :--------: | :----: |
+    | `BertForEntityClassification`        |  **93.0**  |  **92.1**  |   12   |
+    | `BertForSentencePairClassification`  |    92.4    |    91.6    |   23   |
+    | `BertCapsuleNetwork`                 |    88.1    |    87.1    |   47   |

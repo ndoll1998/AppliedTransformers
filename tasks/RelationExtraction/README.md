@@ -9,8 +9,7 @@ We currently provide the following models:
 
 - `BertForRelationExtraction`
 
-    - "Matching the Blanks: Distributional Similarity for Relation Learning"
-    - [Paper](https://arxiv.org/abs/1906.03158)
+    - [Matching the Blanks: Distributional Similarity for Relation Learning](https://arxiv.org/abs/1906.03158)
 
 
 A custom model must have the following form:
@@ -106,3 +105,27 @@ class CustomDataset(RelationExtractionDataset):
 ```
 
 ## Evaluation
+
+- `SemEval2010Task8`
+
+    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |
+    | :------------------------------ | :--------: | :--------: | :----: |
+    | `BertForRelationExtraction`     |  **83.6**  |  **79.8**  |   4    |
+
+- `GermanYelpRelations`
+
+    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |
+    | :------------------------------ | :--------: | :--------: | :----: |
+    | `BertForRelationExtraction`     |  **91.3**  |  **91.2**  |   9    |
+
+- `GermanYelpPolarity`
+
+    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |
+    | :------------------------------ | :--------: | :--------: | :----: |
+    | `BertForRelationExtraction`     |  **86.3**  |  **84.3**  |   21   |
+
+- `SmartdataCorpus`
+
+    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |
+    | :------------------------------ | :--------: | :--------: | :----: |
+    | `BertForRelationExtraction`     |   **100**  |   **100**  |   11   |
