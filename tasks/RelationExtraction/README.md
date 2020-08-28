@@ -30,7 +30,7 @@ class CustomModel(RelationExtractionModel):
         # Each tensor has to have the shape (n, *feature-shape), where n is the
         # number of datapoints/items. Not that seq_length, entity_span_A and entity_span_B 
         # will not be set when data item for prediction is passed.
-        return [itemA, itemB, itemC, ...]
+        return featureTensorA, featureTensorB, ...
 
     def preprocess(self, *features, tokenizer, device) -> (dict, torch.tensor):
         """ Preprocess a batch of features from the prepare function. """
