@@ -49,9 +49,9 @@ class CustomModel(EntityClassificationModel):
     def forward(self, **kwargs) -> (torch.tensor, torch.tensor):
         """ The forward call of the model """
         # This function receives the keyword arguments returned by the preprocess function.
-        # It needs to return the logits of the current batch at first position.
+        # It needs to return the loss and entity logits of the current batch at the first positions.
         # Additional returns will be ignored.
-        return logits, *additionals
+        return loss, logits, *additionals
 
 ```
 

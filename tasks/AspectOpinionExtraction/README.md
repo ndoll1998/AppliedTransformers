@@ -41,9 +41,9 @@ class CustomModel(AspectOpinionExtractionModel):
     def forward(self, **kwargs) -> (torch.tensor, torch.tensor):
         """ The forward call of the model """
         # This function receives the keyword arguments returned by the preprocess function.
-        # It needs to return the logits for aspects and opinion of the current batch 
-        # separately at first two positions. Additional returns will be ignored.
-        return logits, *additionals
+        # It needs to return the loss and logits for aspects and opinion of the current batch 
+        # separately at first positions. Additional returns will be ignored.
+        return loss, aspect_logits, opinion_logits, *additionals
 
 ```
 

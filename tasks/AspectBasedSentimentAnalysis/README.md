@@ -45,8 +45,8 @@ class CustomModel(AspectBasedSentimentAnalysisModels):
     def forward(self, **kwargs) -> (torch.tensor, torch.tensor):
         """ The forward call of the model """
         # This function receives the keyword arguments returned by the preprocess function.
-        # It needs to return the logits for aspects and opinion of the current batch 
-        # separately at first two positions. Additional returns will be ignored.
+        # It needs to return the loss and polarity logits of the current batch 
+        # at first two positions. Additional returns will be ignored.
         return logits, *additionals
 
 ```
