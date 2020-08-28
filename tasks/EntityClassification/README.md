@@ -31,7 +31,7 @@ class CustomModel(EntityClassificationModel):
     def __init__(self, config):
         # initialize all parameters of the model
 
-    def build_feature_tensors(self, input_ids, entity_spans, labels, max_entities, tokenizer) -> list:
+    def build_feature_tensors(self, input_ids, entity_spans, labels, max_entities, seq_length, tokenizer) -> list:
         """ Build all feature tensors from a data item. """
         # This function needs to return tensors build from the provided features. 
         # Each tensor has to have the shape (n, *feature-shape), where n is the 
