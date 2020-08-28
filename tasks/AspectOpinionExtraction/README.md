@@ -31,7 +31,7 @@ class CustomModel(AspectOpinionExtractionModel):
         # when data item for prediction is passed.
         return featureTensorA, featureTensorB, ...
 
-    def preprocess(self, *features, tokenizer, device) -> (dict, torch.tensor):
+    def preprocess(self, *features, tokenizer) -> (dict, torch.tensor):
         """ Preprocess a batch of features from the prepare function. """
         # This function is called immediately before the forward call
         # and needs to return the keyword arguments for the foward call 
