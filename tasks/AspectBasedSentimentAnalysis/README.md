@@ -35,19 +35,19 @@ class CustomModel(AspectBasedSentimentAnalysisModels):
         # when data item for prediction is passed.
         return featureTensorA, featureTensorB, ...
 
-    def preprocess(self, *features, tokenizer, device) -> (dict, torch.tensor):
+    def preprocess(self, *features, tokenizer) -> tuple:
         """ Preprocess a batch of features from the prepare function. """
         # This function is called immediately before the forward call
         # and needs to return the keyword arguments for the foward call 
         # as well as the target labels for the current batch.
         return kwargs, labels
 
-    def forward(self, **kwargs) -> (torch.tensor, torch.tensor):
+    def forward(self, **kwargs) -> tuple:
         """ The forward call of the model """
         # This function receives the keyword arguments returned by the preprocess function.
         # It needs to return the loss and polarity logits of the current batch 
         # at first two positions. Additional returns will be ignored.
-        return logits, *additionals
+        return loss, logits, *additionals
 
 ```
 

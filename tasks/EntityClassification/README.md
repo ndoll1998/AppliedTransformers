@@ -37,16 +37,16 @@ class CustomModel(EntityClassificationModel):
         # Each tensor has to have the shape (n, *feature-shape), where n is the 
         # number of datapoints/items. Note that seq_length will not be set 
         # when data item for prediction is passed.
-        return [itemA, itemB, itemC, ...]
+        return featureTensorA, featureTensorB, ...
 
-    def preprocess(self, *features, tokenizer, device) -> (dict, torch.tensor):
+    def preprocess(self, *features, tokenizer) -> tuple:
         """ Preprocess a batch of features from the prepare function. """
         # This function is called immediately before the forward call
         # and needs to return the keyword arguments for the foward call 
         # as well as the target labels for the current batch.
         return kwargs, labels
 
-    def forward(self, **kwargs) -> (torch.tensor, torch.tensor):
+    def forward(self, **kwargs) -> tuple:
         """ The forward call of the model """
         # This function receives the keyword arguments returned by the preprocess function.
         # It needs to return the loss and entity logits of the current batch at the first positions.
@@ -137,17 +137,17 @@ class CustomDataset(EntityClassificationDataset):
     
     |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |
     | :----------------------------------- | :--------: | :--------: | :----: |
-    | `BertForEntityClassification`        |  **82.7**  |  **63.5**  |   NA   |
-    | `BertForSentencePairClassification`  |    81.6    |    60.2    |   NA   |
-    | `BertCapsuleNetwork`                 |    75.0    |    49.3    |   NA   |
+    | `BertForEntityClassification`        |  **82.7**  |  **63.5**  |   N/A  |
+    | `BertForSentencePairClassification`  |    81.6    |    60.2    |   N/A  |
+    | `BertCapsuleNetwork`                 |    75.0    |    49.3    |   N/A  |
 
 - `SemEval2015Task12_OpinionSentiment`
     
     |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |
     | :----------------------------------- | :--------: | :--------: | :----: |
-    | `BertForEntityClassification`        |  **96.5**  |  **95.3**  |   NA   |
-    | `BertForSentencePairClassification`  |    96.0    |    94.8    |   NA   |
-    | `BertCapsuleNetwork`                 |    94.1    |    92.1    |   NA   |
+    | `BertForEntityClassification`        |  **96.5**  |  **95.3**  |   N/A  |
+    | `BertForSentencePairClassification`  |    96.0    |    94.8    |   N/A  |
+    | `BertCapsuleNetwork`                 |    94.1    |    92.1    |   N/A  |
 
 - `SemEval2014Task4`
 
