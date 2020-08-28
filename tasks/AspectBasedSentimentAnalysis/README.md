@@ -91,7 +91,7 @@ We currently provide the following datasets for this task:
 A custom dataset must have the following form.
 ```python
 
-class CustomDataset(AspectOpinionExtractionDataset):
+class CustomDataset(AspectBasedSentimentAnalysisDataset):
     
     def yield_dataset_item(self, train:bool, base_data_dir:str):
         # read and process data here
