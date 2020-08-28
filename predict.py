@@ -44,7 +44,7 @@ def EntityClassification():
 
     # create predictor
     predictor = EntityClassificationPredictor(
-        model_type = BertForSentencePairClassification,
+        model_type = BertForEntityClassification,
         pretrained_name = 'bert-base-uncased',
         device = 'cpu',
         # dataset
@@ -118,6 +118,6 @@ def AspectBasedSentimentAnalysis():
 if __name__ == '__main__':
 
     # RelationExtraction()
-    # EntityClassification()
+    EntityClassification()
     # AspectOpinionExtraction()
-    AspectBasedSentimentAnalysis()
+    # AspectBasedSentimentAnalysis()

@@ -8,7 +8,7 @@ from .EntityClassificationModel import EntityClassificationModel
 from transformers import BertModel, BertPreTrainedModel
 from transformers import BertTokenizer
 # import utils
-from core.utils import align_shape
+from core.utils import align_shape, train_default_kwargs, eval_default_kwargs
 
 class BertForEntityClassificationTokenizer(BertTokenizer):
     """ Tokenizer for the Bert Entity Classification Model """
@@ -41,8 +41,9 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
         # initialize weights
         self.init_weights()
 
-    # TODO: dynamically set max_entities to None when predicting
-    def prepare(self, input_ids, entity_spans, labels, seq_length=None, max_entities=5, tokenizer=None) -> tuple:
+    @train_default_kwargs(max_entities=5)
+    @eval_default_kwargs(seq_length=None, max_entities=None)
+    def prepare(self, input_ids, entity_spans, labels, seq_length, max_entities, tokenizer=None) -> tuple:
 
         if seq_length is not None:
             # remove entities that will be out of bounds after markers are added

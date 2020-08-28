@@ -50,6 +50,7 @@ class BaseTrainer(object):
         # create model and update token embeddings
         self.model = model_type.from_pretrained(pretrained_name, **model_kwargs).to(device)
         self.model.resize_token_embeddings(len(self.tokenizer))
+        self.model.train()
         # create optimizer
         self.optim = transformers.AdamW(self.model.parameters(), lr=self.lr, weight_decay=self.wd)
         # check dataset type

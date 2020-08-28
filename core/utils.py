@@ -1,5 +1,10 @@
+# import torch
+import torch.nn as nn
+# import numpy
 import numpy as np
+# import utils
 import unicodedata
+from functools import wraps
 
 
 """ Tensor Helpers """
@@ -26,6 +31,80 @@ def align_shape(L:list, shape:tuple, fill_value:float =0) -> np.ndarray:
 
     # match the shape of a one dimensional array
     return np.asarray(L + [fill_value] * (shape[0] - len(L)))
+
+
+""" Model Decorator Helpers """
+
+class conditional_default_kwargs(object):
+    """ Decorator to set default values for keyword arguments on condition.
+        Condition can be a bool or a function returning a bool value.
+        If condition is a function, then it need to accept the same arguments as f.
+    """
+
+    def __init__(self, condition:bool, **conditional_kwargs):
+        # convert condition to function
+        if isinstance(condition, bool):
+            condition = lambda *args, **kwargs: condition
+
+        # save condition and kwargs
+        self.condition = condition
+        self.conditional_kwargs = conditional_kwargs
+
+    def __call__(self, f):
+
+        @wraps(f)
+        def wrapped_func(*args, **kwargs):
+            # evaulate condition
+            if self.condition(*args, **kwargs):
+                kwargs = dict(
+                    list(self.conditional_kwargs.items()) + list(kwargs.items())
+                )
+
+            # call function and return
+            return f(*args, **kwargs)
+
+        # return wrapped function    
+        return wrapped_func
+
+class train_default_kwargs(conditional_default_kwargs):
+    """ Decorator to set the default arguments of a nn.Module 
+        function when it is in training mode.
+    """
+
+    @staticmethod
+    def condition(model, *args, **kwargs):
+        # check model type
+        if not isinstance(model, nn.Module):
+            raise RuntimeError("Model is not of type pytorch.nn.Module!")
+        # return condition
+        return model.training
+
+    def __init__(self, **conditional_kwargs):
+        # initialize super decorator class
+        conditional_default_kwargs.__init__(self, 
+            condition=train_default_kwargs.condition, 
+            **conditional_kwargs
+        )
+
+class eval_default_kwargs(conditional_default_kwargs):
+    """ Decorator to set the default arguments of a nn.Module 
+        function when it is in evaluation mode.
+    """
+
+    @staticmethod
+    def condition(model, *args, **kwargs):
+        # check model type
+        if not isinstance(model, nn.Module):
+            raise RuntimeError("Model is not of type pytorch.nn.Module!")
+        # return condition
+        return (not model.training)
+
+    def __init__(self, **conditional_kwargs):
+        # initialize super decorator class
+        conditional_default_kwargs.__init__(self, 
+            condition=eval_default_kwargs.condition, 
+            **conditional_kwargs
+        )
 
 
 """ Word-Piece Token Helpers """

@@ -30,9 +30,9 @@ class BasePredictor(object):
         if not issubclass(model_type, self.__class__.BASE_MODEL_TYPE):
             raise ValueError("Model Type %s must inherit %s!" % (model_type.__name__, self.__class__.BASE_MODEL_TYPE.__name__))
         # create model
-        self.model = model_type.from_pretrained(pretrained_name, **model_kwargs)
+        self.model = model_type.from_pretrained(pretrained_name, **model_kwargs).to(device)
         self.model.resize_token_embeddings(len(self.tokenizer))
-        self.model.to(device)
+        self.model.eval()
         # check dataset type
         if not issubclass(dataset_type, self.__class__.BASE_DATASET_TYPE):
             raise ValueError("Dataset Type %s must inherit %s!" % (dataset_type.__name__, self.__class__.BASE_DATASET_TYPE.__name__))
