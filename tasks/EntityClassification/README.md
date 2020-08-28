@@ -137,17 +137,17 @@ class CustomDataset(EntityClassificationDataset):
     
     |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |
     | :----------------------------------- | :--------: | :--------: | :----: |
-    | `BertForEntityClassification`        |  **82.7**  |  **63.5**  |   NA   |
-    | `BertForSentencePairClassification`  |    81.6    |    60.2    |   NA   |
-    | `BertCapsuleNetwork`                 |    75.0    |    49.3    |   NA   |
+    | `BertForEntityClassification`        |  **82.7**  |  **63.5**  |   N/A  |
+    | `BertForSentencePairClassification`  |    81.6    |    60.2    |   N/A  |
+    | `BertCapsuleNetwork`                 |    75.0    |    49.3    |   N/A  |
 
 - `SemEval2015Task12_OpinionSentiment`
     
     |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |
     | :----------------------------------- | :--------: | :--------: | :----: |
-    | `BertForEntityClassification`        |  **96.5**  |  **95.3**  |   NA   |
-    | `BertForSentencePairClassification`  |    96.0    |    94.8    |   NA   |
-    | `BertCapsuleNetwork`                 |    94.1    |    92.1    |   NA   |
+    | `BertForEntityClassification`        |  **96.5**  |  **95.3**  |   N/A  |
+    | `BertForSentencePairClassification`  |    96.0    |    94.8    |   N/A  |
+    | `BertCapsuleNetwork`                 |    94.1    |    92.1    |   N/A  |
 
 - `SemEval2014Task4`
 
