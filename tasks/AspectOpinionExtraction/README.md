@@ -23,7 +23,7 @@ class CustomModel(AspectOpinionExtractionModel):
     def __init__(self, config):
         # initialize all parameters of the model
 
-    def build_feature_tensors(self, input_ids, aspect_bio, opinion_bio, seq_length, tokenizer) -> list:
+    def build_feature_tensors(self, input_ids, aspect_bio, opinion_bio, seq_length, tokenizer) -> tuple:
         """ Build all feature tensors from a data item. """
         # This function needs to return tensors build from the provided features. 
         # Each tensor has to have the shape (n, *feature-shape), where n is the 
@@ -79,12 +79,13 @@ class CustomDataset(AspectOpinionExtractionDataset):
 
 - `SemEval2015Task12`
 
-    |                 Model                |  Aspect-F1  |  Opinion-F1  | Epochs |
-    | :----------------------------------- | :---------: | :----------: | :----: |
-    | `BertForAspectOpinionExtraction`     |   **81.0**  |   **79.3**   |   29   |
+    |                 Model                |  Aspect-F1  |  Opinion-F1  | Epochs |   Pretrained Model Name      |
+    | :----------------------------------- | :---------: | :----------: | :----: | :--------------------------- |
+    | `BertForAspectOpinionExtraction`     |   **81.0**  |   **79.3**   |   29   |  bert-base-uncased           |
 
 - `GermanYelpDataset`
 
-    |                 Model                |  Aspect-F1  |  Opinion-F1  | Epochs |
-    | :----------------------------------- | :---------: | :----------: | :----: |
-    | `BertForAspectOpinionExtraction`     |   **81.4**  |   **77.3**   |   34   |
+    |                 Model                |  Aspect-F1  |  Opinion-F1  | Epochs |   Pretrained Model Name      |
+    | :----------------------------------- | :---------: | :----------: | :----: | :--------------------------- |
+    | `BertForAspectOpinionExtraction`     |     81.8    |   **78.5**   |   29   |  bert-base-german-cased      |
+    | `BertForAspectOpinionExtraction`     |   **82.2**  |     76.2     |   11   |  bert-base-german-cased-yelp |
