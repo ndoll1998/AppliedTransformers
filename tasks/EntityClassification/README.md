@@ -166,4 +166,3 @@ class CustomDataset(EntityClassificationDataset):
     | `BertForSentencePairClassification`  |    92.4    |    91.6    |   23   |  bert-base-german-cased      |
     | `BertForSentencePairClassification`  |    94.4    |    93.7    |   1    |  bert-base-german-cased-yelp |
     | `BertCapsuleNetwork`                 |    88.1    |    87.1    |   47   |  bert-base-german-cased      |
-    | `BertCapsuleNetwork`                 |    88.1    |    87.1    |   47   |  bert-base-german-cased-yelp |
