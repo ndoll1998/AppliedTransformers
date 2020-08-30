@@ -83,7 +83,7 @@ class CustomDataset(AspectOpinionExtractionDataset):
     | :----------------------------------- | :---------: | :----------: | :----: |
     | `BertForAspectOpinionExtraction`     |   **81.0**  |   **79.3**   |   29   |
 
-- `GermanYelpSentiment`
+- `GermanYelpDataset`
 
     |                 Model                |  Aspect-F1  |  Opinion-F1  | Epochs |
     | :----------------------------------- | :---------: | :----------: | :----: |
