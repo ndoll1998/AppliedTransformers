@@ -79,7 +79,7 @@ class BaseTrainer(object):
         self.model.train()
         train_running_loss = 0
         # create progress bar
-        with tqdm(total=len(self.train_dataloader)) as pbar:
+        with tqdm(total=len(self.train_dataloader), ascii=True) as pbar:
             pbar.set_description("Train")
 
             for i, batch in enumerate(self.train_dataloader, 1):
@@ -101,7 +101,7 @@ class BaseTrainer(object):
         # no gradients needed for evaluation
         with torch.no_grad():
             # create progress bar
-            with tqdm(total=len(self.test_dataloader)) as pbar:
+            with tqdm(total=len(self.test_dataloader), ascii=True) as pbar:
                 pbar.set_description("Test")
 
                 for i, batch in enumerate(self.test_dataloader, 1):

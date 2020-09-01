@@ -132,6 +132,9 @@ def build_token_spans(tokens:list, text:str) -> list:
     begin, last_was_unk = 0, False
     for token in tokens:
         token = token.replace('##', '')
+        # remove all leading whitespaces
+        begin += len(text) - len(text.lstrip())
+        text = text.lstrip()
         # handle unknown
         if "[unk]" == token:
             spans.append((begin, begin))
@@ -141,9 +144,6 @@ def build_token_spans(tokens:list, text:str) -> list:
             # find token
             n = text.find(token)
             begin, text = begin + n, text[n:]
-        # remove all leading whitespaces
-        begin += len(text) - len(text.lstrip())
-        text = text.lstrip()
         # make sure text starts with token
         assert text.startswith(token)
         spans.append((begin, begin + len(token)))
