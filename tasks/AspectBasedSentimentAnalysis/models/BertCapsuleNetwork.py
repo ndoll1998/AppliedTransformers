@@ -239,8 +239,8 @@ class BertCapsuleNetwork(AspectBasedSentimentAnalysisModel, BertModel):
             one_hot = torch.zeros_like(logits).to(logits.device)
             one_hot = one_hot.scatter(1, labels.unsqueeze(-1), 1)
             # compute loss
-            a = torch.relu(1 - self.config.loss_smooth - logits)
-            b = torch.relu(logits - self.config.loss_smooth)
+            a = torch.max(torch.zeros_like(logits), 1 - self.config.loss_smooth - logits)
+            b = torch.max(torch.zeros_like(logits), logits - self.config.loss_smooth)
             loss = one_hot * a * a + self.config.loss_lambda * (1 - one_hot) * b * b
             loss = loss.sum(dim=1).mean()
             # add to outputs

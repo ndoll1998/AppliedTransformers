@@ -68,7 +68,7 @@ We currently provide the following datasets for this task:
         - etc.
     - [Download](http://alt.qcri.org/semeval2015/task12/index.php?id=data-and-tools)
 
-- `GermanYelpRelations`
+- `GermanYelpRelation`
     - Language: German
     - Domain: Restaurant Reviews
     - Relationship Types:
@@ -117,19 +117,19 @@ class CustomDataset(RelationExtractionDataset):
     | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
     | `BertForRelationExtraction`     |  **83.6**  |  **79.8**  |   4    |  bert-base-uncased           |
 
-- `GermanYelpRelations`
+- `GermanYelpRelation`
 
     |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
     | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForRelationExtraction`     |  **91.3**  |  **91.2**  |   9    |  bert-base-german-cased      |
-    | `BertForRelationExtraction`     |    90.5    |    90.4    |   8    |  bert-base-german-cased-yelp |
+    | `BertForRelationExtraction`     |  **94.8**  |  **94.7**  |   7    |  bert-base-german-cased      |
+    | `BertForRelationExtraction`     |    93.7    |    93.5    |   4    |  bert-base-german-cased-yelp |
 
 - `GermanYelpPolarity`
 
     |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
     | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForRelationExtraction`     |  **86.3**  |  **84.3**  |   21   |  bert-base-german-cased      |
-    | `BertForRelationExtraction`     |  **86.3**  |    84.7    |   7    |  bert-base-german-cased-yelp |
+    | `BertForRelationExtraction`     |    87.4    |    85.1    |   5    |  bert-base-german-cased      |
+    | `BertForRelationExtraction`     |  **88.9**  |  **87.7**  |   7    |  bert-base-german-cased-yelp |
 
 - `SmartdataCorpus`
 
