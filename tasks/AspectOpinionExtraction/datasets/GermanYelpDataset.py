@@ -23,7 +23,7 @@ class GermanYelpDataset(AspectOpinionExtractionDataset):
                 continue
             # read sentence, aspects and opinions
             sentence = sentences[k]
-            aspects = [eval(span) for span in group['Aspect'] if span == span]
-            opinions = [eval(span) for span in group['Opinion'] if span == span]
+            aspects = [eval(span) for span in group['Aspect'].dropna().unique()]
+            opinions = [eval(span) for span in group['Opinion'].dropna().unique()]
             # yield item features
             yield sentence, aspects, opinions
