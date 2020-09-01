@@ -34,7 +34,7 @@ class GermanYelpRelation(RelationExtractionDataset):
             for _, a in sent_annotations.iterrows():
                 if (a['Aspect'] not in aspects) and (a['Aspect'] == a['Aspect']):
                     aspects.append(a['Aspect'])
-                if (a['Opinion'] not in aspects) and (a['Opinion'] == a['Opinion']):
+                if (a['Opinion'] not in opinions) and (a['Opinion'] == a['Opinion']):
                     opinions.append(a['Opinion'])
                 if (a['Aspect'] == a['Aspect']) and (a['Opinion'] == a['Opinion']):
                     aspect_id, opinion_id = aspects.index(a['Aspect']), opinions.index(a['Opinion'])
@@ -83,7 +83,7 @@ class GermanYelpPolarity(RelationExtractionDataset):
             for _, a in sent_annotations.iterrows():
                 if (a['Aspect'] not in aspects) and (a['Aspect'] == a['Aspect']):
                     aspects.append(a['Aspect'])
-                if (a['Opinion'] not in aspects) and (a['Opinion'] == a['Opinion']):
+                if (a['Opinion'] not in opinions) and (a['Opinion'] == a['Opinion']):
                     opinions.append(a['Opinion'])
                 if (a['Aspect'] == a['Aspect']) and (a['Opinion'] == a['Opinion']):
                     aspect_id, opinion_id = aspects.index(a['Aspect']), opinions.index(a['Opinion'])

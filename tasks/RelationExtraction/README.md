@@ -108,24 +108,26 @@ class CustomDataset(RelationExtractionDataset):
 
 - `SemEval2010Task8`
 
-    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |
-    | :------------------------------ | :--------: | :--------: | :----: |
-    | `BertForRelationExtraction`     |  **83.6**  |  **79.8**  |   4    |
+    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
+    | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
+    | `BertForRelationExtraction`     |  **83.6**  |  **79.8**  |   4    |  bert-base-uncased           |
 
 - `GermanYelpRelations`
 
-    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |
-    | :------------------------------ | :--------: | :--------: | :----: |
-    | `BertForRelationExtraction`     |  **91.3**  |  **91.2**  |   9    |
+    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
+    | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
+    | `BertForRelationExtraction`     |  **91.3**  |  **91.2**  |   9    |  bert-base-german-cased      |
+    | `BertForRelationExtraction`     |    90.5    |    90.4    |   8    |  bert-base-german-cased-yelp |
 
 - `GermanYelpPolarity`
 
-    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |
-    | :------------------------------ | :--------: | :--------: | :----: |
-    | `BertForRelationExtraction`     |  **86.3**  |  **84.3**  |   21   |
+    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
+    | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
+    | `BertForRelationExtraction`     |  **86.3**  |  **84.3**  |   21   |  bert-base-german-cased      |
+    | `BertForRelationExtraction`     |  **86.3**  |    84.7    |   7    |  bert-base-german-cased-yelp |
 
 - `SmartdataCorpus`
 
-    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |
-    | :------------------------------ | :--------: | :--------: | :----: |
-    | `BertForRelationExtraction`     |   **100**  |   **100**  |   11   |
+    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
+    | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
+    | `BertForRelationExtraction`     |   **100**  |   **100**  |   11   |  bert-base-uncased           |
