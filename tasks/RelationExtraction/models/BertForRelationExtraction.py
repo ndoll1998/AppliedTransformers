@@ -1,11 +1,13 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-# import base model and tokenizer
+# import tokenizer
 from .RelationExtractionModel import RelationExtractionModel
 # import Bert Model and Tokenizer
 from transformers import BertModel, BertPreTrainedModel
 from transformers import BertTokenizer
+# import dataset
+from ..datasets import RelationExtractionDataset
 # import utils
 from core.utils import align_shape
 
@@ -91,6 +93,10 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         label = torch.LongTensor([label]) if label is not None else None
         # return new item features
         return marked_input_ids, e1_e2_start, label
+
+    def prepare(self, dataset:RelationExtractionDataset, tokenizer:BertForRelationExtractionTokenizer) -> None:
+        # resize token embeddings to match the tokenizer
+        self.resize_token_embeddings(len(tokenizer))
 
     def preprocess(self, input_ids, e1_e2_start, labels, tokenizer):
         # create attention mask

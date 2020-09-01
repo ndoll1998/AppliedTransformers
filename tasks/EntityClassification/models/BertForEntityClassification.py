@@ -7,6 +7,8 @@ from .EntityClassificationModel import EntityClassificationModel
 # import Bert Model and Tokenizer
 from transformers import BertModel, BertPreTrainedModel
 from transformers import BertTokenizer
+# import dataset
+from ..datasets import EntityClassificationDataset
 # import utils
 from core.utils import align_shape, train_default_kwargs, eval_default_kwargs
 
@@ -40,6 +42,10 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
         self.classifier = nn.Linear(config.hidden_size, config.num_labels)
         # initialize weights
         self.init_weights()
+
+    def prepare(self, dataset:EntityClassificationDataset, tokenizer:BertForEntityClassificationTokenizer) -> None:
+        # resize token embeddings to match the tokenizer
+        self.resize_token_embeddings(len(tokenizer))
 
     @train_default_kwargs(max_entities=5)
     @eval_default_kwargs(seq_length=None, max_entities=None)

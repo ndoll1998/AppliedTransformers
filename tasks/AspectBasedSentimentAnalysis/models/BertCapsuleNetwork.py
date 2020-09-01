@@ -4,6 +4,8 @@ import torch.nn.functional as F
 # import base models
 from transformers import BertModel, BertConfig
 from .AspectBasedSentimentAnalysisModel import AspectBasedSentimentAnalysisModel
+# import dataset
+from ..datasets import AspectBasedSentimentAnalysisDataset
 # import utils
 from core.utils import align_shape
 
@@ -134,6 +136,30 @@ class BertCapsuleNetwork(AspectBasedSentimentAnalysisModel, BertModel):
         # randomize parameters
         nn.init.xavier_uniform_(self.guide_capsule)
         nn.init.xavier_uniform_(self.guide_weight)
+
+    @torch.no_grad()
+    def _init_guide_capsule(self, labels, tokenizer):
+        self.eval()
+        # tokenize labels
+        label_tokens = [tokenizer.tokenize(label) for label in labels]
+        label_ids = [tokenizer.convert_tokens_to_ids(tokens) for tokens in label_tokens]
+        # create input ids for model
+        shape = (len(labels), max((len(ids) for ids in label_ids)))
+        input_ids = align_shape(label_ids, shape, tokenizer.pad_token_id)
+        # create input tensors
+        input_ids = torch.LongTensor(input_ids).to(self.device)
+        attention_mask = torch.LongTensor((input_ids != tokenizer.pad_token_id).long()).to(self.device)
+        # pass through model
+        label_embed, _ = BertModel.forward(self, input_ids, attention_mask=attention_mask)
+        label_embed = self.sentence_transform(label_embed)
+        # compute average over timesteps
+        label_embed = label_embed.sum(dim=1) / attention_mask.sum(dim=1, keepdims=True).float()
+        # apply label embeddings
+        self.guide_capsule.data.copy_(label_embed)
+
+    def prepare(self, dataset:AspectBasedSentimentAnalysisDataset, tokenizer) -> None:
+        # initialize guide-capsule
+        self._init_guide_capsule(dataset.__class__.LABELS, tokenizer)
 
     def build_feature_tensors(self, input_ids, aspects_token_ids, labels, seq_length=None, tokenizer=None) -> list:
         # one label per entity span

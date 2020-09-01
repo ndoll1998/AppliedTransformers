@@ -13,6 +13,10 @@ class BaseModel(transformers.PreTrainedModel):
         """
         raise NotImplementedError()
 
+    def prepare(self, dataset, tokenizer) -> None:
+        """ Prepare the model for the dataset """
+        return None
+
     def preprocess(self, *batch, tokenizer) -> dict:
         """ Preprocess a batch from the dataset.
             Returns the keyword arguments for the forward call. 

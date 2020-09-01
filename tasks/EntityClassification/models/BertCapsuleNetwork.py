@@ -2,6 +2,8 @@ import torch
 # same model as in the aspect-based sentiment analysis task
 from .EntityClassificationModel import EntityClassificationModel
 from ...AspectBasedSentimentAnalysis.models import BertCapsuleNetwork as BaseModel
+# import dataset
+from ..datasets import EntityClassificationDataset
 # import utils
 from core.utils import align_shape
 
@@ -41,3 +43,7 @@ class BertCapsuleNetwork(EntityClassificationModel, BaseModel):
         labels = torch.LongTensor(labels) if labels is not None else None
         # return items
         return sentence_pairs, token_type_ids, labels
+
+    def prepare(self, dataset:EntityClassificationDataset, tokenizer) -> None:
+        # initialize guide-capsule
+        self._init_guide_capsule(dataset.__class__.LABELS, tokenizer)

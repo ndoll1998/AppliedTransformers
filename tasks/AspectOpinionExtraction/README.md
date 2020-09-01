@@ -22,6 +22,11 @@ class CustomModel(AspectOpinionExtractionModel):
     
     def __init__(self, config):
         # initialize all parameters of the model
+    
+    def prepare(self, dataset, tokenizer) -> None:
+        """ Prepare the model for the dataset """
+        # initialize dataset or tokenizer specific values
+        # defaults to do nothing
 
     def build_feature_tensors(self, input_ids, aspect_bio, opinion_bio, seq_length, tokenizer) -> tuple:
         """ Build all feature tensors from a data item. """

@@ -27,6 +27,11 @@ class CustomModel(AspectBasedSentimentAnalysisModels):
     def __init__(self, config):
         # initialize all parameters of the model
 
+    def prepare(self, dataset, tokenizer) -> None:
+        """ Prepare the model for the dataset """
+        # initialize dataset or tokenizer specific values
+        # defaults to do nothing
+
     def build_feature_tensors(self, input_ids, aspects_token_ids, labels, seq_length, tokenizer) -> list:
         """ Build all important feature tensors from a data item. """
         # This function needs to return tensors build from the provided features. 

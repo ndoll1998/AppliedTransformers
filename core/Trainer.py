@@ -44,15 +44,17 @@ class BaseTrainer(object):
         self.lr, self.wd = learning_rate, weight_decay
         # create tokenizer
         self.tokenizer = model_type.TOKENIZER_TYPE.from_pretrained(pretrained_name)
+
         # check model type
         if not issubclass(model_type, self.__class__.BASE_MODEL_TYPE):
             raise ValueError("Model Type %s must inherit %s!" % (model_type.__name__, self.__class__.BASE_MODEL_TYPE.__name__))
-        # create model and update token embeddings
-        self.model = model_type.from_pretrained(pretrained_name, **model_kwargs).to(device)
-        self.model.resize_token_embeddings(len(self.tokenizer))
+        # create model
+        self.model = model_type.from_pretrained(pretrained_name, **model_kwargs)
+        self.model.to(device)
         self.model.train()
         # create optimizer
         self.optim = transformers.AdamW(self.model.parameters(), lr=self.lr, weight_decay=self.wd)
+
         # check dataset type
         if not issubclass(dataset_type, self.__class__.BASE_DATASET_TYPE):
             raise ValueError("Dataset Type %s must inherit %s!" % (dataset_type.__name__, self.__class__.BASE_DATASET_TYPE.__name__))
@@ -60,6 +62,10 @@ class BaseTrainer(object):
         self.dataset_name = dataset_type.__name__
         self.train_dataloader = torch.utils.data.DataLoader(dataset_type(True, self.model, self.tokenizer, seq_length, data_base_dir, **dataset_kwargs), shuffle=True, batch_size=batch_size)
         self.test_dataloader = torch.utils.data.DataLoader(dataset_type(False, self.model, self.tokenizer, seq_length, data_base_dir, **dataset_kwargs), batch_size=batch_size)
+
+        # prepare model and move to device
+        self.model.prepare(self.train_dataloader.dataset, self.tokenizer)
+
         # save training metrics
         self.metrics = None
 
