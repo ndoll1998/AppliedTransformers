@@ -82,15 +82,22 @@ class CustomDataset(AspectOpinionExtractionDataset):
 
 ## Evaluation
 
+- Hyperparameters
+    - Sequence Length: 128
+    - Batchsize: 8
+    - Learning Rate: 1e-5
+    - Weight Decay: 0.01
+
 - `SemEval2015Task12`
 
     |                 Model                |  Aspect-F1  |  Opinion-F1  | Epochs |   Pretrained Model Name      |
     | :----------------------------------- | :---------: | :----------: | :----: | :--------------------------- |
-    | `BertForAspectOpinionExtraction`     |   **81.0**  |   **79.3**   |   29   |  bert-base-uncased           |
+    | `BertForAspectOpinionExtraction`     |     77.9    |     77.9     |   12   |  bert-base-uncased           |
+    | `BertForAspectOpinionExtraction`     |   **79.8**  |   **79.0**   |   30   |  bert-base-uncased-yelp      |
 
 - `GermanYelpDataset`
 
     |                 Model                |  Aspect-F1  |  Opinion-F1  | Epochs |   Pretrained Model Name      |
     | :----------------------------------- | :---------: | :----------: | :----: | :--------------------------- |
-    | `BertForAspectOpinionExtraction`     |     81.8    |   **78.5**   |   29   |  bert-base-german-cased      |
-    | `BertForAspectOpinionExtraction`     |   **82.2**  |     76.2     |   11   |  bert-base-german-cased-yelp |
+    | `BertForAspectOpinionExtraction`     |     80.2    |   **76.4**   |   30   |  bert-base-german-cased      |
+    | `BertForAspectOpinionExtraction`     |   **81.2**  |   **76.4**   |   29   |  bert-base-german-cased-yelp |

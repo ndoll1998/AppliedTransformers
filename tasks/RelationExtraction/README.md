@@ -111,6 +111,12 @@ class CustomDataset(RelationExtractionDataset):
 
 ## Evaluation
 
+- Hyperparameters
+    - Sequence Length: 128
+    - Batchsize: 8
+    - Learning Rate: 1e-5
+    - Weight Decay: 0.01
+
 - `SemEval2010Task8`
 
     |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |

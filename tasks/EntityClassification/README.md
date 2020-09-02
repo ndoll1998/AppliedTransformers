@@ -138,37 +138,49 @@ class CustomDataset(EntityClassificationDataset):
 
 ## Evaluation
 
+- Hyperparameters
+    - Sequence Length: 128
+    - Batchsize: 8
+    - Learning Rate: 1e-5
+    - Weight Decay: 0.01
+
 - `SemEval2015Task12_AspectSentiment`
     
     |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
     | :----------------------------------- | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForEntityClassification`        |  **82.7**  |  **63.5**  |   N/A  |      bert-base-uncased       |
-    | `BertForSentencePairClassification`  |    81.6    |    60.2    |   N/A  |      bert-base-uncased       |
-    | `BertCapsuleNetwork`                 |    75.0    |    49.3    |   N/A  |      bert-base-uncased       |
+    | `BertForEntityClassification`        |    82.7    |    63.8    |   14   | bert-base-uncased            |
+    | `BertForEntityClassification`        |    83.9    |    67.2    |   12   | bert-base-uncased-yelp       |
+    | `BertForSentencePairClassification`  |    82.5    |    66.7    |   17   | bert-base-uncased            |
+    | `BertForSentencePairClassification`  |  **86.4**  |    70.4    |   16   | bert-base-uncased-yelp       |
+    | `BertCapsuleNetwork`                 |    83.4    |    65.1    |   6    | bert-base-uncased            |
+    | `BertCapsuleNetwork`                 |    86.0    |  **75.3**  |   13   | bert-base-uncased-yelp       |
 
 - `SemEval2015Task12_OpinionSentiment`
     
     |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
     | :----------------------------------- | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForEntityClassification`        |  **96.5**  |  **95.3**  |   N/A  |      bert-base-uncased       |
-    | `BertForSentencePairClassification`  |    96.0    |    94.8    |   N/A  |      bert-base-uncased       |
-    | `BertCapsuleNetwork`                 |    94.1    |    92.1    |   N/A  |      bert-base-uncased       |
+    | `BertForEntityClassification`        |    96.3    |    95.1    |   19   | bert-base-uncased            |
+    | `BertForEntityClassification`        |    96.5    |    95.4    |   16   | bert-base-uncased-yelp       |
+    | `BertForSentencePairClassification`  |    96.5    |    95.4    |   19   | bert-base-uncased            |
+    | `BertForSentencePairClassification`  |    96.9    |    95.9    |   16   | bert-base-uncased-yelp       |
+    | `BertCapsuleNetwork`                 |    96.9    |    95.9    |   2    | bert-base-uncased            |
+    | `BertCapsuleNetwork`                 |  **97.3**  |  **96.4**  |   13   | bert-base-uncased-yelp       |
 
 - `SemEval2014Task4`
 
     |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
     | :----------------------------------- | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForEntityClassification`        |    100.0   |    100.0   |   3    |      bert-base-uncased       |
-    | `BertForSentencePairClassification`  |    100.0   |    100.0   |   2    |      bert-base-uncased       |
-    | `BertCapsuleNetwork`                 |    100.0   |    100.0   |   5    |      bert-base-uncased       |
+    | `BertForEntityClassification`        |    100.0   |    100.0   |   3    | bert-base-uncased            |
+    | `BertForSentencePairClassification`  |    100.0   |    100.0   |   2    | bert-base-uncased            |
+    | `BertCapsuleNetwork`                 |    100.0   |    100.0   |   5    | bert-base-uncased            |
 
 - `GermanYelpSentiment`
 
     |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
     | :----------------------------------- | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForEntityClassification`        |    93.0    |    92.1    |   12   |  bert-base-german-cased      |
-    | `BertForEntityClassification`        |  **94.7**  |  **94.1**  |   5    |  bert-base-german-cased-yelp |
-    | `BertForSentencePairClassification`  |    92.4    |    91.6    |   23   |  bert-base-german-cased      |
-    | `BertForSentencePairClassification`  |    94.4    |    93.7    |   1    |  bert-base-german-cased-yelp |
-    | `BertCapsuleNetwork`                 |    92.5    |    91.6    |   13   |  bert-base-german-cased      |
-    | `BertCapsuleNetwork`                 |    93.9    |    93.2    |   13   |  bert-base-german-cased-yelp |
+    | `BertForEntityClassification`        |    91.3    |    90.3    |   14   |  bert-base-german-cased      |
+    | `BertForEntityClassification`        |  **94.7**  |  **94.1**  |   8    |  bert-base-german-cased-yelp |
+    | `BertForSentencePairClassification`  |    92.4    |    91.5    |   7    |  bert-base-german-cased      |
+    | `BertForSentencePairClassification`  |    93.7    |    93.0    |   19   |  bert-base-german-cased-yelp |
+    | `BertCapsuleNetwork`                 |    91.4    |    90.3    |   4    |  bert-base-german-cased      |
+    | `BertCapsuleNetwork`                 |    92.7    |    92.0    |   12   |  bert-base-german-cased-yelp |
