@@ -29,7 +29,7 @@ class BaseModel(transformers.PreTrainedModel):
             Note that the target labels are not moved to the given cuda device.
         """
         # preprocess and move all tensors to device
-        kwargs, labels = self.preprocess(*batch, tokenizer)
+        kwargs, labels = self.preprocess(*batch, tokenizer=tokenizer)
         kwargs = {key: val.to(device) if isinstance(val, torch.Tensor) else val for key, val in kwargs.items()}
         # predict
         return self.forward(**kwargs), labels

@@ -5,7 +5,7 @@ import torch.nn.functional as F
 # import base model
 from .EntityClassificationModel import EntityClassificationModel
 # import Bert Model and Tokenizer
-from transformers import BertModel, BertPreTrainedModel
+from transformers import BertModel
 from transformers import BertTokenizer
 # import dataset
 from ..datasets import EntityClassificationDataset
@@ -29,15 +29,15 @@ class BertForEntityClassificationTokenizer(BertTokenizer):
         return self.convert_tokens_to_ids('[/e]')
 
 
-class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel):
+class BertForEntityClassification(EntityClassificationModel, BertModel):
 
     # set tokenizer type
     TOKENIZER_TYPE = BertForEntityClassificationTokenizer
 
     def __init__(self, config):
-        BertPreTrainedModel.__init__(self, config)
-        # initialize bert and classifier
-        self.bert = BertModel(config)
+        # initialize bert model
+        BertModel.__init__(self, config)
+        # initialize classifier
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.classifier = nn.Linear(config.hidden_size, config.num_labels)
         # initialize weights
@@ -79,8 +79,8 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
 
     def preprocess(self, input_ids, entity_starts, labels, tokenizer) -> dict:
         # build masks
-        attention_mask = (input_ids != tokenizer.pad_token_id)
-        entity_mask = (labels != -1)
+        attention_mask = (input_ids != tokenizer.pad_token_id).long()
+        entity_mask = (labels != -1).long()
         # build keyword arguments for forward call
         return {
             'input_ids': input_ids,
@@ -104,7 +104,7 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
         output_hidden_states=None,
     ):
         # pass through bert-model
-        output = self.bert(
+        output = BertModel.forward(self,
             input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids, 
             position_ids=position_ids, head_mask=head_mask, inputs_embeds=inputs_embeds, 
             output_attentions=output_attentions, output_hidden_states=output_hidden_states
@@ -129,3 +129,47 @@ class BertForEntityClassification(EntityClassificationModel, BertPreTrainedModel
             outputs = (loss,) + outputs
         
         return outputs
+
+
+""" KnowBert Model """
+
+# import KnowBert Model
+from external.KnowBert.src.kb.model import KnowBertModel
+# import knowledge bases to register them
+import external.KnowBert.src.knowledge
+
+class KnowBertForEntityClassification(BertForEntityClassification, KnowBertModel):
+
+    def __init__(self, config) -> None:
+        # initialize knowbert model
+        KnowBertModel.__init__(self, config)
+        # initialize classifier
+        self.dropout = nn.Dropout(config.hidden_dropout_prob)
+        self.classifier = nn.Linear(config.hidden_size, config.num_labels)
+        # initialize weights
+        self.init_weights()
+
+    @train_default_kwargs(max_entities=5)
+    @eval_default_kwargs(seq_length=None, max_entities=None)
+    def build_feature_tensors(self, *args, tokenizer=None, **kwargs) -> tuple:
+        # build feature-tensors
+        input_ids, entity_starts, labels = BertForEntityClassification.build_feature_tensors(self, *args, tokenizer=tokenizer, **kwargs)
+
+        # clear caches
+        self.clear_kb_caches()
+        # build knowledge base caches
+        for example_input_ids in input_ids:
+            # get tokens and build caches
+            tokens = tokenizer.convert_ids_to_tokens(example_input_ids[example_input_ids != tokenizer.pad_token_id])
+            self.stack_kb_caches(self.build_kb_caches(tokens))
+        # read caches and filter out unvalid
+        caches = self.get_kb_caches()
+        caches = tuple(cache for cache in caches if cache is not None)
+        # return feature tensors and caches
+        return (input_ids, entity_starts, labels) + caches
+
+    def preprocess(self, input_ids, entity_starts, labels, *caches, tokenizer) -> dict:
+        # set caches
+        self.set_valid_kb_caches(*caches)
+        # preprocess
+        return BertForEntityClassification.preprocess(self, input_ids, entity_starts, labels, tokenizer=tokenizer)
