@@ -37,7 +37,7 @@ class BertForRelationExtractionTokenizer(BertTokenizer):
         return self.convert_tokens_to_ids('[blank]')
 
 
-class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
+class BertForRelationExtraction(BertModel, RelationExtractionModel):
     """ Implementation of "Matching the Blanks: Distributional Similarity for Relation Learning"
         Paper: https://arxiv.org/abs/1906.03158
     """
@@ -46,9 +46,9 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
     TOKENIZER_TYPE = BertForRelationExtractionTokenizer
 
     def __init__(self, config):
-        BertPreTrainedModel.__init__(self, config)
-        # initialize bert and classifier
-        self.bert = BertModel(config)
+        # initialize bert model
+        BertModel.__init__(self, config)
+        # initialize classifier
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.classifier = nn.Linear(config.hidden_size * 2, config.num_labels)
         # initialize weights
@@ -122,7 +122,7 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
         output_hidden_states=None,
     ):
         # pass through bert
-        outputs = self.bert(
+        outputs = super(BertForRelationExtraction, self).forward(
             input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids, 
             position_ids=position_ids, head_mask=head_mask, inputs_embeds=inputs_embeds, 
             output_attentions=output_attentions, output_hidden_states=output_hidden_states
@@ -145,3 +145,43 @@ class BertForRelationExtraction(RelationExtractionModel, BertPreTrainedModel):
 
         # return output
         return outputs
+
+
+""" KnowBert Model """
+
+
+# import KnowBert Model and utils
+from external.KnowBert.src.kb.model import KnowBertModel
+from external.utils import knowbert_build_caches_from_input_ids
+# import knowledge bases to register them
+import external.KnowBert.src.knowledge
+
+class KnowBertForRelationExtraction(BertForRelationExtraction, KnowBertModel):
+
+    def __init__(self, config):
+        # initialize bert model
+        KnowBertModel.__init__(self, config)
+        # initialize classifier
+        self.dropout = nn.Dropout(config.hidden_dropout_prob)
+        self.classifier = nn.Linear(config.hidden_size * 2, config.num_labels)
+        # initialize weights
+        self.init_weights()
+
+    def build_feature_tensors(self, *args, tokenizer, **kwargs) -> tuple:
+        # build feature tensors
+        features = BertForRelationExtraction.build_feature_tensors(self, *args, tokenizer=tokenizer, **kwargs)
+        
+        if features is not None:
+            # build caches
+            input_ids = features[0]
+            caches = knowbert_build_caches_from_input_ids(self, input_ids, tokenizer)
+            # add to feature tuple
+            features += caches
+        # return feature tensors and caches
+        return features
+
+    def preprocess(self, input_ids, e1_e2_start, labels, *caches, tokenizer) -> dict:
+        # set caches
+        self.set_valid_kb_caches(*caches)
+        # preprocess
+        return BertForRelationExtraction.preprocess(self, input_ids, e1_e2_start, labels, tokenizer=tokenizer)

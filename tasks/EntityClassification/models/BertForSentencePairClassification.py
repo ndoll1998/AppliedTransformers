@@ -1,11 +1,11 @@
 import torch
 # same model as in the aspect-based sentiment analysis task
 from .EntityClassificationModel import EntityClassificationModel
-from ...AspectBasedSentimentAnalysis.models import BertForSentencePairClassification as BaseModel
+from ...AspectBasedSentimentAnalysis.models import BertForSentencePairClassification as BertBaseModel
 # import utils
 from core.utils import align_shape
 
-class BertForSentencePairClassification(EntityClassificationModel, BaseModel):
+class BertForSentencePairClassification(BertBaseModel, EntityClassificationModel):
     """ Implementation of "Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence" (NAACL 2019)
         Paper: https://arxiv.org/abs/1903.09588
     """
@@ -41,3 +41,26 @@ class BertForSentencePairClassification(EntityClassificationModel, BaseModel):
         labels = torch.LongTensor(labels) if labels is not None else None
         # return items
         return sentence_pairs, token_type_ids, labels
+
+
+""" KnowBert Model """
+
+# import base model and utils
+from ...AspectBasedSentimentAnalysis.models import KnowBertForSentencePairClassification as KnowBertBaseModel
+from external.utils import knowbert_build_caches_from_input_ids
+# import knowledge bases to register them
+import external.KnowBert.src.knowledge
+
+class KnowBertForSentencePairClassification(BertForSentencePairClassification, KnowBertBaseModel):
+
+    def __init__(self, config) -> None:
+        # initialize knowbert base model
+        KnowBertBaseModel.__init__(self, config)
+
+    def build_feature_tensors(self, *args, tokenizer, **kwargs) -> tuple:
+        # build feature tensors
+        input_ids, token_type_ids, labels = BertForSentencePairClassification.build_feature_tensors(self, *args, tokenizer=tokenizer, **kwargs)
+        # build caches
+        caches = knowbert_build_caches_from_input_ids(self, input_ids, tokenizer)
+        # return features and caches
+        return (input_ids, token_type_ids, labels) + caches

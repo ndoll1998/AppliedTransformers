@@ -8,9 +8,9 @@ from transformers import BertForTokenClassification
 # import utils
 from core.utils import align_shape
 
-class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenClassification):
+class BertForAspectOpinionExtraction(BertForTokenClassification, AspectOpinionExtractionModel):
 
-    def __init__(self, config:BertConfig):
+    def __init__(self, config:BertConfig) -> None:
         # number of labels to predict is 3+3 = 6
         # BIO-Scheme for aspects and opinions separately
         config.num_labels = 6
@@ -56,7 +56,7 @@ class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenC
         output_hidden_states=None,
     ):
         # predict
-        outputs = BertForTokenClassification.forward(self,
+        outputs = super(BertForAspectOpinionExtraction, self).forward(
             input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids, 
             position_ids=position_ids, head_mask=head_mask, inputs_embeds=inputs_embeds,
             output_attentions=output_attentions, output_hidden_states=output_hidden_states
@@ -80,3 +80,36 @@ class BertForAspectOpinionExtraction(AspectOpinionExtractionModel, BertForTokenC
 
         # return new outputs
         return outputs
+
+
+""" KnowBert Model """
+
+# import KnowBert Model and utils
+from external.KnowBert.src.kb.model import KnowBertForTokenClassification
+from external.KnowBert.src.kb.configuration import KnowBertConfig
+from external.utils import knowbert_build_caches_from_input_ids
+# import knowledge bases to register them
+import external.KnowBert.src.knowledge
+
+class KnowBertForAspectOpinionExtraction(BertForAspectOpinionExtraction, KnowBertForTokenClassification):
+
+    def __init__(self, config:KnowBertConfig) -> None:
+        # number of labels to predict is 3+3 = 6
+        # BIO-Scheme for aspects and opinions separately
+        config.num_labels = 6
+        # initialize model
+        KnowBertForTokenClassification.__init__(self, config)
+
+    def build_feature_tensors(self, *args, tokenizer, **kwargs):
+        # build feature tensors
+        input_ids, aspect_bio, opinion_bio = BertForAspectOpinionExtraction.build_feature_tensors(self, *args, tokenizer=tokenizer, **kwargs)
+        # build caches
+        caches = knowbert_build_caches_from_input_ids(self, input_ids, tokenizer)
+        # return features and caches
+        return (input_ids, aspect_bio, opinion_bio) + caches
+
+    def preprocess(self, input_ids, labels_a, labels_o, *caches, tokenizer) -> dict:
+        # set caches
+        self.set_valid_kb_caches(*caches)
+        # preprocess
+        return BertForAspectOpinionExtraction.preprocess(self, input_ids, labels_a, labels_o, tokenizer=tokenizer)

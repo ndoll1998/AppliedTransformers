@@ -4,7 +4,12 @@ import torch
 
 # Aspect-based Sentiment Analysis imports
 # from tasks.AspectBasedSentimentAnalysis.Trainer import AspectBasedSentimentAnalysisTrainer as Trainer
-# from tasks.AspectBasedSentimentAnalysis.models import BertForSentencePairClassification, BertCapsuleNetwork
+# from tasks.AspectBasedSentimentAnalysis.models import (
+#     BertForSentencePairClassification, 
+#     KnowBertForSentencePairClassification,
+#     BertCapsuleNetwork,
+#     KnowBertCapsuleNetwork
+# )
 # from tasks.AspectBasedSentimentAnalysis.datasets import (
 #     SemEval2014Task4,
 #     SemEval2014Task4_Laptops,
@@ -14,7 +19,10 @@ import torch
 
 # Aspect Opinion Extraction imports
 # from tasks.AspectOpinionExtraction.Trainer import AspectOpinionExtractionTrainer as Trainer
-# from tasks.AspectOpinionExtraction.models import BertForAspectOpinionExtraction
+# from tasks.AspectOpinionExtraction.models import (
+#     BertForAspectOpinionExtraction,
+#     KnowBertForAspectOpinionExtraction
+# )
 # from tasks.AspectOpinionExtraction.datasets import (
 #     SemEval2015Task12, 
 #     GermanYelpDataset
@@ -26,7 +34,9 @@ from tasks.EntityClassification.models import (
     BertForEntityClassification, 
     KnowBertForEntityClassification,
     BertForSentencePairClassification,
-    BertCapsuleNetwork
+    KnowBertForSentencePairClassification,
+    BertCapsuleNetwork,
+    KnowBertCapsuleNetwork
 )
 from tasks.EntityClassification.datasets import (
     SemEval2015Task12_AspectSentiment, 
@@ -39,7 +49,10 @@ from tasks.EntityClassification.datasets import (
 
 # Relation Extraction imports
 # from tasks.RelationExtraction.Trainer import RelationExtractionTrainer as Trainer
-# from tasks.RelationExtraction.models import BertForRelationExtraction
+# from tasks.RelationExtraction.models import (
+#     BertForRelationExtraction,
+#     KnowBertForRelationExtraction
+# )
 # from tasks.RelationExtraction.datasets import (
 #     SemEval2010Task8,
 #     GermanYelpRelation,

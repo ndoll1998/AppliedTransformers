@@ -1,2 +1,4 @@
 from .AspectOpinionExtractionModel import AspectOpinionExtractionModel
+# bert for aspect opinion extraction
 from .BertForAspectOpinionExtraction import BertForAspectOpinionExtraction
+from .BertForAspectOpinionExtraction import KnowBertForAspectOpinionExtraction

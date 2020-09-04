@@ -1,13 +1,13 @@
 import torch
 # same model as in the aspect-based sentiment analysis task
 from .EntityClassificationModel import EntityClassificationModel
-from ...AspectBasedSentimentAnalysis.models import BertCapsuleNetwork as BaseModel
+from ...AspectBasedSentimentAnalysis.models import BertCapsuleNetwork as BertBaseModel
 # import dataset
 from ..datasets import EntityClassificationDataset
 # import utils
 from core.utils import align_shape
 
-class BertCapsuleNetwork(EntityClassificationModel, BaseModel):
+class BertCapsuleNetwork(BertBaseModel, EntityClassificationModel):
     """ "A Challenge Dataset and Effective Models for Aspect-Based Sentiment Analysis"
         Paper: https://www.aclweb.org/anthology/D19-1654/
     """
@@ -47,3 +47,26 @@ class BertCapsuleNetwork(EntityClassificationModel, BaseModel):
     def prepare(self, dataset:EntityClassificationDataset, tokenizer) -> None:
         # initialize guide-capsule
         self._init_guide_capsule(dataset.__class__.LABELS, tokenizer)
+
+
+""" KnowBert Capsule Network """
+
+# import base model and utils
+from ...AspectBasedSentimentAnalysis.models import KnowBertCapsuleNetwork as KnowBertBaseModel
+from external.utils import knowbert_build_caches_from_input_ids
+# import knowledge bases to register them
+import external.KnowBert.src.knowledge
+
+class KnowBertCapsuleNetwork(BertCapsuleNetwork, KnowBertBaseModel):
+
+    def __init__(self, config) -> None:
+        # initialize knowbert base model
+        KnowBertBaseModel.__init__(self, config)
+
+    def build_feature_tensors(self, *args, tokenizer, **kwargs) -> tuple:
+        # build feature tensors
+        input_ids, token_type_ids, labels = BertCapsuleNetwork.build_feature_tensors(self, *args, tokenizer=tokenizer, **kwargs)
+        # build caches
+        caches = knowbert_build_caches_from_input_ids(self, input_ids, tokenizer)
+        # return features and caches
+        return (input_ids, token_type_ids, labels) + caches

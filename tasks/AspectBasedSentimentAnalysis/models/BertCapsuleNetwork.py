@@ -29,6 +29,7 @@ class BertCapsuleNetworkConfig(BertConfig):
         layer_norm_eps=1e-12,
         pad_token_id=0,
         gradient_checkpointing=False,
+        # capsule network
         capsule_size=300,
         loss_smooth=0.1,
         loss_lambda=0.6,
@@ -98,7 +99,7 @@ def squash(x, dim=-1):
     scale = torch.sqrt(squared) / (1.0 + squared)
     return scale * x
 
-class BertCapsuleNetwork(AspectBasedSentimentAnalysisModel, BertModel):
+class BertCapsuleNetwork(BertModel, AspectBasedSentimentAnalysisModel):
     """ "A Challenge Dataset and Effective Models for Aspect-Based Sentiment Analysis"
         Paper: https://www.aclweb.org/anthology/D19-1654/
     """
@@ -106,9 +107,13 @@ class BertCapsuleNetwork(AspectBasedSentimentAnalysisModel, BertModel):
     # set config class for bert model
     config_class = BertCapsuleNetworkConfig
 
-    def __init__(self, config:BertConfig):
+    def __init__(self, config:BertCapsuleNetworkConfig) -> None:
         # initialize bert model
         BertModel.__init__(self, config)
+        # build all other submodules
+        self._build_submodules(config)
+
+    def _build_submodules(self, config:BertCapsuleNetworkConfig) -> None:
         # aspect transform
         self.aspect_transform = nn.Sequential(
             nn.Linear(config.hidden_size, config.capsule_size),
@@ -128,11 +133,10 @@ class BertCapsuleNetwork(AspectBasedSentimentAnalysisModel, BertModel):
         self.scale = nn.Parameter(torch.tensor(5.0))
         self.capsule_projection = nn.Linear(config.hidden_size, config.hidden_size * config.num_labels)
         self.dropout = nn.Dropout(config.attention_probs_dropout_prob)
-
         # reset parameters
         self._reset_parameters()
 
-    def _reset_parameters(self):
+    def _reset_parameters(self) -> None:
         # randomize parameters
         nn.init.xavier_uniform_(self.guide_capsule)
         nn.init.xavier_uniform_(self.guide_weight)
@@ -206,8 +210,8 @@ class BertCapsuleNetwork(AspectBasedSentimentAnalysisModel, BertModel):
         }, labels
         
     def forward(self, input_ids, attention_mask, token_type_ids, *args, labels=None, **kwargs):
-        # encode 
-        outputs = BertModel.forward(self, input_ids, attention_mask, token_type_ids, *args, **kwargs)
+        # encode
+        outputs = super(BertCapsuleNetwork, self).forward(input_ids, attention_mask, token_type_ids, *args, **kwargs)
         sequence_output = outputs[0]
         # create sentence and aspect masks
         sentence_mask = attention_mask & (token_type_ids == 0)
@@ -263,3 +267,114 @@ class BertCapsuleNetwork(AspectBasedSentimentAnalysisModel, BertModel):
         return category_capsule
     
         
+
+""" KnowBert Model """
+
+# import KnowBert Model, Config and utils
+from external.KnowBert.src.kb.model import KnowBertModel
+from external.KnowBert.src.kb.configuration import KnowBertConfig
+from external.utils import knowbert_build_caches_from_input_ids
+# import knowledge bases to register them
+import external.KnowBert.src.knowledge
+
+
+class KnowBertCapsuleNetworkConfig(KnowBertConfig, BertCapsuleNetworkConfig):
+
+    def __init__(self,
+        # bert
+        vocab_size=30522,
+        hidden_size=768,
+        num_hidden_layers=12,
+        num_attention_heads=12,
+        intermediate_size=3072,
+        hidden_act="gelu",
+        hidden_dropout_prob=0.1,
+        attention_probs_dropout_prob=0.1,
+        max_position_embeddings=512,
+        type_vocab_size=2,
+        initializer_range=0.02,
+        layer_norm_eps=1e-12,
+        pad_token_id=0,
+        gradient_checkpointing=False,
+        # knowbert
+        kbs={},
+        pretrained_model_name_or_path=None,
+        # capsule network
+        capsule_size=300,
+        loss_smooth=0.1,
+        loss_lambda=0.6,
+        **kwargs
+    ):
+        # initialize knowbert config
+        KnowBertConfig.__init__(self,
+            kbs=kbs,
+            pretrained_model_name_or_path=pretrained_model_name_or_path,
+        )
+        # initialize capsule network config
+        BertCapsuleNetworkConfig.__init__(self,
+            vocab_size=vocab_size,
+            hidden_size=hidden_size,
+            num_hidden_layers=num_hidden_layers,
+            num_attention_heads=num_attention_heads,
+            intermediate_size=intermediate_size,
+            hidden_act=hidden_act,
+            hidden_dropout_prob=hidden_dropout_prob,
+            attention_probs_dropout_prob=attention_probs_dropout_prob,
+            max_position_embeddings=max_position_embeddings,
+            type_vocab_size=type_vocab_size,
+            initializer_range=initializer_range,
+            layer_norm_eps=layer_norm_eps,
+            pad_token_id=pad_token_id,
+            gradient_checkpointing=gradient_checkpointing,
+            # capsule network
+            capsule_size=capsule_size,
+            loss_smooth=loss_smooth,
+            loss_lambda=loss_lambda,
+            **kwargs
+        )
+
+class KnowBertCapsuleNetwork(BertCapsuleNetwork, KnowBertModel):
+
+    # set config class
+    config_class = KnowBertCapsuleNetworkConfig
+
+    def __init__(self, config:KnowBertCapsuleNetworkConfig) -> None:
+        # initialize knowbert model
+        KnowBertModel.__init__(self, config)
+        # build all other submodules
+        self._build_submodules(config)
+
+    @torch.no_grad()
+    def _init_guide_capsule(self, labels, tokenizer):
+        self.eval()
+        # tokenize labels
+        label_tokens = [tokenizer.tokenize(label) for label in labels]
+        label_ids = [tokenizer.convert_tokens_to_ids(tokens) for tokens in label_tokens]
+        # create input ids for model
+        shape = (len(labels), max((len(ids) for ids in label_ids)))
+        input_ids = align_shape(label_ids, shape, tokenizer.pad_token_id)
+        # create input tensors
+        input_ids = torch.LongTensor(input_ids).to(self.device)
+        attention_mask = torch.LongTensor((input_ids != tokenizer.pad_token_id).long()).to(self.device)
+        # pass through model
+        self.prepare_kbs(label_tokens)
+        label_embed, _, _, _ = KnowBertModel.forward(self, input_ids, attention_mask=attention_mask)
+        label_embed = self.sentence_transform(label_embed)
+        # compute average over timesteps
+        label_embed = label_embed.sum(dim=1) / attention_mask.sum(dim=1, keepdims=True).float()
+        # apply label embeddings
+        self.guide_capsule.data.copy_(label_embed)
+
+    def build_feature_tensors(self, *args, tokenizer, **kwargs):
+        # build feaure tensors
+        input_ids, token_type_ids, labels = BertCapsuleNetwork.build_feature_tensors(self, *args, tokenizer=tokenizer, **kwargs)
+        # build caches
+        caches = knowbert_build_caches_from_input_ids(self, input_ids, tokenizer)
+        # return features and caches
+        return (input_ids, token_type_ids, labels) + caches
+
+    def preprocess(self, input_ids, token_type_ids, labels, *caches, tokenizer) -> dict:
+        # set caches
+        self.set_valid_kb_caches(*caches)
+        # preprocess
+        return BertCapsuleNetwork.preprocess(self, input_ids, token_type_ids, labels, tokenizer=tokenizer)

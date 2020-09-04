@@ -29,7 +29,7 @@ class BertForEntityClassificationTokenizer(BertTokenizer):
         return self.convert_tokens_to_ids('[/e]')
 
 
-class BertForEntityClassification(EntityClassificationModel, BertModel):
+class BertForEntityClassification(BertModel, EntityClassificationModel):
 
     # set tokenizer type
     TOKENIZER_TYPE = BertForEntityClassificationTokenizer
@@ -104,7 +104,7 @@ class BertForEntityClassification(EntityClassificationModel, BertModel):
         output_hidden_states=None,
     ):
         # pass through bert-model
-        output = BertModel.forward(self,
+        output = super(BertForEntityClassification, self).forward(
             input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids, 
             position_ids=position_ids, head_mask=head_mask, inputs_embeds=inputs_embeds, 
             output_attentions=output_attentions, output_hidden_states=output_hidden_states
@@ -133,8 +133,9 @@ class BertForEntityClassification(EntityClassificationModel, BertModel):
 
 """ KnowBert Model """
 
-# import KnowBert Model
+# import KnowBert Model and utils
 from external.KnowBert.src.kb.model import KnowBertModel
+from external.utils import knowbert_build_caches_from_input_ids
 # import knowledge bases to register them
 import external.KnowBert.src.knowledge
 
@@ -149,22 +150,11 @@ class KnowBertForEntityClassification(BertForEntityClassification, KnowBertModel
         # initialize weights
         self.init_weights()
 
-    @train_default_kwargs(max_entities=5)
-    @eval_default_kwargs(seq_length=None, max_entities=None)
     def build_feature_tensors(self, *args, tokenizer=None, **kwargs) -> tuple:
         # build feature-tensors
         input_ids, entity_starts, labels = BertForEntityClassification.build_feature_tensors(self, *args, tokenizer=tokenizer, **kwargs)
-
-        # clear caches
-        self.clear_kb_caches()
-        # build knowledge base caches
-        for example_input_ids in input_ids:
-            # get tokens and build caches
-            tokens = tokenizer.convert_ids_to_tokens(example_input_ids[example_input_ids != tokenizer.pad_token_id])
-            self.stack_kb_caches(self.build_kb_caches(tokens))
-        # read caches and filter out unvalid
-        caches = self.get_kb_caches()
-        caches = tuple(cache for cache in caches if cache is not None)
+        # build caches
+        caches = knowbert_build_caches_from_input_ids(self, input_ids, tokenizer)
         # return feature tensors and caches
         return (input_ids, entity_starts, labels) + caches
 

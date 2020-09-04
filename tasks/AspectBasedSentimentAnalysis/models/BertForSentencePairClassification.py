@@ -10,7 +10,7 @@ class BertForSentencePairClassification(AspectBasedSentimentAnalysisModel, BertF
         Paper: https://arxiv.org/abs/1903.09588
     """
 
-    def build_feature_tensors(self, input_ids, aspects_token_ids, labels, seq_length=None, tokenizer=None) -> list:
+    def build_feature_tensors(self, input_ids, aspects_token_ids, labels, seq_length=None, tokenizer=None) -> tuple:
         # one label per entity span
         assert (labels is None) or (len(aspects_token_ids) == len(labels))
 
@@ -54,3 +54,27 @@ class BertForSentencePairClassification(AspectBasedSentimentAnalysisModel, BertF
             'labels': labels
         }, labels
         
+
+""" KnowBert Model """
+
+# import KnowBert Model and utils
+from external.KnowBert.src.kb.model import KnowBertForSequenceClassification
+from external.utils import knowbert_build_caches_from_input_ids
+# import knowledge bases to register them
+import external.KnowBert.src.knowledge
+
+class KnowBertForSentencePairClassification(KnowBertForSequenceClassification, BertForSentencePairClassification):
+
+    def build_feature_tensors(self, *args, tokenizer, **kwargs) -> tuple:
+        # build feature tensors
+        input_ids, token_type_ids, labels = BertForSentencePairClassification.build_feature_tensors(self, *args, tokenizer=tokenizer, **kwargs)
+        # build caches
+        caches = knowbert_build_caches_from_input_ids(self, input_ids, tokenizer)
+        # return feature tensors and caches
+        return (input_ids, token_type_ids, labels) + caches
+
+    def preprocess(self, input_ids, token_type_ids, labels, *caches, tokenizer) -> dict:
+        # set caches
+        self.set_valid_kb_caches(*caches)
+        # preprocess
+        return BertForSentencePairClassification.preprocess(self, input_ids, token_type_ids, labels, tokenizer=tokenizer)
