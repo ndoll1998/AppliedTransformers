@@ -53,7 +53,6 @@ class GermanYelp_AspectPolarity(__GermanYelp_Base):
         unique_sent_ids = annotations['SentenceID'].unique()
         # separate training and testing set
         n_train_samples = int(len(unique_sent_ids) * 0.8)
-
         for k, sent_id in enumerate(unique_sent_ids):
             # only load train or test data, not both
             if ((k < n_train_samples) and not train) or ((k >= n_train_samples) and train):
@@ -69,7 +68,8 @@ class GermanYelp_AspectPolarity(__GermanYelp_Base):
                 aspect_annotations = sent_annotations[sent_annotations['Aspect'] == aspect]
                 # get polarity by majority
                 n_positives = (aspect_annotations['Sentiment'].values == GermanYelp_AspectPolarity.LABELS[0]).sum()
-                is_positive = n_positives >= len(aspect_annotations.index) // 2
+                n_negatives = len(aspect_annotations.index) - n_positives
+                is_positive = (n_positives >= n_negatives)
                 polarity = GermanYelp_OpinionPolarity.LABELS[1 - int(is_positive)]
                 # add to lists
                 aspects.append(eval(aspect))
