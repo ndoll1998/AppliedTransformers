@@ -13,7 +13,7 @@ We currently provide the following models:
 - `KnowBertForAspectOpinionExtraction`
 
     - Same structure as `BertForAspectOpinionExtraction`
-    - using KnowBERT Encoder instead of standard BERT encoder
+    - using KnowBERT encoder instead of standard BERT encoder
 
 
 A custom model must have the following form:

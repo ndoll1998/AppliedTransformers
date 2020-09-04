@@ -13,7 +13,7 @@ We currently provide the following models for this task:
 - `KnowBertForEntityClassification`
 
     - Same structure as `BertForEntityClassification`
-    - using KnowBERT Encoder instead of standard BERT encoder
+    - using KnowBERT encoder instead of standard BERT encoder
 
 - `BertForSentencePairClassification`
 
@@ -22,7 +22,7 @@ We currently provide the following models for this task:
 - `KnowBertForSentencePairClassification`
 
     - [Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence](https://arxiv.org/abs/1903.09588)
-    - using KnowBERT Encoder instead of standard BERT encoder
+    - using KnowBERT encoder instead of standard BERT encoder
 
 - `BertCapsuleNetwork`
     
@@ -31,7 +31,7 @@ We currently provide the following models for this task:
 - `KnowBertCapsuleNetwork`
     
     - [A Challenge Dataset and Effective Models for Aspect-Based Sentiment Analysis](https://www.aclweb.org/anthology/D19-1654/)
-    - using KnowBERT Encoder instead of standard BERT encoder
+    - using KnowBERT encoder instead of standard BERT encoder
 
 
 A custom model must have the following form:

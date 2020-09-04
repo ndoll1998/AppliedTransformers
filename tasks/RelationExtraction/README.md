@@ -14,7 +14,7 @@ We currently provide the following models:
 - `KnowBertForRelationExtraction`
 
     - [Matching the Blanks: Distributional Similarity for Relation Learning](https://arxiv.org/abs/1906.03158)
-    - using KnowBERT Encoder instead of standard BERT encoder
+    - using KnowBERT encoder instead of standard BERT encoder
 
 
 A custom model must have the following form:
