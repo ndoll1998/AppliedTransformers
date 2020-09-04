@@ -68,20 +68,30 @@ We currently provide the following datasets for this task:
         - etc.
     - [Download](http://alt.qcri.org/semeval2015/task12/index.php?id=data-and-tools)
 
-- `GermanYelpRelation`
+- `GermanYelp_Polarity`
+    - Language: German
+    - Domain: Restaurant Reviews
+    - Relationship Types:
+        - positive
+        - negative
+    - Analysing the sentiment of a relation between an aspect-opinion pair
+
+- `GermanYelp_Linking`
     - Language: German
     - Domain: Restaurant Reviews
     - Relationship Types:
         - True
         - False
+    - Linking aspects and opinions to eachother
 
-- `GermanYelpPolarity`
+- `GermanYelp_LinkingAndPolarity`
     - Language: German
     - Domain: Restaurant Reviews
     - Relationship Types:
         - none
         - positive
         - negative
+    - Linking aspects and opinions and analyse sentiment of the relation
 
 - `SmartdataCorpus`
     - [A German Corpus for Fine-Grained Named Entity Recognition and Relation Extraction of Traffic and Industry Events](https://www.dfki.de/web/forschung/projekte-publikationen/publikationen-uebersicht/publikation/9427/)
@@ -123,14 +133,14 @@ class CustomDataset(RelationExtractionDataset):
     | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
     | `BertForRelationExtraction`     |  **83.6**  |  **79.8**  |   4    |  bert-base-uncased           |
 
-- `GermanYelpRelation`
+- `GermanYelp_Linking`
 
     |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
     | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
     | `BertForRelationExtraction`     |  **94.8**  |  **94.7**  |   7    |  bert-base-german-cased      |
     | `BertForRelationExtraction`     |    93.7    |    93.5    |   4    |  bert-base-german-cased-yelp |
 
-- `GermanYelpPolarity`
+- `GermanYelp_LinkingAndPolarity`
 
     |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
     | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |

@@ -3,14 +3,14 @@ import torch
 
 
 # Aspect-based Sentiment Analysis imports
-from tasks.AspectBasedSentimentAnalysis.Trainer import AspectBasedSentimentAnalysisTrainer as Trainer
-from tasks.AspectBasedSentimentAnalysis.models import BertForSentencePairClassification, BertCapsuleNetwork
-from tasks.AspectBasedSentimentAnalysis.datasets import (
-    SemEval2014Task4,
-    SemEval2014Task4_Laptops,
-    SemEval2014Task4_Restaurants,
-    SemEval2014Task4_Category,
-)
+# from tasks.AspectBasedSentimentAnalysis.Trainer import AspectBasedSentimentAnalysisTrainer as Trainer
+# from tasks.AspectBasedSentimentAnalysis.models import BertForSentencePairClassification, BertCapsuleNetwork
+# from tasks.AspectBasedSentimentAnalysis.datasets import (
+#     SemEval2014Task4,
+#     SemEval2014Task4_Laptops,
+#     SemEval2014Task4_Restaurants,
+#     SemEval2014Task4_Category,
+# )
 
 # Aspect Opinion Extraction imports
 # from tasks.AspectOpinionExtraction.Trainer import AspectOpinionExtractionTrainer as Trainer
@@ -37,25 +37,26 @@ from tasks.AspectBasedSentimentAnalysis.datasets import (
 # )
 
 # Relation Extraction imports
-# from tasks.RelationExtraction.Trainer import RelationExtractionTrainer as Trainer
-# from tasks.RelationExtraction.models import BertForRelationExtraction
-# from tasks.RelationExtraction.datasets import (
-#     SemEval2010Task8,
-#     GermanYelpRelation,
-#     GermanYelpPolarity,
-#     SmartdataCorpus,
-# )
+from tasks.RelationExtraction.Trainer import RelationExtractionTrainer as Trainer
+from tasks.RelationExtraction.models import BertForRelationExtraction
+from tasks.RelationExtraction.datasets import (
+    SemEval2010Task8,
+    GermanYelp_Linking,
+    GermanYelp_Polarity,
+    GermanYelp_LinkingAndPolarity,
+    SmartdataCorpus,
+)
 
 if __name__ == '__main__':
 
     # create trainer
     trainer = Trainer(
         # model
-        model_type = BertCapsuleNetwork,
+        model_type = BertForRelationExtraction,
         pretrained_name = 'bert-base-german-cased',
         device = 'cpu',
         # dataset
-        dataset_type = SemEval2014Task4_Category,
+        dataset_type = GermanYelp_LinkingAndPolarity,
         data_base_dir = "./data",
         seq_length = 64,
         batch_size = 8,
