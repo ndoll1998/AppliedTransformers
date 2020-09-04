@@ -192,3 +192,14 @@ class CustomDataset(EntityClassificationDataset):
     | `BertForSentencePairClassification`  |    93.7    |    93.0    |   19   |  bert-base-german-cased-yelp |
     | `BertCapsuleNetwork`                 |    91.4    |    90.3    |   4    |  bert-base-german-cased      |
     | `BertCapsuleNetwork`                 |    92.7    |    92.0    |   12   |  bert-base-german-cased-yelp |
+
+- `GermanYelp_AspectPolarity`
+
+    |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
+    | :----------------------------------- | :--------: | :--------: | :----: | :--------------------------- |
+    | `BertForEntityClassification`        |    88.7    |    87.4    |   7    |  bert-base-german-cased      |
+    | `BertForEntityClassification`        |  **92.5**  |  **91.4**  |   18   |  bert-base-german-cased-yelp |
+    | `BertForSentencePairClassification`  |    90.0    |    88.6    |   6    |  bert-base-german-cased      |
+    | `BertForSentencePairClassification`  |    91.2    |    90.3    |   15   |  bert-base-german-cased-yelp |
+    | `BertCapsuleNetwork`                 |    89.2    |    88.0    |   20   |  bert-base-german-cased      |
+    | `BertCapsuleNetwork`                 |    92.1    |    91.1    |   15   |  bert-base-german-cased-yelp |

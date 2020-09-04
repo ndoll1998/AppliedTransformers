@@ -133,6 +133,13 @@ class CustomDataset(RelationExtractionDataset):
     | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
     | `BertForRelationExtraction`     |  **83.6**  |  **79.8**  |   4    |  bert-base-uncased           |
 
+- `GermanYelp_Polarity`
+
+    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
+    | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
+    | `BertForRelationExtraction`     |    91.8    |    90.6    |   2    |  bert-base-german-cased      |
+    | `BertForRelationExtraction`     |  **94.5**  |  **93.8**  |   11   |  bert-base-german-cased-yelp |
+
 - `GermanYelp_Linking`
 
     |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
@@ -151,4 +158,4 @@ class CustomDataset(RelationExtractionDataset):
 
     |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
     | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForRelationExtraction`     |   **100**  |   **100**  |   11   |  bert-base-uncased           |
+    | `BertForRelationExtraction`     |     100    |     100    |   11   |  bert-base-uncased           |
