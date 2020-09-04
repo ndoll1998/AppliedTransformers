@@ -10,6 +10,11 @@ We currently provide the following models:
 
     - Based on the BERT model for token classification. For each token, it returns aspect and opinion logits that follow the Begin-In-Out (BIO) scheme.
 
+- `KnowBertForAspectOpinionExtraction`
+
+    - Same structure as `BertForAspectOpinionExtraction`
+    - using KnowBERT Encoder instead of standard BERT encoder
+
 
 A custom model must have the following form:
 ```python

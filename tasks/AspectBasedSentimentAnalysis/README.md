@@ -10,9 +10,20 @@ We currently provide the following models:
 
     - [Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence](https://arxiv.org/abs/1903.09588)
 
+- `KnowBertForAspectBasedSentimentAnalysis`
+
+    - [Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence](https://arxiv.org/abs/1903.09588)
+    - using KnowBERT Encoder instead of standard BERT encoder
+
 - `BertCapsuleNetwork`
     
     - [A Challenge Dataset and Effective Models for Aspect-Based Sentiment Analysis](https://www.aclweb.org/anthology/D19-1654/)
+
+
+- `KnowBertCapsuleNetwork`
+    
+    - [A Challenge Dataset and Effective Models for Aspect-Based Sentiment Analysis](https://www.aclweb.org/anthology/D19-1654/)
+    - using KnowBERT Encoder instead of standard BERT encoder
 
 
 A custom model must have the following form:
@@ -32,7 +43,7 @@ class CustomModel(AspectBasedSentimentAnalysisModels):
         # initialize dataset or tokenizer specific values
         # defaults to do nothing
 
-    def build_feature_tensors(self, input_ids, aspects_token_ids, labels, seq_length, tokenizer) -> list:
+    def build_feature_tensors(self, input_ids, aspects_token_ids, labels, seq_length, tokenizer) -> tuple:
         """ Build all important feature tensors from a data item. """
         # This function needs to return tensors build from the provided features. 
         # Each tensor has to have the shape (n, *feature-shape), where n is the 

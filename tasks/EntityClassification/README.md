@@ -10,13 +10,28 @@ We currently provide the following models for this task:
 
     - Basically a BERT encoder folowed by a linear classification layer. We apply a custom tokenizer which defines the special tokens `[e]` and `[/e]` to mark entities in a corpus. For classification, we pass the corpus through the BERT encoder and gather the outputs for all entity beginning markers (`[e]`). These will then be passed into the classification layer to compute the output logits.
 
+- `KnowBertForEntityClassification`
+
+    - Same structure as `BertForEntityClassification`
+    - using KnowBERT Encoder instead of standard BERT encoder
+
 - `BertForSentencePairClassification`
 
     - [Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence](https://arxiv.org/abs/1903.09588)
 
+- `KnowBertForSentencePairClassification`
+
+    - [Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence](https://arxiv.org/abs/1903.09588)
+    - using KnowBERT Encoder instead of standard BERT encoder
+
 - `BertCapsuleNetwork`
     
     - [A Challenge Dataset and Effective Models for Aspect-Based Sentiment Analysis](https://www.aclweb.org/anthology/D19-1654/)
+
+- `KnowBertCapsuleNetwork`
+    
+    - [A Challenge Dataset and Effective Models for Aspect-Based Sentiment Analysis](https://www.aclweb.org/anthology/D19-1654/)
+    - using KnowBERT Encoder instead of standard BERT encoder
 
 
 A custom model must have the following form:
@@ -36,7 +51,7 @@ class CustomModel(EntityClassificationModel):
         # initialize dataset or tokenizer specific values
         # defaults to do nothing
 
-    def build_feature_tensors(self, input_ids, entity_spans, labels, max_entities, seq_length, tokenizer) -> list:
+    def build_feature_tensors(self, input_ids, entity_spans, labels, max_entities, seq_length, tokenizer) -> tuple:
         """ Build all feature tensors from a data item. """
         # This function needs to return tensors build from the provided features. 
         # Each tensor has to have the shape (n, *feature-shape), where n is the 

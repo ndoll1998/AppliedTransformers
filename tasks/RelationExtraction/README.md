@@ -11,6 +11,11 @@ We currently provide the following models:
 
     - [Matching the Blanks: Distributional Similarity for Relation Learning](https://arxiv.org/abs/1906.03158)
 
+- `KnowBertForRelationExtraction`
+
+    - [Matching the Blanks: Distributional Similarity for Relation Learning](https://arxiv.org/abs/1906.03158)
+    - using KnowBERT Encoder instead of standard BERT encoder
+
 
 A custom model must have the following form:
 ```python
@@ -29,7 +34,7 @@ class CustomModel(RelationExtractionModel):
         # initialize dataset or tokenizer specific values
         # defaults to do nothing
 
-    def build_feature_tensors(self, input_ids, entity_span_A, entity_span_B, label, seq_length, tokenizer) -> list:
+    def build_feature_tensors(self, input_ids, entity_span_A, entity_span_B, label, seq_length, tokenizer) -> tuple:
         """ Build all feature tensors from a data item. """
         # This function needs to return tensors build from the provided features. 
         # Each tensor has to have the shape (n, *feature-shape), where n is the
