@@ -21,42 +21,43 @@ import torch
 # )
 
 # Entity Classfication imports
-# from tasks.EntityClassification.Trainer import EntityClassificationTrainer as Trainer
-# from tasks.EntityClassification.models import (
-#     BertForEntityClassification, 
-#     BertForSentencePairClassification,
-#     BertCapsuleNetwork
-# )
-# from tasks.EntityClassification.datasets import (
-#     SemEval2015Task12_AspectSentiment, 
-#     SemEval2015Task12_OpinionSentiment, 
-#     GermanYelpSentiment,
-#     SemEval2014Task4,
-#     SemEval2014Task4_Laptops,
-#     SemEval2014Task4_Restaurants
-# )
+from tasks.EntityClassification.Trainer import EntityClassificationTrainer as Trainer
+from tasks.EntityClassification.models import (
+    BertForEntityClassification, 
+    BertForSentencePairClassification,
+    BertCapsuleNetwork
+)
+from tasks.EntityClassification.datasets import (
+    SemEval2015Task12_AspectPolarity, 
+    SemEval2015Task12_OpinionPolarity, 
+    GermanYelp_OpinionPolarity,
+    GermanYelp_AspectPolarity,
+    SemEval2014Task4,
+    SemEval2014Task4_Laptops,
+    SemEval2014Task4_Restaurants
+)
 
 # Relation Extraction imports
-from tasks.RelationExtraction.Trainer import RelationExtractionTrainer as Trainer
-from tasks.RelationExtraction.models import BertForRelationExtraction
-from tasks.RelationExtraction.datasets import (
-    SemEval2010Task8,
-    GermanYelp_Linking,
-    GermanYelp_Polarity,
-    GermanYelp_LinkingAndPolarity,
-    SmartdataCorpus,
-)
+# from tasks.RelationExtraction.Trainer import RelationExtractionTrainer as Trainer
+# from tasks.RelationExtraction.models import BertForRelationExtraction
+# from tasks.RelationExtraction.datasets import (
+#     SemEval2010Task8,
+#     GermanYelp_Linking,
+#     GermanYelp_Polarity,
+#     GermanYelp_LinkingAndPolarity,
+#     SmartdataCorpus,
+# )
 
 if __name__ == '__main__':
 
     # create trainer
     trainer = Trainer(
         # model
-        model_type = BertForRelationExtraction,
+        model_type = BertForEntityClassification,
         pretrained_name = 'bert-base-german-cased',
         device = 'cpu',
         # dataset
-        dataset_type = GermanYelp_LinkingAndPolarity,
+        dataset_type = GermanYelp_AspectPolarity,
         data_base_dir = "./data",
         seq_length = 64,
         batch_size = 8,

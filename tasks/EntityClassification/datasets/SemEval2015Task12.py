@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from .EntityClassificationDataset import EntityClassificationDataset
 
 
-class SemEval2015Task12_AspectSentiment(EntityClassificationDataset):
+class SemEval2015Task12_AspectPolarity(EntityClassificationDataset):
     """ Dataset for the SemEval2014 Task4 data for Aspect-based Sentiment Analysis
         Download: http://alt.qcri.org/semeval2015/task12/index.php?id=data-and-tools
     """
@@ -49,7 +49,7 @@ class SemEval2015Task12_AspectSentiment(EntityClassificationDataset):
 
 
 
-class SemEval2015Task12_OpinionSentiment(EntityClassificationDataset):
+class SemEval2015Task12_OpinionPolarity(EntityClassificationDataset):
     """ Dataset for the SemEval2014 Task4 data for Opinion-based Sentiment Analysis
         Downlaod: https://github.com/happywwy/Coupled-Multi-layer-Attentions/tree/master/util/data_semEval
     """
