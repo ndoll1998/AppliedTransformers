@@ -79,7 +79,7 @@ class CustomModel(EntityClassificationModel):
 
 We currently provide the following datasets for this task:
 
-- `SemEval2015Task12_AspectSentiment`
+- `SemEval2015Task12_AspectPolarity`
     - [SemEval-2015 Task 12: Aspect Based Sentiment Analysis](https://www.aclweb.org/anthology/S15-2082/)
     - Language: English
     - Domain: Restaurant Reviews
@@ -90,7 +90,7 @@ We currently provide the following datasets for this task:
         - negative
     - [Download](http://alt.qcri.org/semeval2015/task12/index.php?id=data-and-tools)
 
-- `SemEval2015Task12_OpinionSentiment`
+- `SemEval2015Task12_OpinionPolarity`
     - [SemEval-2015 Task 12: Aspect Based Sentiment Analysis](https://www.aclweb.org/anthology/S15-2082/)
     - Opinion Annotations by: [Coupled Multi-Layer Attentions
 for Co-Extraction of Aspect and Opinion Terms](https://www.aaai.org/Conferences/AAAI/2017/PreliminaryPapers/15-Wang-W-14441.pdf)
@@ -107,7 +107,7 @@ for Co-Extraction of Aspect and Opinion Terms](https://www.aaai.org/Conferences/
     - Language: English
     - Domain: Restaurant + Laptop Reviews
     - Entity Type: Aspects
-    - Polarity Labels:
+    - Entity Labels:
         - positive
         - neutral
         - negative
@@ -130,11 +130,19 @@ for Co-Extraction of Aspect and Opinion Terms](https://www.aaai.org/Conferences/
     - Polarity Labels: see `SemEval2014Task4`
     - [Download](http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools)
 
-- `GermanYelpSentiment`
+- `GermanYelp_OpinionPolarity`
     - Language: German
     - Domain: Restaurant Reviews
     - Entity Type: Opinions
+    - Entity Labels:
+        - positive
+        - negative
 
+- `GermanYelp_AspectPolarity`
+    - Language: German
+    - Domain: Restaurant Reviews
+    - Entity Type: Aspects
+    - Entity Labels: see `GermanYelp_OpinionPolarity`
 
 A custom dataset must have the following form.
 ```python
@@ -159,7 +167,7 @@ class CustomDataset(EntityClassificationDataset):
     - Learning Rate: 1e-5
     - Weight Decay: 0.01
 
-- `SemEval2015Task12_AspectSentiment`
+- `SemEval2015Task12_AspectPolarity`
     
     |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
     | :----------------------------------- | :--------: | :--------: | :----: | :--------------------------- |
@@ -170,7 +178,7 @@ class CustomDataset(EntityClassificationDataset):
     | `BertCapsuleNetwork`                 |    83.4    |    65.1    |   6    | bert-base-uncased            |
     | `BertCapsuleNetwork`                 |    86.0    |  **75.3**  |   13   | bert-base-uncased-yelp       |
 
-- `SemEval2015Task12_OpinionSentiment`
+- `SemEval2015Task12_OpinionPolarity`
     
     |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
     | :----------------------------------- | :--------: | :--------: | :----: | :--------------------------- |
@@ -189,7 +197,7 @@ class CustomDataset(EntityClassificationDataset):
     | `BertForSentencePairClassification`  |    100.0   |    100.0   |   2    | bert-base-uncased            |
     | `BertCapsuleNetwork`                 |    100.0   |    100.0   |   5    | bert-base-uncased            |
 
-- `GermanYelpSentiment`
+- `GermanYelp_OpinionPolarity`
 
     |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
     | :----------------------------------- | :--------: | :--------: | :----: | :--------------------------- |
@@ -199,3 +207,14 @@ class CustomDataset(EntityClassificationDataset):
     | `BertForSentencePairClassification`  |    93.7    |    93.0    |   19   |  bert-base-german-cased-yelp |
     | `BertCapsuleNetwork`                 |    91.4    |    90.3    |   4    |  bert-base-german-cased      |
     | `BertCapsuleNetwork`                 |    92.7    |    92.0    |   12   |  bert-base-german-cased-yelp |
+
+- `GermanYelp_AspectPolarity`
+
+    |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
+    | :----------------------------------- | :--------: | :--------: | :----: | :--------------------------- |
+    | `BertForEntityClassification`        |    88.7    |    87.4    |   7    |  bert-base-german-cased      |
+    | `BertForEntityClassification`        |  **92.5**  |  **91.4**  |   18   |  bert-base-german-cased-yelp |
+    | `BertForSentencePairClassification`  |    90.0    |    88.6    |   6    |  bert-base-german-cased      |
+    | `BertForSentencePairClassification`  |    91.2    |    90.3    |   15   |  bert-base-german-cased-yelp |
+    | `BertCapsuleNetwork`                 |    89.2    |    88.0    |   20   |  bert-base-german-cased      |
+    | `BertCapsuleNetwork`                 |    92.1    |    91.1    |   15   |  bert-base-german-cased-yelp |
