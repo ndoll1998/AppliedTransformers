@@ -140,24 +140,27 @@ class CustomDataset(RelationExtractionDataset):
 
 - `GermanYelp_Polarity`
 
-    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
-    | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForRelationExtraction`     |    91.8    |    90.6    |   2    |  bert-base-german-cased      |
-    | `BertForRelationExtraction`     |  **94.5**  |  **93.8**  |   11   |  bert-base-german-cased-yelp |
+    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name                |
+    | :------------------------------ | :--------: | :--------: | :----: | :------------------------------------- |
+    | `BertForRelationExtraction`     |    91.4    |    90.5    |   2    |  bert-base-german-cased                |
+    | `BertForRelationExtraction`     |    93.2    |    92.2    |   9    |  bert-base-german-cased-yelp           |
+    | `KnowBertForRelationExtraction` |  **93.5**  |  **92.6**  |   10   |  bert-base-german-cased-senticnet-yelp |
 
 - `GermanYelp_Linking`
 
-    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
-    | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForRelationExtraction`     |  **94.8**  |  **94.7**  |   7    |  bert-base-german-cased      |
-    | `BertForRelationExtraction`     |    93.7    |    93.5    |   4    |  bert-base-german-cased-yelp |
+    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name                |
+    | :------------------------------ | :--------: | :--------: | :----: | :------------------------------------- |
+    | `BertForRelationExtraction`     |    93.6    |    93.3    |   16   |  bert-base-german-cased                |
+    | `BertForRelationExtraction`     |  **94.6**  |  **94.5**  |   5    |  bert-base-german-cased-yelp           |
+    | `KnowBertForRelationExtraction` |  **94.6**  |  **94.5**  |   14   |  bert-base-german-cased-senticnet-yelp |
 
 - `GermanYelp_LinkingAndPolarity`
 
-    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
-    | :------------------------------ | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForRelationExtraction`     |    87.4    |    85.1    |   5    |  bert-base-german-cased      |
-    | `BertForRelationExtraction`     |  **88.9**  |  **87.7**  |   7    |  bert-base-german-cased-yelp |
+    |              Model              |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name                |
+    | :------------------------------ | :--------: | :--------: | :----: | :------------------------------------- |
+    | `BertForRelationExtraction`     |    89.1    |    87.1    |   18   |  bert-base-german-cased                |
+    | `BertForRelationExtraction`     |    90.8    |    89.3    |   19   |  bert-base-german-cased-yelp           |
+    | `BertForRelationExtraction`     |  **91.0**  |  **89.8**  |   20   |  bert-base-german-cased-senticnet-yelp |
 
 - `SmartdataCorpus`
 
