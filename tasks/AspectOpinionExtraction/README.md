@@ -95,14 +95,16 @@ class CustomDataset(AspectOpinionExtractionDataset):
 
 - `SemEval2015Task12`
 
-    |                 Model                |  Aspect-F1  |  Opinion-F1  | Epochs |   Pretrained Model Name      |
-    | :----------------------------------- | :---------: | :----------: | :----: | :--------------------------- |
-    | `BertForAspectOpinionExtraction`     |     77.9    |     77.9     |   12   |  bert-base-uncased           |
-    | `BertForAspectOpinionExtraction`     |   **79.8**  |   **79.0**   |   30   |  bert-base-uncased-yelp      |
+    |                 Model                |  Aspect-F1  |  Opinion-F1  | Epochs |   Pretrained Model Name           |
+    | :----------------------------------- | :---------: | :----------: | :----: | :-------------------------------- |
+    | `BertForAspectOpinionExtraction`     |     77.9    |     77.9     |   12   |  bert-base-uncased                |
+    | `BertForAspectOpinionExtraction`     |   **79.5**  |   **79.6**   |   30   |  bert-base-uncased-yelp           |
+    | `KnowBertForAspectOpinionExtraction` |     78.8    |     78.3     |   28   |  bert-base-uncased-senticnet-yelp |
 
 - `GermanYelpDataset`
 
-    |                 Model                |  Aspect-F1  |  Opinion-F1  | Epochs |   Pretrained Model Name      |
-    | :----------------------------------- | :---------: | :----------: | :----: | :--------------------------- |
-    | `BertForAspectOpinionExtraction`     |     80.2    |   **76.4**   |   30   |  bert-base-german-cased      |
-    | `BertForAspectOpinionExtraction`     |   **81.2**  |   **76.4**   |   29   |  bert-base-german-cased-yelp |
+    |                 Model                |  Aspect-F1  |  Opinion-F1  | Epochs |   Pretrained Model Name                |
+    | :----------------------------------- | :---------: | :----------: | :----: | :------------------------------------- |
+    | `BertForAspectOpinionExtraction`     |     80.2    |     76.4     |   30   |  bert-base-german-cased                |
+    | `BertForAspectOpinionExtraction`     |     81.0    |     77.4     |   11   |  bert-base-german-cased-yelp           |
+    | `KnowBertForAspectOpinionExtraction` |   **82.6**  |   **79.6**   |   19   |  bert-base-german-cased-senticnet-yelp |
