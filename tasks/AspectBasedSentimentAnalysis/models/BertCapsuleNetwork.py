@@ -355,8 +355,9 @@ class KnowBertCapsuleNetwork(BertCapsuleNetwork, KnowBertModel):
         shape = (len(labels), max((len(ids) for ids in label_ids)))
         input_ids = align_shape(label_ids, shape, tokenizer.pad_token_id)
         # create input tensors
-        input_ids = torch.LongTensor(input_ids).to(self.device)
-        attention_mask = torch.LongTensor((input_ids != tokenizer.pad_token_id).long()).to(self.device)
+        input_ids = torch.LongTensor(input_ids)
+        attention_mask = torch.LongTensor((input_ids != tokenizer.pad_token_id).long())
+        input_ids, attention_mask = input_ids.to(self.device), attention_mask.to(self.device)
         # pass through model
         self.prepare_kbs(label_tokens)
         label_embed, _, _, _ = KnowBertModel.forward(self, input_ids, attention_mask=attention_mask)

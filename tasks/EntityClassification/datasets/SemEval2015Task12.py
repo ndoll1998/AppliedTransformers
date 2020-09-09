@@ -18,7 +18,7 @@ class SemEval2015Task12_AspectPolarity(EntityClassificationDataset):
     def yield_item_features(self, train:bool, data_base_dir:str ='./data'):
 
         # build full paths to files
-        fname = SemEval2015Task12_AspectSentiment.TRAIN_FILE if train else SemEval2015Task12_AspectSentiment.TEST_FILE
+        fname = SemEval2015Task12_AspectPolarity.TRAIN_FILE if train else SemEval2015Task12_AspectPolarity.TEST_FILE
         fpath = os.path.join(data_base_dir, fname)
 
         # parse xml file
@@ -62,7 +62,7 @@ class SemEval2015Task12_OpinionPolarity(EntityClassificationDataset):
     def yield_item_features(self, train:bool, data_base_dir:str ='./data'):
 
         # build full paths to files
-        fname = SemEval2015Task12_OpinionSentiment.TRAIN_FILE if train else SemEval2015Task12_OpinionSentiment.TEST_FILE
+        fname = SemEval2015Task12_OpinionPolarity.TRAIN_FILE if train else SemEval2015Task12_OpinionPolarity.TEST_FILE
         fpath = os.path.join(data_base_dir, fname)
 
         # load file content
@@ -83,7 +83,7 @@ class SemEval2015Task12_OpinionPolarity(EntityClassificationDataset):
             opinion_pos = [sent.find(o) for o in opinions]
             opinion_spans = [(i, i + len(o)) for i, o in zip(opinion_pos, opinions)]
             # get sentiment labels
-            sentiments = [SemEval2015Task12_OpinionSentiment.LABELS[(-int(i) + 1) // 2] for i in sentiments]
+            sentiments = [SemEval2015Task12_OpinionPolarity.LABELS[(-int(i) + 1) // 2] for i in sentiments]
             
             yield sent, opinion_spans, sentiments
             
