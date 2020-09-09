@@ -169,25 +169,30 @@ class CustomDataset(EntityClassificationDataset):
 
 - `SemEval2015Task12_AspectPolarity`
     
-    |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
-    | :----------------------------------- | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForEntityClassification`        |    82.7    |    63.8    |   14   | bert-base-uncased            |
-    | `BertForEntityClassification`        |    83.9    |    67.2    |   12   | bert-base-uncased-yelp       |
-    | `BertForSentencePairClassification`  |    82.5    |    66.7    |   17   | bert-base-uncased            |
-    | `BertForSentencePairClassification`  |  **86.4**  |    70.4    |   16   | bert-base-uncased-yelp       |
-    | `BertCapsuleNetwork`                 |    83.4    |    65.1    |   6    | bert-base-uncased            |
-    | `BertCapsuleNetwork`                 |    86.0    |  **75.3**  |   13   | bert-base-uncased-yelp       |
+    |                 Model                   |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name          |
+    | :-------------------------------------- | :--------: | :--------: | :----: | :------------------------------- |
+    | `BertForEntityClassification`           |    82.7    |    63.8    |   14   | bert-base-uncased                |
+    | `BertForEntityClassification`           |    83.9    |    67.2    |   12   | bert-base-uncased-yelp           |
+    | `KnowBertForEntityClassification`       |    83.8    |    63.9    |   12   | bert-base-uncased-senticnet-yelp |
+    | `BertForSentencePairClassification`     |    82.5    |    66.7    |   17   | bert-base-uncased                |
+    | `BertForSentencePairClassification`     |    84.2    |    71.3    |   13   | bert-base-uncased-yelp           |
+    | `KnowBertForSentencePairClassification` |    85.1    |    71.2    |   19   | bert-base-uncased-senticnet-yelp |
+    | `BertCapsuleNetwork`                    |    83.4    |    65.1    |   6    | bert-base-uncased                |
+    | `BertCapsuleNetwork`                    |    86.0    |    75.3    |   13   | bert-base-uncased-yelp           |
+    | `KnowBertCapsuleNetwork`                |  **86.4**  |  **76.0**  |   14   | bert-base-uncased-senticnet-yelp |
 
 - `SemEval2015Task12_OpinionPolarity`
     
-    |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
-    | :----------------------------------- | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForEntityClassification`        |    96.3    |    95.1    |   19   | bert-base-uncased            |
-    | `BertForEntityClassification`        |    96.5    |    95.4    |   16   | bert-base-uncased-yelp       |
-    | `BertForSentencePairClassification`  |    96.5    |    95.4    |   19   | bert-base-uncased            |
-    | `BertForSentencePairClassification`  |    96.9    |    95.9    |   16   | bert-base-uncased-yelp       |
-    | `BertCapsuleNetwork`                 |    96.9    |    95.9    |   2    | bert-base-uncased            |
-    | `BertCapsuleNetwork`                 |  **97.3**  |  **96.4**  |   13   | bert-base-uncased-yelp       |
+    |                 Model                   |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name          |
+    | :-------------------------------------- | :--------: | :--------: | :----: | :------------------------------- |
+    | `BertForEntityClassification`           |    96.3    |    95.1    |   19   | bert-base-uncased                |
+    | `BertForEntityClassification`           |    96.5    |    95.4    |   16   | bert-base-uncased-yelp           |
+    | `KnowBertForEntityClassification`       |    96.5    |    95.3    |   18   | bert-base-uncased-senticnet-yelp |
+    | `BertForSentencePairClassification`     |    96.5    |    95.4    |   19   | bert-base-uncased                |
+    | `BertForSentencePairClassification`     |    96.9    |    95.9    |   16   | bert-base-uncased-yelp           |
+    | `KnowBertForSentencePairClassification` |    96.9    |    95.8    |   8    | bert-base-uncased-senticnet-yelp |
+    | `BertCapsuleNetwork`                    |    96.9    |    95.9    |   2    | bert-base-uncased                |
+    | `BertCapsuleNetwork`                    |  **97.3**  |  **96.4**  |   13   | bert-base-uncased-yelp           |
 
 - `SemEval2014Task4`
 
@@ -199,22 +204,26 @@ class CustomDataset(EntityClassificationDataset):
 
 - `GermanYelp_OpinionPolarity`
 
-    |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
-    | :----------------------------------- | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForEntityClassification`        |    91.3    |    90.3    |   14   |  bert-base-german-cased      |
-    | `BertForEntityClassification`        |  **94.7**  |  **94.1**  |   8    |  bert-base-german-cased-yelp |
-    | `BertForSentencePairClassification`  |    92.4    |    91.5    |   7    |  bert-base-german-cased      |
-    | `BertForSentencePairClassification`  |    93.7    |    93.0    |   19   |  bert-base-german-cased-yelp |
-    | `BertCapsuleNetwork`                 |    91.4    |    90.3    |   4    |  bert-base-german-cased      |
-    | `BertCapsuleNetwork`                 |    92.7    |    92.0    |   12   |  bert-base-german-cased-yelp |
+    |                 Model                    |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name                |
+    | :--------------------------------------- | :--------: | :--------: | :----: | :------------------------------------- |
+    | `BertForEntityClassification`            |    91.3    |    90.3    |   14   |  bert-base-german-cased                |
+    | `BertForEntityClassification`            |  **94.7**  |    94.1    |   8    |  bert-base-german-cased-yelp           |
+    | `KnowBertForEntityClassification`        |  **94.7**  |    94.0    |   3    |  bert-base-german-cased-senticnet-yelp |
+    | `BertForSentencePairClassification`      |    92.4    |    91.5    |   7    |  bert-base-german-cased                |
+    | `BertForSentencePairClassification`      |    93.7    |    93.0    |   19   |  bert-base-german-cased-yelp           |
+    | `KnowBertForSentencePairClassification`  |  **94.7**  |  **94.2**  |   19   |  bert-base-german-cased-senticnet-yelp |
+    | `BertCapsuleNetwork`                     |    91.4    |    90.3    |   4    |  bert-base-german-cased                |
+    | `BertCapsuleNetwork`                     |    92.7    |    92.0    |   12   |  bert-base-german-cased-yelp           |
 
 - `GermanYelp_AspectPolarity`
 
-    |                 Model                |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name      |
-    | :----------------------------------- | :--------: | :--------: | :----: | :--------------------------- |
-    | `BertForEntityClassification`        |    88.7    |    87.4    |   7    |  bert-base-german-cased      |
-    | `BertForEntityClassification`        |  **92.5**  |  **91.4**  |   18   |  bert-base-german-cased-yelp |
-    | `BertForSentencePairClassification`  |    90.0    |    88.6    |   6    |  bert-base-german-cased      |
-    | `BertForSentencePairClassification`  |    91.2    |    90.3    |   15   |  bert-base-german-cased-yelp |
-    | `BertCapsuleNetwork`                 |    89.2    |    88.0    |   20   |  bert-base-german-cased      |
-    | `BertCapsuleNetwork`                 |    92.1    |    91.1    |   15   |  bert-base-german-cased-yelp |
+    |                 Model                    |  Micro-F1  |  Macro-F1  | Epochs |   Pretrained Model Name                |
+    | :--------------------------------------- | :--------: | :--------: | :----: | :------------------------------------- |
+    | `BertForEntityClassification`            |    88.7    |    87.4    |   7    |  bert-base-german-cased                |
+    | `BertForEntityClassification`            |  **92.5**  |  **91.4**  |   18   |  bert-base-german-cased-yelp           |
+    | `KnowBertForEntityClassification`        |    92.1    |    90.9    |   8    |  bert-base-german-cased-senticnet-yelp |
+    | `BertForSentencePairClassification`      |    90.0    |    88.6    |   6    |  bert-base-german-cased                |
+    | `BertForSentencePairClassification`      |    91.2    |    90.3    |   15   |  bert-base-german-cased-yelp           |
+    | `KnowBertForSentencePairClassification`  |    91.2    |    90.2    |   18   |  bert-base-german-cased-senticnet-yelp |
+    | `BertCapsuleNetwork`                     |    89.2    |    88.0    |   20   |  bert-base-german-cased                |
+    | `BertCapsuleNetwork`                     |    92.1    |    91.1    |   15   |  bert-base-german-cased-yelp           |
