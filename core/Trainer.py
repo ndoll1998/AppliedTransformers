@@ -96,7 +96,6 @@ class BaseTrainer(object):
             pbar.set_description("Train")
 
             for i, batch in enumerate(self.train_dataloader, 1):
-                break
                 # get loss
                 loss, _ = self.predict_batch(*batch)
                 train_running_loss += loss.item()
