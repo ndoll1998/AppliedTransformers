@@ -51,7 +51,7 @@ class AspectOpinionExtractionTrainer(BaseTrainer):
         # read metrics
         train_loss, test_loss, aspect_f1, opinion_f1, aspect_confusions, opinion_confusions = self.metrics
         # build layout and create figure
-        n = 2 + len(aspect_confusions)
+        n = 2 + ceil(len(aspect_confusions) / 6)
         fig = plt.figure(figsize=figsize, **kwargs)
         # plot train and test loss
         loss_ax = fig.add_subplot(n, 1, 1)
@@ -67,8 +67,8 @@ class AspectOpinionExtractionTrainer(BaseTrainer):
         f1_ax.set(xlabel='Epoch', ylabel='F1-Score', title='F1 Score')
         # plot all confusion matrices
         for i, (aspect_cm, opinion_cm) in enumerate(zip(aspect_confusions, opinion_confusions), 1):
-            aspect_ax = fig.add_subplot(n, 2, 4 - 1 + i * 2)
-            opinion_ax = fig.add_subplot(n, 2, 4 + i * 2)
+            aspect_ax = fig.add_subplot(n, 6, 12 - 1 + i * 2)
+            opinion_ax = fig.add_subplot(n, 6, 12 + i * 2)
             plot_confusion_matrix(aspect_ax, aspect_cm, title="Aspect - Epoch %i" % i)
             plot_confusion_matrix(opinion_ax, opinion_cm, title="Opinion - Epoch %i" % i)
         # set layout
