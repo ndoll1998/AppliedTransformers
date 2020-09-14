@@ -156,7 +156,7 @@ class BaseTrainer(object):
         dump_dir = os.path.join(
             dump_base_path, 
             self.model.__class__.__name__, 
-            "%s-%s" % (self.pretrained_name, self.dataset_name)
+            "%s-%s" % (os.path.split(self.pretrained_name)[1], self.dataset_name)
         )
         # create directory
         os.makedirs(dump_dir, exist_ok=True)
@@ -216,12 +216,12 @@ class SimpleTrainer(BaseTrainer):
     def metrics_string(self, metrics:tuple) -> str:
         return "Train Loss: %.4f\t- Test Loss: %.4f\t- Micro F1: %.4f\t- Macro F1: %.4f" % metrics[:4]
 
-    def plot(self, figsize=(20, 15), **kwargs):
+    def plot(self) -> plt.Figure:
         # read metrics
         train_loss, test_loss, micro_f1, macro_f1, confusions = self.metrics
         # build layout and create figure
-        n = 2 + ceil(len(confusions) / 5)
-        fig = plt.figure(figsize=figsize, **kwargs)
+        n = 2 + ceil(len(confusions) / 3)
+        fig = plt.figure(figsize=(10, 4 * n))
         # create loss subplot
         loss_ax = fig.add_subplot(n, 1, 1)
         loss_ax.plot(train_loss, label='Train')
@@ -236,7 +236,7 @@ class SimpleTrainer(BaseTrainer):
         f1_ax.set(xlabel='Epoch', ylabel='F1-Score', title="F1 Score")
         # plot all confusion matrices
         for i, cm in enumerate(confusions, 1):
-            ax = fig.add_subplot(n, 5, 10 + i)
+            ax = fig.add_subplot(n, 3, 6 + i)
             plot_confusion_matrix(ax, cm, title="Epoch %i" % i)
         # set layout
         fig.tight_layout()
