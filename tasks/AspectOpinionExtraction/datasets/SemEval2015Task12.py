@@ -33,6 +33,10 @@ class SemEval2015Task12(AspectOpinionExtractionDataset):
         for sent_opinions, aspects in zip(all_sents_opinions, all_aspects):
             # separate sentence from opinions
             sent, opinions = sent_opinions.split('##') if '##' in sent_opinions else (sent_opinions, '')
+            sent = sent.strip()
+            # check if sentence is valid
+            if len(sent) == 0:
+                continue
             # get aspects and opinions
             opinions = [o.strip()[:-3] for o in opinions.split(',')] if len(opinions) > 0 else []
             aspects = [a.strip() for a in aspects.split(',')] if len(aspects) > 0 else []
@@ -41,6 +45,6 @@ class SemEval2015Task12(AspectOpinionExtractionDataset):
             opinion_spans = [(i, i + len(o)) for i, o in zip(opinion_pos, opinions)]
             aspect_pos = [sent.find(a) for a in aspects]
             aspect_spans = [(i, i + len(a)) for i, a in zip(aspect_pos, aspects)]
-            
+
             # yield features
             yield sent, aspect_spans, opinion_spans
