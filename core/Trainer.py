@@ -10,6 +10,9 @@ from .Model import BaseModel
 from .Dataset import BaseDataset
 # import f1-score metric
 from sklearn.metrics import f1_score
+# import utils
+from .utils import build_confusion_matrix, plot_confusion_matrix
+from math import ceil
 # import visualization tools
 from tqdm import tqdm
 from matplotlib import pyplot as plt
@@ -79,6 +82,10 @@ class BaseTrainer(object):
         """ Compute all metrics from a list of caches collected during the evaluation. """
         raise NotImplementedError()
 
+    def metrics_string(self, metrics:tuple) -> str:
+        """ Build the metrics string that will be displayed during training. """
+        return ""
+
     def run_epoch(self):
 
         # train model
@@ -89,6 +96,7 @@ class BaseTrainer(object):
             pbar.set_description("Train")
 
             for i, batch in enumerate(self.train_dataloader, 1):
+                break
                 # get loss
                 loss, _ = self.predict_batch(*batch)
                 train_running_loss += loss.item()
@@ -130,7 +138,7 @@ class BaseTrainer(object):
             test_running_loss / len(self.test_dataloader),
         ) + metrics
 
-    def train(self, epochs:int) -> None:
+    def train(self, epochs:int, dump_path:str =None) -> None:
 
         metric_caches = []
         # run epochs
@@ -140,7 +148,7 @@ class BaseTrainer(object):
             metrics = self.run_epoch()
             metric_caches.append(metrics)
             # print
-            print("Evaluation: %s" % ', '.join(["%.3f" % m for m in metrics]))
+            print(self.metrics_string(metrics))
         # build metric lists
         self.metrics = tuple(zip(*metric_caches))
 
@@ -198,25 +206,41 @@ class SimpleTrainer(BaseTrainer):
         # concatenate tensors from caches and get predictions from logits
         targets, logits = (torch.cat(l, dim=0) for l in zip(*caches))
         predicts = logits.max(dim=-1)[1]
+        # build confusion matrix
+        conf_matrix = build_confusion_matrix(targets, predicts)
         # compute f1-scores
         micro_f1 = f1_score(predicts, targets, average='micro')
         macro_f1 = f1_score(predicts, targets, average='macro')
         # return metrics
-        return micro_f1, macro_f1
+        return micro_f1, macro_f1, conf_matrix
 
-    def plot(self, figsize=(8, 5)):
-        # create figure
-        fig, (loss_ax, f1_ax) = plt.subplots(2, 1, figsize=figsize, sharex=True)
-        # plot train and test loss
-        loss_ax.plot(self.metrics[0], label='Train')
-        loss_ax.plot(self.metrics[1], label='Test')
+    def metrics_string(self, metrics:tuple) -> str:
+        return "Train Loss: %.4f\t- Test Loss: %.4f\t- Micro F1: %.4f\t- Macro F1: %.4f" % metrics[:4]
+
+    def plot(self, figsize=(20, 15), **kwargs):
+        # read metrics
+        train_loss, test_loss, micro_f1, macro_f1, confusions = self.metrics
+        # build layout and create figure
+        n = 2 + ceil(len(confusions) / 5)
+        fig = plt.figure(figsize=figsize, **kwargs)
+        # create loss subplot
+        loss_ax = fig.add_subplot(n, 1, 1)
+        loss_ax.plot(train_loss, label='Train')
+        loss_ax.plot(test_loss, label='Test')
         loss_ax.legend()
-        loss_ax.set(xlabel='Epoch', ylabel='Loss')
+        loss_ax.set(xlabel='Epoch', ylabel='Loss', title="Loss")
         # plot f1-scores
-        f1_ax.plot(self.metrics[2], label='Micro')
-        f1_ax.plot(self.metrics[3], label='Macro')
+        f1_ax = fig.add_subplot(n, 1, 2)
+        f1_ax.plot(micro_f1, label='Micro')
+        f1_ax.plot(macro_f1, label='Macro')
         f1_ax.legend()
-        f1_ax.set(xlabel='Epoch', ylabel='F1-Score')
+        f1_ax.set(xlabel='Epoch', ylabel='F1-Score', title="F1 Score")
+        # plot all confusion matrices
+        for i, cm in enumerate(confusions, 1):
+            ax = fig.add_subplot(n, 5, 10 + i)
+            plot_confusion_matrix(ax, cm, title="Epoch %i" % i)
+        # set layout
+        fig.tight_layout()
         # return figure
         return fig
 

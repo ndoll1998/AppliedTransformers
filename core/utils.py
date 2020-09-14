@@ -2,6 +2,8 @@
 import torch.nn as nn
 # import numpy
 import numpy as np
+# import matplotlib
+import matplotlib.pyplot as plt
 # import utils
 import unicodedata
 from functools import wraps
@@ -205,3 +207,48 @@ def get_spans_from_bio_scheme(bio:list):
             in_entity = False
 
     return spans
+
+
+""" Trainer Helpers """
+
+def build_confusion_matrix(targets:list, predictions:list) -> np.ndarray:
+    # get list of all unique labels
+    labels = np.unique(np.concatenate((targets, predictions)))
+    labels = np.sort(labels)
+    # build confusion matrix
+    confusion = np.zeros((labels.shape[0], labels.shape[0]))
+    for t, p in zip(targets, predictions):
+        confusion[t, p] += 1
+    # return confusion
+    return confusion
+
+def plot_confusion_matrix(ax:plt.Axes, cm:np.ndarray, classes:list =None, normalize:bool =True, title:str ="Confusion Matrix") -> None:
+    # default classes and check them
+    classes = list(range(cm.shape[0])) if classes is None else classes
+    assert len(classes) == cm.shape[0] == cm.shape[1]
+    # normalize confusion matrix if asked for
+    cm = (cm.astype(np.float32) / (cm.sum(axis=1, keepdims=True) + 1e-10)) if normalize else cm.astype(np.int32)
+    fmt = '.2f' if normalize else 'd'
+    # configure axes
+    ax.set(
+        xticks=np.arange(cm.shape[1]),
+        yticks=np.arange(cm.shape[0]),
+        xticklabels=classes,
+        yticklabels=classes,
+        xlabel='Predicted Labels',
+        ylabel='True Labels',
+        title=title
+    )
+    # create confusion matrix and color bar
+    im = ax.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+    ax.figure.colorbar(im, ax=ax)
+    # Rotate the tick labels and set their alignment.
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+    # Loop over data dimensions and create text annotations.
+    thresh = cm.max() / 2.
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            ax.text(j, i, format(cm[i, j], fmt),
+                        ha="center", va="center",
+                        color="white" if cm[i, j] > thresh else "black"
+                    )
