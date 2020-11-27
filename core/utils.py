@@ -211,12 +211,9 @@ def get_spans_from_bio_scheme(bio:list):
 
 """ Trainer Helpers """
 
-def build_confusion_matrix(targets:list, predictions:list) -> np.ndarray:
-    # get list of all unique labels
-    labels = np.unique(np.concatenate((targets, predictions)))
-    labels = np.sort(labels)
+def build_confusion_matrix(n, targets:list, predictions:list) -> np.ndarray:
     # build confusion matrix
-    confusion = np.zeros((labels.shape[0], labels.shape[0]))
+    confusion = np.zeros((n, n))
     for t, p in zip(targets, predictions):
         confusion[t, p] += 1
     # return confusion

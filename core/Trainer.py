@@ -46,7 +46,8 @@ class BaseTrainer(object):
         self.pretrained_name = pretrained_name
         self.lr, self.wd = learning_rate, weight_decay
         # create tokenizer
-        self.tokenizer = model_type.TOKENIZER_TYPE.from_pretrained(pretrained_name)
+        lower_case = 'uncased' in pretrained_name
+        self.tokenizer = model_type.TOKENIZER_TYPE.from_pretrained(pretrained_name, do_lower_case=lower_case)
 
         # check model type
         if not issubclass(model_type, self.__class__.BASE_MODEL_TYPE):
@@ -206,7 +207,7 @@ class SimpleTrainer(BaseTrainer):
         targets, logits = (torch.cat(l, dim=0) for l in zip(*caches))
         predicts = logits.max(dim=-1)[1]
         # build confusion matrix
-        conf_matrix = build_confusion_matrix(targets, predicts)
+        conf_matrix = build_confusion_matrix(logits.shape[-1], targets, predicts)
         # compute f1-scores
         micro_f1 = f1_score(predicts, targets, average='micro')
         macro_f1 = f1_score(predicts, targets, average='macro')

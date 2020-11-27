@@ -25,7 +25,8 @@ class BasePredictor(object):
         self.device = device
         self.pretrained_name = pretrained_name
         # create tokenizer
-        self.tokenizer = model_type.TOKENIZER_TYPE.from_pretrained(pretrained_name)
+        lower_case = 'uncased' in pretrained_name
+        self.tokenizer = model_type.TOKENIZER_TYPE.from_pretrained(pretrained_name, do_lower_case=lower_case)
         # check model type
         if not issubclass(model_type, self.__class__.BASE_MODEL_TYPE):
             raise ValueError("Model Type %s must inherit %s!" % (model_type.__name__, self.__class__.BASE_MODEL_TYPE.__name__))
@@ -47,6 +48,7 @@ class BasePredictor(object):
         # build and prepare item
         item = self.dataset_type.build_dataset_item(text, *args, **kwargs, tokenizer=self.tokenizer)
         item = self.model.build_feature_tensors(*item, tokenizer=self.tokenizer)
+        print(item)
         # predict and postprocess
         outputs, _ = self.model.preprocess_and_predict(*item, tokenizer=self.tokenizer, device=self.device)
         return self.postprocess(*outputs)

@@ -36,8 +36,8 @@ class AspectOpinionExtractionTrainer(BaseTrainer):
         labels_a, labels_o, logits_a, logits_o = (torch.cat(l, dim=0) for l in zip(*caches))
         predicts_a, predicts_o = logits_a.max(dim=-1)[1], logits_o.max(dim=-1)[1]
         # build confusion matrices
-        aspect_confusion = build_confusion_matrix(labels_a, predicts_a)
-        opinion_confusion = build_confusion_matrix(labels_o, predicts_o)
+        aspect_confusion = build_confusion_matrix(logits_a.size(-1), labels_a, predicts_a)
+        opinion_confusion = build_confusion_matrix(logits_o.size(-1), labels_o, predicts_o)
         # compute f1-scores
         macro_f1_aspects = f1_score(predicts_a, labels_a, average='macro')
         macro_f1_opinions = f1_score(predicts_o, labels_o, average='macro')

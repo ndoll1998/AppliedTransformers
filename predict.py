@@ -6,15 +6,15 @@ def RelationExtraction():
     from tasks.RelationExtraction.models import BertForRelationExtraction
     from tasks.RelationExtraction.datasets import (
         SemEval2010Task8,
-        GermanYelpRelation,
-        GermanYelpPolarity,
+        GermanYelp_Linking,
+        GermanYelp_Polarity,
         SmartdataCorpus,
     )
 
     # create predictor
     predictor = RelationExtractionPredictor(
         model_type = BertForRelationExtraction,
-        pretrained_name = 'bert-base-uncased',
+        pretrained_name = './results/BertForRelationExtraction/bert-base-uncased-SemEval2010Task8',
         device = 'cpu',
         # dataset
         dataset_type=SemEval2010Task8
@@ -74,14 +74,14 @@ def AspectOpinionExtraction():
     # create predictor
     predictor = AspectOpinionExtractionPredictor(
         model_type = BertForAspectOpinionExtraction,
-        pretrained_name = 'bert-base-uncased',
+        pretrained_name = 'results/BertForAspectOpinionExtraction/bert-base-german-cased-yelp-GermanYelpDataset',
         device = 'cpu',
         # dataset
         dataset_type=SemEval2015Task12
     )
 
     # predict aspect and opinions
-    aspects, opinions = predictor(text="The coffee was hot and tasty.")
+    aspects, opinions = predictor(text="Der Kaffee war gut aber die Bedienung war langsam.")
 
     # print
     print("Aspects:", aspects)
@@ -117,7 +117,7 @@ def AspectBasedSentimentAnalysis():
 
 if __name__ == '__main__':
 
-    RelationExtraction()
-    EntityClassification()
+    # RelationExtraction()
+    # EntityClassification()
     AspectOpinionExtraction()
-    AspectBasedSentimentAnalysis()
+    # AspectBasedSentimentAnalysis()
