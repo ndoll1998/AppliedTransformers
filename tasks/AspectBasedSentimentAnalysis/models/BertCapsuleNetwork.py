@@ -227,7 +227,7 @@ class BertCapsuleNetwork(AspectBasedSentimentAnalysisModel, BertModel):
         # aspect-aware normalization
         norm_weight = self.norm_attention.get_attention_weight(secondary_capsule, primary_capsule, sentence_mask)
         # capsule guided routing
-        category_capsule = self.capsule_gruided_routing(primary_capsule, norm_weight)
+        category_capsule = self.capsule_guided_routing(primary_capsule, norm_weight)
         category_capsule_norm = (category_capsule * category_capsule).sum(dim=-1)
         category_capsule_norm = torch.sqrt(category_capsule_norm)
         # add to outputs
@@ -250,7 +250,7 @@ class BertCapsuleNetwork(AspectBasedSentimentAnalysisModel, BertModel):
         # return
         return outputs
 
-    def capsule_gruided_routing(self, primary_capsule, norm_weight):
+    def capsule_guided_routing(self, primary_capsule, norm_weight):
         # build guide matrix
         guide_capsule = squash(primary_capsule)
         guide_matrix = (primary_capsule @ self.guide_weight) @ self.guide_capsule.transpose(0, 1)
