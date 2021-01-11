@@ -6,55 +6,44 @@ Applied Transformers is a project collecting state-of-the-art transformer models
 
 The Project currently holds the following tasks:
 
-- `AspectBasedSentimentAnalysis`
-- `AspectOpinionCoExtraction`
-- `EntityClassification`
-- `RelationExtraction`
+- [AspectBasedSentimentAnalysis](applied/tasks/absa/ReadMe.md)
 
-## Target training example
+## How to use
+
+Our main goal is to provide a very simple yet scalable interface for both training and infering SOTA transformer models for serveral NLP tasks. The following shows a simple example to train a `BERT` model for aspect based sentiment analysis (from `examples/train_abse.py`).
 
 ```python
-from applied import bases
+import torch
+from applied import encoders
 from applied import optimizers
 from applied.tasks import absa
 import matplotlib.pyplot as plt
 
+# create encoder
+encoder = encoders.BERT.from_pretrained("bert-base-uncased")
+encoder.init_tokenizer_from_pretrained("bert-base-uncased")
 # create model and optimizer
-base = bases.BERT.from_pretrained("bert-base-uncased")
-model = absa.heads.SentencePairClassification(base=base)
-optim = optimizers.AdamW(model.parameters(only_head=False), lr=1e-5, weight_decay=0.01)
+model = absa.models.SentencePairClassification(encoder=encoder, 
+    num_labels=absa.datasets.SemEval2014Task4.num_labels())
+optim = optimizers.AdamW(model.parameters(only_head=True), lr=1e-5, weight_decay=0.01)
 # create dataset and prepare it for the model
-dataset = absa.data.SemEval2014Task4(data_base_dir="./data", seq_length=128)
+dataset = absa.datasets.SemEval2014Task4(
+    data_base_dir='../data', seq_length=128, batch_size=2)
 dataset.prepare(model)
-# create a trainer instance and train the model
-trainer = absa.Trainer(
-    model=model,
-    dataset=dataset,
-    optimizer=optim
-).train(
-    epochs=5,
-    batch_size=64,
-    verbose=True
-)
+# create trainer instance and train model
+trainer = absa.Trainer(model, dataset, optim)
+trainer.train(epochs=10)
 # save metrics and model
-trainer.metrics.save("results/ABSA-Bert/")
-model.save("results/ABSA-Bert/")
+trainer.metrics.save("../results/ABSA-Bert/metrics.json")
+torch.save(model.state_dict(), "../results/ABSA-Bert/model.bin")
 # plot metrics - slice metrics to get metrics of specific epochs
-fig = trainer.metrics[1:5].plot()
+fig = trainer.metrics.plot()
 plt.show()
 ```
 
 
 ## TODOs
- - Models need to be able to use different bases (BERT, ALBERT, KnowBERT, etc.)
- - Trainer receives model instance as argument, not model description
+ - implement more encoders
  - make trainer iterable
- - Ability to combine models to use the same base and apply multiple heads
-   - not sure if this is a good idea because this needs to combine datasets too for combined training of multiple heads
-   - is there a generic way to "synchronize" datasets?
- - move core.utils to tasks.common
  - is there any benefit of having a task instance? (core.task)
- - make the repo more package like and also PyPi
- - a dataset class should be able to yield both training and testing examples
-    - `dataset.train` yields training examples
-    - `dataset.eval`yields testing examples
+ - PyPi
