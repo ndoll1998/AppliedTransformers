@@ -14,7 +14,6 @@ optim = optimizers.AdamW(model.parameters(only_head=True), lr=1e-5, weight_decay
 # create dataset and prepare it for the model
 dataset = absa.datasets.SemEval2014Task4(
     data_base_dir='../data', seq_length=128, batch_size=2)
-dataset.prepare(model)
 # create trainer instance and train model
 trainer = absa.Trainer(
     model=model, 
