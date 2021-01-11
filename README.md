@@ -6,7 +6,7 @@ Applied Transformers is a project collecting state-of-the-art transformer models
 
 The Project currently holds the following tasks:
 
-- [AspectBasedSentimentAnalysis](applied/tasks/absa/ReadMe.md)
+- [AspectBasedSentimentAnalysis](applied/tasks/absa/README.md)
 
 ## How to use
 
