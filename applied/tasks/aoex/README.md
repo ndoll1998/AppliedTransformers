@@ -91,7 +91,7 @@ for Co-Extraction of Aspect and Opinion Terms](https://www.aaai.org/Conferences/
     - Domain: Restaurant Reviews
     - [Download](https://github.com/happywwy/Coupled-Multi-layer-Attentions/tree/master/util/data_semEval)
 
-- `GermanYelpDataset`
+- `GermYelp`
     - Language: German
     - Domain: Restaurant Reviews
 
