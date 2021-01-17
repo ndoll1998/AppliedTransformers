@@ -4,6 +4,8 @@ from tqdm import tqdm
 # base model and dataset type
 from .model import Model
 from .dataset import Dataset
+# import metric track
+from .metrics import Track
 
 class Trainer(object):
     """ Base class for trainers """
@@ -33,7 +35,7 @@ class Trainer(object):
         # prepare dataset
         self.data.prepare(self.model)
         # list to store al
-        self.metrics = self.__class__.METRICS_TYPE()
+        self.metrics = Track(self.__class__.METRICS_TYPE())
 
     def run_epoch(self) -> None:
 
@@ -58,6 +60,7 @@ class Trainer(object):
                 # update progress bar
                 pbar.set_postfix({'loss': train_running_loss / i})
                 pbar.update(1)
+                # TODO: remove for full training
                 break
 
         # test model
@@ -86,15 +89,15 @@ class Trainer(object):
                     pbar.set_postfix({'loss': eval_running_loss / i})
                     pbar.update(1)
 
-                    if i == 1:
-                        break
+                    # TODO: remove for full evaluation
+                    break
 
         # add a new metrics entry
-        self.metrics.new_entry(
+        self.metrics.add_entry(
             train_loss=train_running_loss / len(self.data.train), 
             eval_loss=eval_running_loss / len(self.data.eval),
-            logits=all_logits,
-            labels=all_labels
+            logits=[l.numpy() for l in all_logits],
+            labels=[l.numpy() for l in all_labels]
         )
             
     def train(self, epochs:int, verbose:bool =True) -> None:

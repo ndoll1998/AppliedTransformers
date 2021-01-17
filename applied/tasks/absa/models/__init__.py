@@ -1,1 +1,1 @@
-from .sentence_pair_classification import SentencePairClassification
+from .sentence_pair_classifier import SentencePairClassifier

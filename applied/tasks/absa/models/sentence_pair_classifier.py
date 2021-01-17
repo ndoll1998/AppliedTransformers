@@ -9,7 +9,7 @@ from applied.core.model import Encoder, FeaturePair
 # import utils
 from typing import Tuple
 
-class SentencePairClassification(ABSA_Model):
+class SentencePairClassifier(ABSA_Model):
     """ Implementation of "Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence" (NAACL 2019)
         Paper: https://arxiv.org/abs/1903.09588
     """
