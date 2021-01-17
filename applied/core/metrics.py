@@ -2,8 +2,6 @@ import json
 from dataclasses import dataclass
 from sklearn.metrics import f1_score
 from matplotlib import pyplot as plt
-
-from collections.abc import Sequence
 from typing import Tuple, Union
 
 @dataclass
