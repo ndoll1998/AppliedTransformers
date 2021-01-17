@@ -6,14 +6,18 @@ The Aspect-based Sentiment Analysis (ABSA) predicts the polarity of an aspect. I
 
 We currently provide the following models:
 
-- `BertForAspectBasedSentimentAnalysis`
+- `SentencePairClassifier`
 
     - [Utilizing BERT for Aspect-Based Sentiment Analysis via Constructing Auxiliary Sentence](https://arxiv.org/abs/1903.09588)
 
 
 A custom model must have the following form:
 ```python
-class SentencePairClassification(ABSA_Model):
+from models.base import ABSA_Model
+from datasets.base import ABSA_DatasetItem
+from applied.core.Model import FeaturePair
+
+class Model(ABSA_Model):
 
     def __init__(self, encoder:Encoder):
         ABSA_Model.__init__(self, encoder=encoder)
@@ -100,14 +104,16 @@ We currently provide the following datasets for this task:
 
 A custom dataset must have the following form.
 ```python
+from typing import Iterator
+from datasets.base import ABSA_Dataset, ABSA_DatasetItem
 
-class CustomDataset(AspectBasedSentimentAnalysisDataset):    
+class CustomDataset(ABSA_Dataset):    
     def yield_train_items(self) -> Iterator[ABSA_DatasetItem]:
         # read and process training data here
         yield ABSA_DatasetItem(
             sentence=text, aspects=aspect_terms, labels=labels)
     def yield_eval_items(self) -> Iterator[ABSA_DatasetItem]:
-        # read and process eval data here
+        # read and process evaluation data here
         yield ABSA_DatasetItem(
             sentence=text, aspects=aspect_terms, labels=labels)
 
