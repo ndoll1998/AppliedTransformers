@@ -19,8 +19,8 @@ trainer = aoex.Trainer(
     optimizer=optim
 ).train(epochs=10)
 # save metrics and model
-# trainer.metrics.save("../results/AOEx-Bert/metrics.json")
-# torch.save(model.state_dict(), "../results/AOEx-Bert/model.bin")
+trainer.metrics.save_table("../results/ABSA-Bert/metrics.table")
+torch.save(model.state_dict(), "../results/ABSA-Bert/model.bin")
 # plot metrics
 fig = trainer.metrics.plot()
 plt.show()
