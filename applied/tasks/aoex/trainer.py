@@ -7,8 +7,8 @@ from .datasets.base import AOEx_Dataset
 # F1-Score Metrics for aspects and opinions
 Aspect_MicroF1 = type("Aspect_MicroF1", (MicroF1Score,), {'idx': 0})
 Aspect_MacroF1 = type("Aspect_MacroF1", (MacroF1Score,), {'idx': 0})
-Opinion_MicroF1 = type("Opinion_MicroF1", (MicroF1Score,), {'idx': 0})
-Opinion_MacroF1 = type("Opinion_MacroF1", (MacroF1Score,), {'idx': 0})
+Opinion_MicroF1 = type("Opinion_MicroF1", (MicroF1Score,), {'idx': 1})
+Opinion_MacroF1 = type("Opinion_MacroF1", (MacroF1Score,), {'idx': 1})
 
 class Trainer(BaseTrainer):
     # model and dataset type
