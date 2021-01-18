@@ -15,7 +15,7 @@ class Trainer(BaseTrainer):
     BASE_MODEL_TYPE = AOEx_Model
     BASE_DATASET_TYPE = AOEx_Dataset
     # metrics type
-    METRICS_TYPE = MetricCollection[Losses, 
+    METRIC_TYPE = MetricCollection[Losses, 
         MetricCollection[Aspect_MicroF1, Opinion_MicroF1].share_axes(),
         MetricCollection[Aspect_MacroF1, Opinion_MacroF1].share_axes()
     ]

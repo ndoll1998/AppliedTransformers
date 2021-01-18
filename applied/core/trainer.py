@@ -14,7 +14,7 @@ class Trainer(object):
     BASE_MODEL_TYPE:type = None
     BASE_DATASET_TYPE:type = None
     # metrics type
-    METRICS_TYPE:type = None
+    METRIC_TYPE:type = None
 
     def __init__(self,
         model:Model,
@@ -35,7 +35,7 @@ class Trainer(object):
         # prepare dataset
         self.data.prepare(self.model)
         # list to store al
-        self.metrics = Track(self.__class__.METRICS_TYPE())
+        self.metrics = Track(self.__class__.METRIC_TYPE())
 
     def run_epoch(self) -> None:
 

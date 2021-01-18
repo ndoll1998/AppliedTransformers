@@ -9,7 +9,7 @@ class Trainer(BaseTrainer):
     BASE_MODEL_TYPE = ABSA_Model
     BASE_DATASET_TYPE = ABSA_Dataset
     # metrics type
-    METRICS_TYPE = MetricCollection[Losses,
+    METRIC_TYPE = MetricCollection[Losses,
         MetricCollection[
             MicroF1Score, 
             MacroF1Score
