@@ -4,11 +4,13 @@ from .base import AOEx_Dataset, AOEx_DatasetItem
 
 class GermYelp(AOEx_Dataset):
 
+    # begin-in-out scheme
+    LABELS = ["Out", "Begin", "In"]
     # file paths
     ANNOTATIONS_FILE = "GermanYelp/annotations.csv"
     SENTENCES_FILE = "GermanYelp/sentences.txt"
 
-    # yield train items
+    # yield items
     yield_train_items = lambda self: self.yield_items(train=True)
     yield_eval_items = lambda self: self.yield_items(train=False)
 
