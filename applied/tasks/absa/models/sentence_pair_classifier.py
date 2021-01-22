@@ -22,7 +22,7 @@ class SentencePairClassifier(ABSA_Model):
 
     def build_features_from_item(self, item:ABSA_DatasetItem) -> Tuple[FeaturePair]:
         return tuple(FeaturePair(
-                text=item.sentence + " [SEP] " + aspect,
+                text="[CLS]" + item.sentence + "[SEP]" + aspect + "[SEP]",
                 labels=label
             ) for aspect, label in zip(item.aspects, item.labels))
 

@@ -30,15 +30,27 @@ class TokenClassifier(AOEx_Model):
         return (FeaturePair(
             text=item.sentence,
             tokens=["[CLS]"] + tokens + ["[SEP]"],
-            labels=(aspect_bio, opinion_bio)
+            labels=(
+                [0] + aspect_bio + [0], 
+                [0] + opinion_bio + [0]
+            )
         ),)
 
+    def truncate_feature(self, f:FeaturePair, max_seq_length:int) -> FeaturePair:
+        # truncate both aspect and opinion bios
+        f.tokens = f.tokens[:max_seq_length]
+        f.labels = (f.labels[0][:max_seq_length], f.labels[1][:max_seq_length])
+        return f
+
     def build_target_tensors(self, features:Tuple[FeaturePair])-> Tuple[torch.LongTensor]:
-        # align shapes to sequence length
-        seq_length = max(map(len, (f.labels for f in features)))
+        # separate aspect and opinion bios
+        aspect_bio, opinion_bio = zip(*(f.labels for f in features))
+        # compute shape
+        seq_length = max(map(len, aspect_bio + opinion_bio))
         shape = (len(features), seq_length)
-        aspect_bio = align_shape([f.labels[0] for f in features], shape, fill_value=-1)
-        opinion_bio = align_shape([f.labels[1] for f in features], shape, fill_value=-1)
+        # align shapes to sequence length
+        aspect_bio = align_shape(aspect_bio, shape, fill_value=-1)
+        opinion_bio = align_shape(opinion_bio, shape, fill_value=-1)
         # return tensors
         return (torch.LongTensor(aspect_bio), torch.LongTensor(opinion_bio))
 
