@@ -137,7 +137,7 @@ class CustomModel(BaseModel):
             FeaturePair(text=textB, labels=labelsB, tokens=tokensB),
         )
 
-    def build_target_tensors(self, features:Tuple[FeaturePair], seq_length:int) -> Tuple[torch.LongTensor]:
+    def build_target_tensors(self, features:Tuple[FeaturePair]) -> Tuple[torch.LongTensor]:
         """ build all target tensors from the given features. 
             Note that even in the case of only one target tensor, 
             you still have to return a tuple of tensors.
