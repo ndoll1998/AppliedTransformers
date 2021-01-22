@@ -14,20 +14,18 @@ class HuggingfaceModel(transformers.PreTrainedModel, Encoder):
         assert self.__class__.TOKENIZER_TYPE is not None
         self.tokenizer = self.__class__.TOKENIZER_TYPE.from_pretrained(*args, **kwargs)
 
-    def build_feature_tensors(self, features:tuple, seq_length:int =None):
+    def build_feature_tensors(self, features:tuple):
         # build all input ids
-        input_ids = tuple(f.get_token_ids(self.tokenizer) for f in features)
-
+        input_ids = tuple(f.token_ids(self.tokenizer) for f in features)
         # choose minimal sequence length to fit all features
-        if seq_length is None:
-            seq_length = max(map(len, input_ids))
-        # shape of inputs
+        seq_length = max(map(len, input_ids))
         shape = (len(features), seq_length)
 
         # build attention masks
         attention_mask = [[1] * len(ids) for ids in input_ids]
         # build token type ids
-        first_sep_idx = [ids.index(self.tokenizer.sep_token_id) + 1 for ids in input_ids]
+        sep = self.tokenizer.sep_token_id
+        first_sep_idx = [(ids.index(sep) + 1) if sep in ids else len(ids) for ids in input_ids]
         token_type_ids = [[0] * idx + [1] * (len(ids) - idx) for idx, ids in zip(first_sep_idx, input_ids)]
 
         # match shape

@@ -80,7 +80,7 @@ class SemEval2014Task4(SemEval2014Task4_Restaurants, SemEval2014Task4_Laptops):
         Combination of the restaurant and laptop dataset.
         Download: http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools
     """
-    def yield_items(self, fpath) -> iter:
+    def yield_train_items(self) -> iter:
         # yield from restaurant and from laptop dataset
         yield from SemEval2014Task4_Restaurants.yield_train_items(self)
         yield from SemEval2014Task4_Laptops.yield_train_items(self)

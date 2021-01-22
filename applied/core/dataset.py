@@ -1,4 +1,5 @@
 import torch
+import itertools as it
 from .model import Model
 from typing import Iterator
 
@@ -85,27 +86,32 @@ class Dataset(object):
     def yield_eval_items(self) -> Iterator[DatasetItem]:
         raise NotImplementedError()
 
-    def _build_dataset(self, model:Model, items:Iterator[DatasetItem]) -> torch.utils.data.TensorDataset:
+    def _data_prep_pipe(self, model:Model, items:Iterator[DatasetItem]) -> torch.utils.data.TensorDataset:
         # 0) dataset -> yield items
         drop_none = lambda f: f is not None
         items = filter(drop_none, items)
         # 1) model -> build features
         features = map(model.build_features_from_item, items)
         features = filter(drop_none, features)
-        features = sum(features, tuple())
-        # 2) model -> build feature tensors
-        feature_tensors = model.encoder.build_feature_tensors(features, seq_length=self.seq_length)
-        target_tensors = model.build_target_tensors(features, seq_length=self.seq_length)
+        features = it.chain(*features)
+        # 2) feature pair -> tokenize text
+        features = map(lambda f: f.tokenize(model.encoder.tokenizer), features)
+        # 3) model -> truncate features
+        truncate = lambda f: model.truncate_feature(f, max_seq_length=self.seq_length)
+        features = list(map(truncate, features))
+        # 4) model/encoder -> build feature tensors
+        feature_tensors = model.encoder.build_feature_tensors(features)
+        target_tensors = model.build_target_tensors(features)
         # get number of input and target tensors
         self.__n_inputs = len(feature_tensors)
         self.__n_targets = len(target_tensors)
-        # 3) build tensor dataset from feature tensors
+        # 5) build tensor dataset from feature tensors
         return torch.utils.data.TensorDataset(*feature_tensors, *target_tensors)
 
     def prepare(self, model:Model) -> None:
         # prepare training and testing dataset
-        train_dataset = self._build_dataset(model, self.yield_train_items())
-        eval_dataset = self._build_dataset(model, self.yield_eval_items())
+        train_dataset = self._data_prep_pipe(model, self.yield_train_items())
+        eval_dataset = self._data_prep_pipe(model, self.yield_eval_items())
         # create dataloaders
         self.__train_loader = torch.utils.data.DataLoader(train_dataset, shuffle=True, batch_size=self.batch_size)
         self.__eval_loader = torch.utils.data.DataLoader(eval_dataset, shuffle=False, batch_size=self.batch_size)

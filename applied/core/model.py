@@ -10,15 +10,16 @@ class FeaturePair(object):
     text:str
     labels:Union[Tuple[int], int]    # depending on task
     # optional
-    tokens:Tuple[int] =None
-    
-    def get_token_ids(self, tokenizer) -> Tuple[str]:
-        # check if tokens are given
-        if self.tokens is None:
-            return tokenizer.encode(self.text)
-        # if so use them
-        return tokenizer.convert_tokens_to_ids(self.tokens)
+    tokens:Tuple[str] =None
 
+    def tokenize(self, tokenizer) -> "FeaturePair":
+        if self.tokens is None:
+            self.tokens = tokenizer.tokenize(self.text)
+        return self
+
+    def token_ids(self, tokenizer) -> Tuple[int]:
+        assert self.tokens is not None
+        return tokenizer.convert_tokens_to_ids(self.tokens)
 
 class Encoder(nn.Module):
     TOKENIZER_TYPE:type = None
@@ -45,7 +46,7 @@ class Encoder(nn.Module):
         assert self.__class__.TOKENIZER_TYPE is not None
         self.__tokenizer = self.__class__.TOKENIZER_TYPE(*args, **kwargs)
 
-    def build_feature_tensors(self, features:tuple, seq_length:int):
+    def build_feature_tensors(self, features:tuple):
         raise NotImplementedError()
 
     def forward(self, *args, **kwargs):
@@ -63,10 +64,6 @@ class Model(nn.Module):
     def encoder(self) -> Encoder:
         return self.__encoder
 
-    def preprocess(self, *batch) -> Tuple[dict, torch.tensor]:
-        """ Preprocess batch and return input kwargs to forward pass and labels """
-        raise NotImplementedError()
-
     def forward(self, *args, **kwargs):
         raise NotImplementedError()
 
@@ -76,8 +73,16 @@ class Model(nn.Module):
     def build_features_from_item(self, item:'DatasetItem') -> Tuple[FeaturePair]:
         raise NotImplementedError()
 
-    def build_target_tensors(self, features:Tuple[FeaturePair], seq_length:int):
+    def build_target_tensors(self, features:Tuple[FeaturePair]) -> Tuple[torch.Tensor]:
         raise NotImplementedError()
+
+    def truncate_feature(self, f:FeaturePair, max_seq_length:int) -> FeaturePair:
+        """ This function may be overriden as needed for specific models or tasks 
+            By default just cuts tokens that exceed the maximum sequence length.
+        """
+        f.tokens = f.tokens[:max_seq_length]
+        f.labels = f.labels[:max_seq_length] if isinstance(f.labels, (tuple, list)) else f.labels
+        return f
 
     def parameters(self, only_head:bool =False):
         return (p for n, p in nn.Module.named_parameters(self) 

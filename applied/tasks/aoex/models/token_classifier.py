@@ -33,8 +33,9 @@ class TokenClassifier(AOEx_Model):
             labels=(aspect_bio, opinion_bio)
         ),)
 
-    def build_target_tensors(self, features:Tuple[FeaturePair], seq_length:int)-> Tuple[torch.LongTensor]:
+    def build_target_tensors(self, features:Tuple[FeaturePair])-> Tuple[torch.LongTensor]:
         # align shapes to sequence length
+        seq_length = max(map(len, (f.labels for f in features)))
         shape = (len(features), seq_length)
         aspect_bio = align_shape([f.labels[0] for f in features], shape, fill_value=-1)
         opinion_bio = align_shape([f.labels[1] for f in features], shape, fill_value=-1)
