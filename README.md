@@ -67,7 +67,10 @@ In general a task is a directory with the following structure
 We'll give a quick overview on the initial files and their purpose
  - `models/base.py`
     ```python
-    """ Create the base model type. Usually there is nothing really to define here. The base class is just for typechecking. """
+    """ 
+    Create the base model type. Usually there is nothing really to define here. 
+    The base class is just for typechecking. 
+    """
     from applied.core.model import Model
     class BaseModel(Model): pass
     ```
@@ -88,7 +91,10 @@ We'll give a quick overview on the initial files and their purpose
     ```
 - `trainer.py`
     ```python
-    """ This file defines the trainer of the task. In most cases the trainer only differs from the  standard trainer by the metrics that are to be tracked. """
+    """ 
+    This file defines the trainer of the task. In most cases the trainer 
+    only differs from the standard trainer by the metrics that are to be tracked. 
+    """
     from applied.core.trainer import Trainer as BaseTrainer
     from applied.core.metrics import MetricCollection, Losses, MicroF1Score, MacroF1Score
     # import model and dataset
