@@ -116,7 +116,20 @@ With the task directory set up one can add new models. Just add a file to the mo
 ```python
 from .base import BaseModel
 from ..datasets.base import MyDatasetItem
-from applied.core.Model import Encoder, FeaturePair
+from applied.core.Model import Encoder, InputFeatures
+
+@dataclass
+class CustomInputFeatures(InputFeatures):
+    """ specify additional input features for the custom model
+        The features should be of a torch tensor type
+        They will be passed to the forward function in the 
+        same order as they are defined here
+    """
+    # Note that you do not need to set this to a tensor by hand 
+    # but the values will be collected and converted to the 
+    # specified tensor type in preprocessing
+    additional_input:torch.Tensor
+    ...
 
 class CustomModel(BaseModel):
 
@@ -133,11 +146,11 @@ class CustomModel(BaseModel):
             restriction to only sentence-level or token-level tasks.
         """
         return (
-            FeaturePair(text=textA, labels=labelsA),
-            FeaturePair(text=textB, labels=labelsB, tokens=tokensB),
+            CustomInputFeatures(text=textA, labels=labelsA),
+            CustomInputFeatures(text=textB, labels=labelsB, tokens=tokensB),
         )
 
-    def build_target_tensors(self, features:Tuple[FeaturePair]) -> Tuple[torch.LongTensor]:
+    def build_target_tensors(self, features:Tuple[CustomInputFeatures]) -> Tuple[torch.LongTensor]:
         """ build all target tensors from the given features. 
             Note that even in the case of only one target tensor, 
             you still have to return a tuple of tensors.
@@ -148,9 +161,13 @@ class CustomModel(BaseModel):
         return (torch.LongTensor(labels),)
 
     def forward(self, 
+        # encoder input arguments
         input_ids, 
         attention_mask=None, 
-        token_type_ids=None
+        token_type_ids=None,
+        # additional input arguments
+        additional_input=None,
+        ...
     ):
         """ the forward pass for the given model """
         # pass through encoder
