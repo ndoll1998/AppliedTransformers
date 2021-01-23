@@ -5,7 +5,7 @@ import torch.nn.functional as F
 # import from applied transformers
 from .base import ABSA_Model
 from ..datasets.base import ABSA_DatasetItem
-from applied.core.model import Encoder, FeaturePair
+from applied.core.model import Encoder, InputFeatures
 # import utils
 from typing import Tuple
 
@@ -14,19 +14,19 @@ class SentencePairClassifier(ABSA_Model):
         Paper: https://arxiv.org/abs/1903.09588
     """
 
-    def __init__(self, encoder:Encoder, num_labels:int, dropout:float=0.01):
+    def __init__(self, encoder:Encoder, num_labels:int, dropout:float =0.01):
         ABSA_Model.__init__(self, encoder=encoder)
         # classifier
         self.dropout = nn.Dropout(dropout)
         self.classifier = nn.Linear(encoder.hidden_size, num_labels)
 
-    def build_features_from_item(self, item:ABSA_DatasetItem) -> Tuple[FeaturePair]:
-        return tuple(FeaturePair(
+    def build_features_from_item(self, item:ABSA_DatasetItem) -> Tuple[InputFeatures]:
+        return tuple(InputFeatures(
                 text="[CLS]" + item.sentence + "[SEP]" + aspect + "[SEP]",
                 labels=label
             ) for aspect, label in zip(item.aspects, item.labels))
 
-    def build_target_tensors(self, features:Tuple[FeaturePair]) -> Tuple[torch.LongTensor]:
+    def build_target_tensors(self, features:Tuple[InputFeatures]) -> Tuple[torch.LongTensor]:
         return (torch.LongTensor([f.labels for f in features]),)
 
     def forward(self, 

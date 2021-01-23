@@ -5,7 +5,7 @@ import torch.nn.functional as F
 # import from applied transformers
 from .base import AOEx_Model
 from ..datasets.base import AOEx_DatasetItem
-from applied.core.model import Encoder, FeaturePair
+from applied.core.model import Encoder, InputFeatures
 # import utils
 from applied.common import build_token_spans, build_bio_scheme, align_shape
 from typing import Tuple
@@ -19,7 +19,7 @@ class TokenClassifier(AOEx_Model):
         self.dropout = nn.Dropout(dropout)
         self.classifier = nn.Linear(encoder.hidden_size, 6)
 
-    def build_features_from_item(self, item:AOEx_DatasetItem) -> Tuple[FeaturePair]:
+    def build_features_from_item(self, item:AOEx_DatasetItem) -> Tuple[InputFeatures]:
         # tokenize everything
         tokens = self.encoder.tokenizer.tokenize(item.sentence)
         token_spans = build_token_spans(tokens, item.sentence)
@@ -27,7 +27,7 @@ class TokenClassifier(AOEx_Model):
         aspect_bio = build_bio_scheme(token_spans, item.aspect_spans)
         opinion_bio = build_bio_scheme(token_spans, item.opinion_spans)
         # return feature pair
-        return (FeaturePair(
+        return (InputFeatures(
             text=item.sentence,
             tokens=["[CLS]"] + tokens + ["[SEP]"],
             labels=(
@@ -36,13 +36,13 @@ class TokenClassifier(AOEx_Model):
             )
         ),)
 
-    def truncate_feature(self, f:FeaturePair, max_seq_length:int) -> FeaturePair:
+    def truncate_feature(self, f:InputFeatures, max_seq_length:int) -> InputFeatures:
         # truncate both aspect and opinion bios
         f.tokens = f.tokens[:max_seq_length]
         f.labels = (f.labels[0][:max_seq_length], f.labels[1][:max_seq_length])
         return f
 
-    def build_target_tensors(self, features:Tuple[FeaturePair])-> Tuple[torch.LongTensor]:
+    def build_target_tensors(self, features:Tuple[InputFeatures])-> Tuple[torch.LongTensor]:
         # separate aspect and opinion bios
         aspect_bio, opinion_bio = zip(*(f.labels for f in features))
         # compute shape
