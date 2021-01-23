@@ -4,3 +4,4 @@ from .germYelp import (
     GermYelp_LinkingAndPolarity
 )
 from .semEval2010Task8 import SemEval2010Task8
+from .smartdataCorpus import SmartdataCorpus
