@@ -60,7 +60,7 @@ class SemEval2015Task12_OpinionPolarity(__SemEval2015Task12):
     LABELS = ['positive', 'negative']
 
     # urls map
-    AUTO_DOWNLOAD_AVAILABLE = True
+    CAN_DOWNLOAD = True
     URL_FILE_MAP = {
         "SemEval2015-Task12/sentence_res15_op": "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_res15_op",
         "SemEval2015-Task12/sentence_restest15_op": "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_restest15_op"        

@@ -20,7 +20,7 @@ class Dataset(object):
 
     # map data files to download urls
     # this enables auto downloading of the dataset
-    AUTO_DOWNLOAD_AVAILABLE = False
+    CAN_DOWNLOAD = False
     URL_FILE_MAP = {}
 
     def __init__(self, 
@@ -43,7 +43,7 @@ class Dataset(object):
         self.download()
 
     def download(self) -> None:
-        if not self.__class__.AUTO_DOWNLOAD_AVAILABLE:
+        if not self.__class__.CAN_DOWNLOAD:
             return
         for fpath, url in self.__class__.URL_FILE_MAP.items():
             # check if file already exists

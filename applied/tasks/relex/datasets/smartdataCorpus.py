@@ -6,6 +6,7 @@ class SmartdataCorpus(RelExDataset):
     """ German Smartdata Corpus
         Download: https://github.com/DFKI-NLP/smartdata-corpus/tree/master/v2_20190802
     """
+    
     # training and evaluation files
     TRAIN_FILE = "SmartdataCorpus/train.json"
     EVAL_FILE = "SmartdataCorpus/test.json"
