@@ -103,23 +103,18 @@ def build_bio_scheme(token_spans:list, entity_spans:list) -> list:
 
     return bio
 
-
 def get_spans_from_bio_scheme(bio:list):
     
     spans, in_entity = [], False
     for i, l in enumerate(bio):
-
         if l == 1:
             # new entity starts
             spans.append((i, i + 1))
             in_entity = True
-
         elif (l == 2) and in_entity:
             # in entity
             spans[-1] = (spans[-1][0], i + 1)
-
         elif l == 0:
             # entity done
             in_entity = False
-
     return spans

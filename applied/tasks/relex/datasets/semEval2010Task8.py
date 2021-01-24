@@ -6,9 +6,10 @@ class SemEval2010Task8(RelExDataset):
         Download: https://github.com/sahitya0000/Relation-Classification/blob/master/corpus/SemEval2010_task8_all_data.zip
     """
 
+    # training and testing files
     TRAIN_FILE = "SemEval2010-Task8/SemEval2010_task8_training/TRAIN_FILE.TXT"
     EVAL_FILE = "SemEval2010-Task8/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT"
-
+    # set of valid labels
     LABELS = [
         "Other",
         "Component-Whole(e2,e1)",       "Component-Whole(e1,e2)",
@@ -22,13 +23,13 @@ class SemEval2010Task8(RelExDataset):
         "Entity-Origin(e2,e1)",         "Entity-Origin(e1,e2)"
     ]
 
+    # yield training and evaluation items
     yield_train_items = lambda self: self.yield_item(
         os.path.join(self.data_base_dir, SemEval2010Task8.TRAIN_FILE))
     yield_eval_items = lambda self: self.yield_item(
         os.path.join(self.data_base_dir, SemEval2010Task8.EVAL_FILE))
 
     def yield_item(self, fpath:str) -> iter:
-                
         # load data
         with open(fpath, 'r', encoding='utf-8') as f:
             lines = f.read().strip().split('\n')

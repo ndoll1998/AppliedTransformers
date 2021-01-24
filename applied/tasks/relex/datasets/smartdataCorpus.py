@@ -6,12 +6,12 @@ class SmartdataCorpus(RelExDataset):
     """ German Smartdata Corpus
         Download: https://github.com/DFKI-NLP/smartdata-corpus/tree/master/v2_20190802
     """
-
+    # training and evaluation files
     TRAIN_FILE = "SmartdataCorpus/train.json"
     EVAL_FILE = "SmartdataCorpus/test.json"
-
+    # set of valid labels
     LABELS = ["Acquisition", "Insolvency", "Layoffs", "Merger", "OrganizationLeadership", "SpinOff", "Strike"]
-
+    # yield training and evaluation items
     yield_train_items = lambda self: self.yield_items(
         os.path.join(self.data_base_dir, SmartdataCorpus.TRAIN_FILE))
     yield_eval_items = lambda self: self.yield_items(

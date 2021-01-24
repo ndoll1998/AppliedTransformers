@@ -5,9 +5,6 @@ from .base import EC_Dataset, EC_DatasetItem
 class __SemEval2014Task4(EC_Dataset):
 
     LABELS = ['positive', 'neutral', 'negative', 'conflict']
-    # train and test files
-    TRAIN_FILE = None
-    TEST_FILE = None
 
     # yield train items
     yield_train_items = lambda self: self.yield_items(

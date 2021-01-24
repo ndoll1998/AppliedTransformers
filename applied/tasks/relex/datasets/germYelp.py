@@ -8,14 +8,12 @@ from .base import RelExDataset, RelExDatasetItem
 class __GermYelp(RelExDataset):
     ANNOTATIONS_FILE = "GermanYelp/annotations.csv"
     SENTENCES_FILE = "GermanYelp/sentences.txt"
-
-class GermYelp_Polarity(__GermYelp):
-    LABELS = ["positive", "negative"]
-
     # yield items
     yield_train_items = lambda self: self.yield_items(train=True)
     yield_eval_items = lambda self: self.yield_items(train=False)
 
+class GermYelp_Polarity(__GermYelp):
+    LABELS = ["positive", "negative"]
     def yield_items(self, train:bool) -> iter:
         # build filepaths
         annotations_fpath = os.path.join(self.data_base_dir, GermYelp_Polarity.ANNOTATIONS_FILE)
@@ -43,11 +41,6 @@ class GermYelp_Polarity(__GermYelp):
 
 class GermYelp_Linking(__GermYelp):
     LABELS = ["false", "true"]
-
-    # yield items
-    yield_train_items = lambda self: self.yield_items(train=True)
-    yield_eval_items = lambda self: self.yield_items(train=False)
-
     def yield_items(self, train:bool) -> iter:
         # build filepaths
         annotations_fpath = os.path.join(self.data_base_dir, GermYelp_Linking.ANNOTATIONS_FILE)
@@ -100,11 +93,6 @@ class GermYelp_Linking(__GermYelp):
 
 class GermYelp_LinkingAndPolarity(__GermYelp):
     LABELS = ["none", "positive", "negative"]
-
-    # yield items
-    yield_train_items = lambda self: self.yield_items(train=True)
-    yield_eval_items = lambda self: self.yield_items(train=False)
-
     def yield_items(self, train:bool) -> iter:
         # build filepaths
         annotations_fpath = os.path.join(self.data_base_dir, GermYelp_LinkingAndPolarity.ANNOTATIONS_FILE)
