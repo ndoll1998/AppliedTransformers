@@ -7,3 +7,7 @@ from .germYelp import (
     GermYelp_OpinionPolarity,
     GermYelp_AspectPolarity
 )
+from .semEval2015Task12 import (
+    SemEval2015Task12_AspectPolarity,
+    SemEval2015Task12_OpinionPolarity
+)
