@@ -7,7 +7,7 @@ class SemEval2015Task12(AOEx_Dataset):
     """    
 
     # urls map
-    AUTO_DOWNLOAD_AVAILABLE = True
+    CAN_DOWNLOAD = True
     URL_FILE_MAP = {
         # training data files
         "SemEval2015-Task12/aspectTerm_res15": "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/aspectTerm_res15",
