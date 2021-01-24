@@ -5,7 +5,18 @@ class SemEval2015Task12(AOEx_Dataset):
     """ SemEval 2015 Task 12 dataset for Aspect-Opinion Extraction
         Downlaod: https://github.com/happywwy/Coupled-Multi-layer-Attentions/tree/master/util/data_semEval
     """    
-    
+
+    # urls map
+    AUTO_DOWNLOAD_AVAILABLE = True
+    URL_FILE_MAP = {
+        # training data files
+        "SemEval2015-Task12/aspectTerm_res15": "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/aspectTerm_res15",
+        "SemEval2015-Task12/sentence_res15_op": "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_res15_op",
+        # evaluation data files
+        "SemEval2015-Task12/aspectTerm_restest15": "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/aspectTerm_restest15",
+        "SemEval2015-Task12/sentence_restest15_op": "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_restest15_op"        
+    }
+
     def yield_items(self, aspect_fname:str, sent_opinion_fname:str):
         # build full paths to files
         aspect_fpath = os.path.join(self.data_base_dir, aspect_fname)
