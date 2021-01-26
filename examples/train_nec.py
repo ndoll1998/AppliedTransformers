@@ -1,21 +1,21 @@
 import torch
 from applied import encoders
 from applied import optimizers
-from applied.tasks import ec
+from applied.tasks import nec
 import matplotlib.pyplot as plt
 
 # create encoder
 encoder = encoders.BERT.from_pretrained("bert-base-uncased")
 encoder.init_tokenizer_from_pretrained("bert-base-uncased")
 # create model and optimizer
-model = ec.models.SentencePairClassifier(encoder=encoder, 
-    num_labels=ec.datasets.SemEval2014Task4.num_labels())
+model = nec.models.SentencePairClassifier(encoder=encoder, 
+    num_labels=nec.datasets.SemEval2014Task4.num_labels())
 optim = optimizers.AdamW(model.parameters(only_head=True), lr=1e-5, weight_decay=0.01)
 # create dataset and prepare it for the model
-dataset = ec.datasets.SemEval2014Task4(
+dataset = nec.datasets.SemEval2014Task4(
     data_base_dir='../data', seq_length=128, batch_size=2)
 # create trainer instance and train model
-trainer = ec.Trainer(
+trainer = nec.Trainer(
     model=model, 
     dataset=dataset,
     optimizer=optim

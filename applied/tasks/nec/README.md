@@ -1,6 +1,6 @@
-# Entity Classification
+# Named Entity Classification
 
-The Entity Classification task aims to classify a given number of entities in a given text.
+The Named Entity Classification task aims to classify a given number of entities in a given text.
 
 ## Models
 

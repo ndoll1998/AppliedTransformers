@@ -1,8 +1,8 @@
 import os
 import xml.etree.ElementTree as ET
-from .base import EC_Dataset, EC_DatasetItem
+from .base import NEC_Dataset, NEC_DatasetItem
 
-class __SemEval2014Task4(EC_Dataset):
+class __SemEval2014Task4(NEC_Dataset):
 
     LABELS = ['positive', 'neutral', 'negative', 'conflict']
 
@@ -27,7 +27,7 @@ class __SemEval2014Task4(EC_Dataset):
             # get label ids
             labels = [self.__class__.LABELS.index(l) for l in labels]
             # yield item
-            yield EC_DatasetItem(
+            yield NEC_DatasetItem(
                 sentence=text, entity_spans=aspect_spans, labels=labels)
     
     def get_aspect_label_pairs(self, sentence):

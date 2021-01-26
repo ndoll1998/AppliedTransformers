@@ -8,7 +8,7 @@ The Project currently holds the following tasks:
 
 - [AspectBasedSentimentAnalysis](applied/tasks/absa/README.md)
 - [AspectOpinionExtraction](applied/tasks/aoex/README.md)
-- [EntityClassification](applied/tasks/ec/README.md)
+- [NamedEntityClassification](applied/tasks/nec/README.md)
 
 ## How to use
 
@@ -206,4 +206,6 @@ class CustomDataset(Dataset):
  - implement more encoders
  - make trainer iterable
  - is there any benefit of having a task instance? (core.task)
+   - yes at least for house keeping this seems helpfull
+   - provide functions like show_datasets/show_models etc.
  - PyPi

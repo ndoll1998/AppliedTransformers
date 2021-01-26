@@ -1,8 +1,8 @@
 import os
 import xml.etree.ElementTree as ET
-from .base import EC_Dataset, EC_DatasetItem
+from .base import NEC_Dataset, NEC_DatasetItem
 
-class __SemEval2015Task12(EC_Dataset):
+class __SemEval2015Task12(NEC_Dataset):
     TRAIN_FILE = None
     EVAL_FILE = None
 
@@ -45,7 +45,7 @@ class SemEval2015Task12_AspectPolarity(__SemEval2015Task12):
                     continue
                 
                 # build dataset item
-                yield EC_DatasetItem(
+                yield NEC_DatasetItem(
                     sentence=text,
                     entity_spans=aspects,
                     labels=[SemEval2015Task12_AspectPolarity.LABELS.index(s) for s in sentiments]
@@ -86,7 +86,7 @@ class SemEval2015Task12_OpinionPolarity(__SemEval2015Task12):
             # get sentiment labels
             sentiments = [(-int(i) + 1) // 2 for i in sentiments]
             # build dataset item
-            yield EC_DatasetItem(
+            yield NEC_DatasetItem(
                 sentence=sent, 
                 entity_spans=opinion_spans, 
                 labels=sentiments

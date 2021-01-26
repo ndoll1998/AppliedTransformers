@@ -1,10 +1,10 @@
 import os
 import numpy as np
 import pandas as pd
-from .base import EC_Dataset, EC_DatasetItem
+from .base import NEC_Dataset, NEC_DatasetItem
 
 
-class __GermYelp(EC_Dataset):
+class __GermYelp(NEC_Dataset):
     ANNOTATIONS_FILE = "GermanYelp/annotations.csv"
     SENTENCES_FILE = "GermanYelp/sentences.txt"
     # entity labels
@@ -45,7 +45,7 @@ class GermYelp_OpinionPolarity(__GermYelp):
             opinions = list(map(eval, opinions))
 
             # yield features for this item
-            yield EC_DatasetItem(
+            yield NEC_DatasetItem(
                 sentence=sent, 
                 entity_spans=opinions, 
                 labels=[GermYelp_OpinionPolarity.LABELS.index(p) for p in polarities]
@@ -88,7 +88,7 @@ class GermYelp_AspectPolarity(__GermYelp):
                 polarities.append(polarity)
 
             # yield item
-            yield EC_DatasetItem(
+            yield NEC_DatasetItem(
                 sentence=sent,
                 entity_spans=aspects,
                 labels=polarities
