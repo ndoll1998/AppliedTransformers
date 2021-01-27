@@ -6,6 +6,13 @@ class SemEval2010Task8(RelExDataset):
         Download: https://github.com/sahitya0000/Relation-Classification/blob/master/corpus/SemEval2010_task8_all_data.zip
     """
 
+    # urls map
+    CAN_DOWNLOAD = True
+    URL_FILE_MAP = {
+        "SemEval2010-Task8/SemEval2010_task8_training/TRAIN_FILE.TXT": "https://raw.githubusercontent.com/sahitya0000/Relation-Classification/master/corpus/SemEval2010_task8_training/TRAIN_FILE.TXT",
+        "SemEval2010-Task8/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT": "https://raw.githubusercontent.com/sahitya0000/Relation-Classification/master/corpus/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT"
+    }
+
     # training and testing files
     TRAIN_FILE = "SemEval2010-Task8/SemEval2010_task8_training/TRAIN_FILE.TXT"
     EVAL_FILE = "SemEval2010-Task8/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT"

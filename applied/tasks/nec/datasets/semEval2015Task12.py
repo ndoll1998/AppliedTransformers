@@ -17,6 +17,13 @@ class SemEval2015Task12_AspectPolarity(__SemEval2015Task12):
     """ Dataset for the SemEval2014 Task4 data for Aspect-based Sentiment Analysis
         Download: http://alt.qcri.org/semeval2015/task12/index.php?id=data-and-tools
     """
+    # urls map
+    CAN_DOWNLOAD = True
+    URL_FILE_MAP = {
+        "SemEval2015-Task12/ABSA-15_Restaurants_Train_Final.xml": "https://github.com/peace195/aspect-based-sentiment-analysis/blob/master/data/ABSA_SemEval2015/Restaurants_Train_Final.xml",
+        "SemEval2015-Task12/ABSA15_Restaurants_Test.xml": "https://raw.githubusercontent.com/peace195/aspect-based-sentiment-analysis/master/data/ABSA_SemEval2015/Restaurants_Test.xml"
+    }
+
     TRAIN_FILE = "SemEval2015-Task12/ABSA-15_Restaurants_Train_Final.xml"
     EVAL_FILE = "SemEval2015-Task12/ABSA15_Restaurants_Test.xml"
     LABELS = ['positive', 'neutral', 'negative']
@@ -55,16 +62,16 @@ class SemEval2015Task12_OpinionPolarity(__SemEval2015Task12):
     """ Dataset for the SemEval2014 Task4 data for Opinion-based Sentiment Analysis
         Downlaod: https://github.com/happywwy/Coupled-Multi-layer-Attentions/tree/master/util/data_semEval
     """
-    TRAIN_FILE = "SemEval2015-Task12/sentence_res15_op"
-    EVAL_FILE = "SemEval2015-Task12/sentence_restest15_op"
-    LABELS = ['positive', 'negative']
-
     # urls map
     CAN_DOWNLOAD = True
     URL_FILE_MAP = {
         "SemEval2015-Task12/sentence_res15_op": "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_res15_op",
         "SemEval2015-Task12/sentence_restest15_op": "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_restest15_op"        
     }
+
+    TRAIN_FILE = "SemEval2015-Task12/sentence_res15_op"
+    EVAL_FILE = "SemEval2015-Task12/sentence_restest15_op"
+    LABELS = ['positive', 'negative']
 
     def yield_items(self, fpath:str) -> iter:
         # load file content
