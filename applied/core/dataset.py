@@ -95,6 +95,7 @@ class Dataset(object):
         features = map(truncate, features)
         features = filter(drop_none, features)
         features = list(features)
+        assert len(features) > 0, "Empty datasets are not allowed!"
         # 4) model/encoder -> build feature tensors
         input_features = model.encoder.build_feature_tensors(features)
         additional_features = features[0].__class__.build_additional_feature_tensors(features)

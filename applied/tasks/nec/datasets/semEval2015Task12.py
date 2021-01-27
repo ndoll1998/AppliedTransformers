@@ -8,9 +8,9 @@ class __SemEval2015Task12(NEC_Dataset):
 
     # yield training and evaluation items
     yield_train_items = lambda self: self.yield_items(
-        os.path.join(self.data_base_dir, SemEval2015Task12_AspectPolarity.TRAIN_FILE))
+        os.path.join(self.data_base_dir, self.__class__.TRAIN_FILE))
     yield_eval_items = lambda self: self.yield_items(
-        os.path.join(self.data_base_dir, SemEval2015Task12_AspectPolarity.EVAL_FILE))
+        os.path.join(self.data_base_dir, self.__class__.EVAL_FILE))
 
 
 class SemEval2015Task12_AspectPolarity(__SemEval2015Task12):
