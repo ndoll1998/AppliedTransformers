@@ -9,6 +9,7 @@ The Project currently holds the following tasks:
 - [AspectBasedSentimentAnalysis](applied/tasks/absa/README.md)
 - [AspectOpinionExtraction](applied/tasks/aoex/README.md)
 - [NamedEntityClassification](applied/tasks/nec/README.md)
+- [RelationExtraction](applied/tasks/relex/README.md)
 
 ## How to use
 
