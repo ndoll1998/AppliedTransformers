@@ -69,7 +69,7 @@ def build_token_spans(tokens:list, text:str) -> list:
             assert len(token) <= len(text), "Token and Text do not align!"
             for i, t in enumerate(token):
                 while not text[i + off]: off += 1
-                assert t == text[i + off], "Token and Text do not align! '%s' != '%s' > '%s'" % (t, text[i + off], text[:30])
+                assert t == text[i + off], "Token and Text do not align! '%s' != '%s'(%i) > '%s'" % (t, text[i + off], ord(text[i + off]), text[:30])
         # update spans and text
         spans.append((begin, begin + len(token) + off))
         begin += len(token) + off
