@@ -14,11 +14,12 @@ class __SemEval2014Task4(ABSA_Dataset):
     yield_eval_items = lambda self: self.yield_items(self.data_base_dir / self.__class__.TEST_FILE)
 
     def yield_items(self, fpath):
+        print(fpath)
         # parse xml file
         tree = ET.parse(fpath)
         root = tree.getroot()
         # parse all reviews
-        for sentence in root:
+        for sentence in root:            
             # get sentence
             text = sentence.find('text').text
             # get aspect terms and labels
@@ -78,7 +79,7 @@ class SemEval2014Task4_Laptops(__SemEval2014Task4):
 
     def get_aspect_label_pairs(self, sentence):
         # get aspect categories and terms
-        aspect_categories = sentence.find('aspectCategories')
+        aspect_terms = sentence.find('aspectTerms')
         # load aspect label pairs
         aspect_label_pairs = []
         if aspect_terms is not None:

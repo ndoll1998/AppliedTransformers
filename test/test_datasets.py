@@ -12,9 +12,10 @@ encoder.init_tokenizer_from_pretrained("bert-base-uncased")
 class __DatasetTestCaseType(type):
     def __new__(cls, name, bases, attrs):
         Test = type.__new__(cls, name, bases, attrs)
-        for Dataset in Test.DATASETS:
-            fn = lambda self: Dataset().prepare(Test.MODEL)
-            setattr(Test, "test_%s" % Dataset.__name__, fn)
+        for d in Test.DATASETS:
+            # this is maximum hax
+            fn = lambda self, Dataset=d, model=Test.MODEL: Dataset().prepare(model)
+            setattr(Test, "test_%s" % d.__name__, classmethod(fn))
         return Test
 
 class DatasetTestCase(unittest.TestCase, metaclass=__DatasetTestCaseType):

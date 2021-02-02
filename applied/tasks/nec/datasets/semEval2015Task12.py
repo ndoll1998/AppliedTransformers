@@ -17,7 +17,7 @@ class SemEval2015Task12_AspectPolarity(__SemEval2015Task12):
         Download: http://alt.qcri.org/semeval2015/task12/index.php?id=data-and-tools
     """
 
-    TRAIN_FILE = FilePath("SemEval2015-Task12/ABSA-15_Restaurants_Train_Final.xml", "https://github.com/peace195/aspect-based-sentiment-analysis/blob/master/data/ABSA_SemEval2015/Restaurants_Train_Final.xml")
+    TRAIN_FILE = FilePath("SemEval2015-Task12/ABSA-15_Restaurants_Train_Final.xml", "https://raw.githubusercontent.com/peace195/aspect-based-sentiment-analysis/master/data/ABSA_SemEval2015/Restaurants_Train_Final.xml")
     EVAL_FILE = FilePath("SemEval2015-Task12/ABSA15_Restaurants_Test.xml", "https://raw.githubusercontent.com/peace195/aspect-based-sentiment-analysis/master/data/ABSA_SemEval2015/Restaurants_Test.xml")
     LABELS = ['positive', 'neutral', 'negative']
 
