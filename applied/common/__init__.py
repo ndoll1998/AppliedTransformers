@@ -63,7 +63,7 @@ def build_token_spans(tokens:list, text:str) -> list:
             n = text.find(token)
             begin, text = begin + n, text[n:]
         # make sure text starts with token
-        assert text.startswith(token), "Text and tokens do not align! '%s' > '%s'" % (token, text)
+        assert text[:len(token)] == token, "Text and tokens do not align! '%s' != '%s' > '%s'" % (token, text[:len(token)], text)
         spans.append((begin, begin + len(token)))
         begin += len(token)
         text = text[len(token):]

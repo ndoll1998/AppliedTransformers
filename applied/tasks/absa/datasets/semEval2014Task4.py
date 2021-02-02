@@ -14,7 +14,6 @@ class __SemEval2014Task4(ABSA_Dataset):
     yield_eval_items = lambda self: self.yield_items(self.data_base_dir / self.__class__.TEST_FILE)
 
     def yield_items(self, fpath):
-        print(fpath)
         # parse xml file
         tree = ET.parse(fpath)
         root = tree.getroot()
