@@ -67,22 +67,25 @@ class Dataset(object):
         features = map(model.build_features_from_item, items)
         features = filter(drop_none, features)
         features = it.chain(*features)
-        # 2) feature pair -> tokenize text
+        # 2) features -> clean up
+        features = map(lambda f: f.clean_up(), features)
+        features = filter(drop_none, features)
+        # 3) feature pair -> tokenize text
         features = map(lambda f: f.tokenize(model.encoder.tokenizer), features)
-        # 3) model -> truncate features
+        # 4) model -> truncate features
         truncate = lambda f: model.truncate_feature(f, max_seq_length=self.seq_length)
         features = map(truncate, features)
         features = filter(drop_none, features)
         features = list(features)
         assert len(features) > 0, "Empty datasets are not allowed!"
-        # 4) model/encoder -> build feature tensors
+        # 5) model/encoder -> build feature tensors
         input_features = model.encoder.build_feature_tensors(features)
         additional_features = features[0].__class__.build_additional_feature_tensors(features)
         target_tensors = model.build_target_tensors(features)
         # get number of input and target tensors
         self.__n_inputs = len(input_features) + len(additional_features)
         self.__n_targets = len(target_tensors)
-        # 5) build tensor dataset from feature tensors
+        # 6) build tensor dataset from feature tensors
         return torch.utils.data.TensorDataset(*input_features, *additional_features, *target_tensors)
 
     def prepare(self, model:Model) -> None:
