@@ -65,15 +65,13 @@ def build_token_spans(tokens:list, text:str) -> list:
         # make sure text starts with token
         if not text.startswith(token):
             # second chance just to make really sure
-            counter = 0
-            while token[counter:]: counter += 1
-            assert text[:counter] == token, "Token and Text do not align! (%i ?= %i) '%s' != '%s' > '%s'" % (len(token), counter, token, text[:counter], text[:30])
-        else:
-            counter = len(token)
+            assert len(token) <= len(text), "Token and Text do not align!"
+            for t, tt in zip(token, text):
+                assert t == tt, "Token and Text do not align! %s != %s, > '%s'" % (t, tt, text)
         # update spans and text
-        spans.append((begin, begin + counter))
-        begin += counter
-        text = text[counter:]
+        spans.append((begin, begin + len(token)))
+        begin += len(token)
+        text = text[len(token):]
 
     return spans
 
