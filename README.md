@@ -209,6 +209,7 @@ class CustomDataset(Dataset):
 ## TODOs
  - implement more encoders
  - make trainer iterable
+ - add JustInTime Dataset (JitDataset) that only loads the data currently needed
  - is there any benefit of having a task instance? (core.task)
    - yes at least for house keeping this seems helpfull
    - provide functions like show_datasets/show_models etc.
