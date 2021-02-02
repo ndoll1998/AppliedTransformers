@@ -1,5 +1,7 @@
 import os, json
 from .base import RelExDataset, RelExDatasetItem
+from applied.common.path import FilePath
+import gzip
 from itertools import combinations
 
 class SmartdataCorpus(RelExDataset):
@@ -8,15 +10,13 @@ class SmartdataCorpus(RelExDataset):
     """
     
     # training and evaluation files
-    TRAIN_FILE = "SmartdataCorpus/train.json"
-    EVAL_FILE = "SmartdataCorpus/test.json"
+    TRAIN_FILE = FilePath("SmartdataCorpus/train.json", "https://github.com/DFKI-NLP/smartdata-corpus/blob/master/v2_20190802/train.json.gz?raw=true", post_fetch=gzip.decompress)
+    EVAL_FILE = FilePath("SmartdataCorpus/test.json", "https://github.com/DFKI-NLP/smartdata-corpus/blob/master/v2_20190802/test.json.gz?raw=true", post_fetch=gzip.decompress)
     # set of valid labels
     LABELS = ["Acquisition", "Insolvency", "Layoffs", "Merger", "OrganizationLeadership", "SpinOff", "Strike"]
     # yield training and evaluation items
-    yield_train_items = lambda self: self.yield_items(
-        os.path.join(self.data_base_dir, SmartdataCorpus.TRAIN_FILE))
-    yield_eval_items = lambda self: self.yield_items(
-        os.path.join(self.data_base_dir, SmartdataCorpus.EVAL_FILE))
+    yield_train_items = lambda self: self.yield_items(self.data_base_dir / SmartdataCorpus.TRAIN_FILE)
+    yield_eval_items = lambda self: self.yield_items(self.data_base_dir / SmartdataCorpus.EVAL_FILE)
 
     def yield_items(self, fpath:str):
         # read data

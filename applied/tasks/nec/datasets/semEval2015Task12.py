@@ -1,31 +1,24 @@
 import os
 import xml.etree.ElementTree as ET
 from .base import NEC_Dataset, NEC_DatasetItem
+from applied.common.path import FilePath
 
 class __SemEval2015Task12(NEC_Dataset):
     TRAIN_FILE = None
     EVAL_FILE = None
 
     # yield training and evaluation items
-    yield_train_items = lambda self: self.yield_items(
-        os.path.join(self.data_base_dir, self.__class__.TRAIN_FILE))
-    yield_eval_items = lambda self: self.yield_items(
-        os.path.join(self.data_base_dir, self.__class__.EVAL_FILE))
+    yield_train_items = lambda self: self.yield_items(self.data_base_dir / self.__class__.TRAIN_FILE)
+    yield_eval_items = lambda self: self.yield_items(self.data_base_dir / self.__class__.EVAL_FILE)
 
 
 class SemEval2015Task12_AspectPolarity(__SemEval2015Task12):
     """ Dataset for the SemEval2014 Task4 data for Aspect-based Sentiment Analysis
         Download: http://alt.qcri.org/semeval2015/task12/index.php?id=data-and-tools
     """
-    # urls map
-    CAN_DOWNLOAD = True
-    URL_FILE_MAP = {
-        "SemEval2015-Task12/ABSA-15_Restaurants_Train_Final.xml": "https://github.com/peace195/aspect-based-sentiment-analysis/blob/master/data/ABSA_SemEval2015/Restaurants_Train_Final.xml",
-        "SemEval2015-Task12/ABSA15_Restaurants_Test.xml": "https://raw.githubusercontent.com/peace195/aspect-based-sentiment-analysis/master/data/ABSA_SemEval2015/Restaurants_Test.xml"
-    }
 
-    TRAIN_FILE = "SemEval2015-Task12/ABSA-15_Restaurants_Train_Final.xml"
-    EVAL_FILE = "SemEval2015-Task12/ABSA15_Restaurants_Test.xml"
+    TRAIN_FILE = FilePath("SemEval2015-Task12/ABSA-15_Restaurants_Train_Final.xml", "https://github.com/peace195/aspect-based-sentiment-analysis/blob/master/data/ABSA_SemEval2015/Restaurants_Train_Final.xml")
+    EVAL_FILE = FilePath("SemEval2015-Task12/ABSA15_Restaurants_Test.xml", "https://raw.githubusercontent.com/peace195/aspect-based-sentiment-analysis/master/data/ABSA_SemEval2015/Restaurants_Test.xml")
     LABELS = ['positive', 'neutral', 'negative']
 
     def yield_items(self, fpath:str) -> iter:
@@ -69,8 +62,8 @@ class SemEval2015Task12_OpinionPolarity(__SemEval2015Task12):
         "SemEval2015-Task12/sentence_restest15_op": "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_restest15_op"        
     }
 
-    TRAIN_FILE = "SemEval2015-Task12/sentence_res15_op"
-    EVAL_FILE = "SemEval2015-Task12/sentence_restest15_op"
+    TRAIN_FILE = FilePath("SemEval2015-Task12/sentence_res15_op", "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_res15_op")
+    EVAL_FILE = FilePath("SemEval2015-Task12/sentence_restest15_op", "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_restest15_op")
     LABELS = ['positive', 'negative']
 
     def yield_items(self, fpath:str) -> iter:

@@ -193,6 +193,8 @@ Implementing a custom dataset is just as easy:
 
 ```python
 from .base import BaseDataset, MyDatasetItem
+# use this file path class to support auto-download from url
+from applied.common.path import FilePath
 
 class CustomDataset(Dataset):
     def yield_train_items(self) -> iter:

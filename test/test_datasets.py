@@ -63,5 +63,6 @@ class RelEx(DatasetTestCase):
         num_labels=1
     )
     DATASETS = [
-        tasks.relex.datasets.SemEval2010Task8
+        tasks.relex.datasets.SemEval2010Task8,
+        tasks.relex.datasets.SmartdataCorpus
     ]

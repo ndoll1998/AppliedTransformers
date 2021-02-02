@@ -4,7 +4,6 @@ from .model import Model
 # utils
 import itertools as it
 from typing import Iterator
-from applied.common.utils import fetch
 
 __all__ = ['Dataset', 'DatasetItem']
 
@@ -17,11 +16,6 @@ class Dataset(object):
     @classmethod
     def num_labels(cls) -> int:
         return len(cls.LABELS)
-
-    # map data files to download urls
-    # this enables auto downloading of the dataset
-    CAN_DOWNLOAD = False
-    URL_FILE_MAP = {}
 
     def __init__(self, 
         data_base_dir:str ='./data', 
@@ -39,21 +33,6 @@ class Dataset(object):
         self.__eval_loader:torch.utils.data.DataLoader = None
         # number of inputs and targets
         self.__n_inputs, self.__n_targets = None, None
-        # download dataset if needed
-        self.download()
-
-    def download(self) -> None:
-        if not self.__class__.CAN_DOWNLOAD:
-            return
-        for fpath, url in self.__class__.URL_FILE_MAP.items():
-            # check if file already exists
-            full_fpath = os.path.join(self.data_base_dir, fpath)
-            if os.path.isfile(full_fpath): continue
-            # create directory
-            fpath, fname = os.path.split(full_fpath)
-            os.makedirs(fpath, exist_ok=True)
-            # fetch file
-            fetch(url, save_to=full_fpath)
 
     def to(self, device:str) -> None:
         self.__device = device

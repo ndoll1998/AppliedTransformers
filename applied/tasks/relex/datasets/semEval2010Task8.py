@@ -1,21 +1,15 @@
 import os, re
 from .base import RelExDataset, RelExDatasetItem
+from applied.common.path import FilePath
 
 class SemEval2010Task8(RelExDataset):
     """ SemEval2010 Task8 Dataset
         Download: https://github.com/sahitya0000/Relation-Classification/blob/master/corpus/SemEval2010_task8_all_data.zip
     """
 
-    # urls map
-    CAN_DOWNLOAD = True
-    URL_FILE_MAP = {
-        "SemEval2010-Task8/SemEval2010_task8_training/TRAIN_FILE.TXT": "https://raw.githubusercontent.com/sahitya0000/Relation-Classification/master/corpus/SemEval2010_task8_training/TRAIN_FILE.TXT",
-        "SemEval2010-Task8/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT": "https://raw.githubusercontent.com/sahitya0000/Relation-Classification/master/corpus/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT"
-    }
-
     # training and testing files
-    TRAIN_FILE = "SemEval2010-Task8/SemEval2010_task8_training/TRAIN_FILE.TXT"
-    EVAL_FILE = "SemEval2010-Task8/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT"
+    TRAIN_FILE = FilePath("SemEval2010-Task8/SemEval2010_task8_training/TRAIN_FILE.TXT", "https://raw.githubusercontent.com/sahitya0000/Relation-Classification/master/corpus/SemEval2010_task8_training/TRAIN_FILE.TXT")
+    EVAL_FILE = FilePath("SemEval2010-Task8/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT", "https://raw.githubusercontent.com/sahitya0000/Relation-Classification/master/corpus/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT")
     # set of valid labels
     LABELS = [
         "Other",
@@ -31,10 +25,8 @@ class SemEval2010Task8(RelExDataset):
     ]
 
     # yield training and evaluation items
-    yield_train_items = lambda self: self.yield_item(
-        os.path.join(self.data_base_dir, SemEval2010Task8.TRAIN_FILE))
-    yield_eval_items = lambda self: self.yield_item(
-        os.path.join(self.data_base_dir, SemEval2010Task8.EVAL_FILE))
+    yield_train_items = lambda self: self.yield_item(self.data_base_dir / SemEval2010Task8.TRAIN_FILE)
+    yield_eval_items = lambda self: self.yield_item(self.data_base_dir / SemEval2010Task8.EVAL_FILE)
 
     def yield_item(self, fpath:str) -> iter:
         # load data

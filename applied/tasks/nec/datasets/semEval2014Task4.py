@@ -1,17 +1,14 @@
 import os
 import xml.etree.ElementTree as ET
 from .base import NEC_Dataset, NEC_DatasetItem
+from applied.common.path import FilePath
 
 class __SemEval2014Task4(NEC_Dataset):
 
     LABELS = ['positive', 'neutral', 'negative', 'conflict']
-
-    # yield train items
-    yield_train_items = lambda self: self.yield_items(
-        os.path.join(self.data_base_dir, self.__class__.TRAIN_FILE))
-    # yield test items
-    yield_eval_items = lambda self: self.yield_items(
-        os.path.join(self.data_base_dir, self.__class__.TEST_FILE))
+    # yield train and test items
+    yield_train_items = lambda self: self.yield_items(self.data_base_dir / self.__class__.TRAIN_FILE)
+    yield_eval_items = lambda self: self.yield_items(self.data_base_dir / self.__class__.TEST_FILE)
 
     def yield_items(self, fpath):
         # parse xml file
@@ -39,16 +36,9 @@ class SemEval2014Task4_Restaurants(__SemEval2014Task4):
         Download: http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools
     """
 
-    # urls map
-    CAN_DOWNLOAD = True
-    URL_FILE_MAP = {
-        "SemEval2014-Task4/Restaurants_Train.xml": "https://raw.githubusercontent.com/pedrobalage/SemevalAspectBasedSentimentAnalysis/master/semeval_data/Restaurants_Train_v2.xml",
-        "SemEval2014-Task4/restaurants-trial.xml": "https://alt.qcri.org/semeval2014/task4/data/uploads/restaurants-trial.xml"
-    }
-
     # files
-    TRAIN_FILE = "SemEval2014-Task4/Restaurants_Train.xml"
-    TEST_FILE = "SemEval2014-Task4/restaurants-trial.xml"
+    TRAIN_FILE = FilePath("SemEval2014-Task4/Restaurants_Train.xml", "https://raw.githubusercontent.com/pedrobalage/SemevalAspectBasedSentimentAnalysis/master/semeval_data/Restaurants_Train_v2.xml")
+    TEST_FILE = FilePath("SemEval2014-Task4/restaurants-trial.xml", "https://alt.qcri.org/semeval2014/task4/data/uploads/restaurants-trial.xml")
 
     def get_aspect_label_pairs(self, sentence):
         # get aspect categories and terms
@@ -65,17 +55,10 @@ class SemEval2014Task4_Laptops(__SemEval2014Task4):
     """ SemEval 2014 Task 4 Laptop Dataset for Entity Classification.
         Download: http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools
     """
-    
-    # urls map
-    CAN_DOWNLOAD = True
-    URL_FILE_MAP = {
-        "SemEval2014-Task4/Laptops_Train.xml": "https://raw.githubusercontent.com/pedrobalage/SemevalAspectBasedSentimentAnalysis/master/semeval_data/Laptop_Train_v2.xml",
-        "SemEval2014-Task4/laptops-trial.xml": "https://alt.qcri.org/semeval2014/task4/data/uploads/laptops-trial.xml"
-    }
 
     # files
-    TRAIN_FILE = "SemEval2014-Task4/Laptops_Train.xml"
-    TEST_FILE = "SemEval2014-Task4/laptops-trial.xml"
+    TRAIN_FILE = FilePath("SemEval2014-Task4/Laptops_Train.xml", "https://raw.githubusercontent.com/pedrobalage/SemevalAspectBasedSentimentAnalysis/master/semeval_data/Laptop_Train_v2.xml")
+    TEST_FILE = FilePath("SemEval2014-Task4/laptops-trial.xml", "https://alt.qcri.org/semeval2014/task4/data/uploads/laptops-trial.xml")
 
     def get_aspect_label_pairs(self, sentence):
         # get aspect categories and terms
@@ -93,17 +76,6 @@ class SemEval2014Task4(SemEval2014Task4_Restaurants, SemEval2014Task4_Laptops):
         Combination of the restaurant and laptop dataset.
         Download: http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools
     """
-
-    # urls map
-    CAN_DOWNLOAD = True
-    URL_FILE_MAP = {
-        # restaurant data
-        "SemEval2014-Task4/Restaurants_Train.xml": "https://raw.githubusercontent.com/pedrobalage/SemevalAspectBasedSentimentAnalysis/master/semeval_data/Restaurants_Train_v2.xml",
-        "SemEval2014-Task4/restaurants-trial.xml": "https://alt.qcri.org/semeval2014/task4/data/uploads/restaurants-trial.xml",
-        # laptop data
-        "SemEval2014-Task4/Laptops_Train.xml": "https://raw.githubusercontent.com/pedrobalage/SemevalAspectBasedSentimentAnalysis/master/semeval_data/Laptop_Train_v2.xml",
-        "SemEval2014-Task4/laptops-trial.xml": "https://alt.qcri.org/semeval2014/task4/data/uploads/laptops-trial.xml"
-    }
 
     def yield_train_items(self) -> iter:
         # yield from restaurant and from laptop dataset
