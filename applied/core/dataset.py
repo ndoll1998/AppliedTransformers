@@ -63,13 +63,13 @@ class Dataset(object):
         # 0) dataset -> yield items
         drop_none = lambda f: f is not None
         items = filter(drop_none, items)
-        # 1) model -> build features
+        # 1) features -> clean up
+        features = map(lambda f: f.clean_up(), features)
+        features = filter(drop_none, features)
+        # 2) model -> build features
         features = map(model.build_features_from_item, items)
         features = filter(drop_none, features)
         features = it.chain(*features)
-        # 2) features -> clean up
-        features = map(lambda f: f.clean_up(), features)
-        features = filter(drop_none, features)
         # 3) feature pair -> tokenize text
         features = map(lambda f: f.tokenize(model.encoder.tokenizer), features)
         # 4) model -> truncate features
