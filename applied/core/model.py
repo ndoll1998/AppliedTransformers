@@ -21,13 +21,6 @@ class InputFeatures(object):
         assert self.tokens is not None
         return tokenizer.convert_tokens_to_ids(self.tokens)
 
-    def clean_up(self) -> "InputFeatures":
-        # remove all soft-hyphen characters
-        self.text = self.text.replace('\xad', '')
-        self.text = self.text.replace('\u00ad', '')
-        self.text = self.text.replace('\N{SOFT HYPHEN}', '')
-        return self
-
     @classmethod
     def build_additional_feature_tensors(cls, features:Tuple["InputFeatures"]) -> Tuple[torch.Tensor]:
         # get additional fields

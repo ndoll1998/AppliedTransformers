@@ -32,6 +32,10 @@ class SmartdataCorpus(RelExDataset):
                 begin, end = sent['span']['start'], sent['span']['end']
                 sent_string = doc['text']['string'][begin:end]
                 off = -begin
+                # remove special characters
+                sent_string = sent_string.replace('\xad', '')
+                sent_string = sent_string.replace('\u00ad', '')
+                sent_string = sent_string.replace('\N{SOFT HYPHEN}', '')
 
                 for rel in sent['relationMentions']['array']:
                     rel_type = rel['name']
