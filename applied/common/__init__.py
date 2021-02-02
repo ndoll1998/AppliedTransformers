@@ -43,7 +43,7 @@ def build_token_spans(tokens:list, text:str) -> list:
 
     # clean text and tokens
     # not case or accent sensitive
-    tokens = [strip_accents(t.lower()) for t in tokens]
+    tokens = [t.lower() for t in tokens]
     text = strip_accents(text.lower())
 
     spans = []
