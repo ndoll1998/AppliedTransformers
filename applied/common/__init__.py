@@ -66,7 +66,7 @@ def build_token_spans(tokens:list, text:str) -> list:
         if not text.startswith(token):
             # second chance just to make really sure
             counter = 0
-            while str[counter:]: counter += 1
+            while token[counter:]: counter += 1
             assert text[:counter] == token, "Token and Text do not align! (%i ?= %i) '%s' != '%s' > '%s'" % (len(token), counter, token, text[:counter], text[:30])
         else:
             counter = len(token)
