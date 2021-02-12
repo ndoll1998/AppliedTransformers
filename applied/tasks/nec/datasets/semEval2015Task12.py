@@ -55,12 +55,6 @@ class SemEval2015Task12_OpinionPolarity(__SemEval2015Task12):
     """ Dataset for the SemEval2014 Task4 data for Opinion-based Sentiment Analysis
         Downlaod: https://github.com/happywwy/Coupled-Multi-layer-Attentions/tree/master/util/data_semEval
     """
-    # urls map
-    CAN_DOWNLOAD = True
-    URL_FILE_MAP = {
-        "SemEval2015-Task12/sentence_res15_op": "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_res15_op",
-        "SemEval2015-Task12/sentence_restest15_op": "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_restest15_op"        
-    }
 
     TRAIN_FILE = FilePath("SemEval2015-Task12/sentence_res15_op", "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_res15_op")
     EVAL_FILE = FilePath("SemEval2015-Task12/sentence_restest15_op", "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_restest15_op")
