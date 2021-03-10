@@ -199,11 +199,11 @@ from applied.common.path import FilePath
 class CustomDataset(Dataset):
     def yield_train_items(self) -> iter:
         # load all training data and yield the dataset items one by one
-        base_data_dir = self.base_data_dir
+        base_data_dir = self.data_base_dir
         yield MyDatasetItem(...)
     def yield_eval_items(self) -> iter:
         # load all evaluation data and yield the dataset items one by one
-        base_data_dir = self.base_data_dir
+        base_data_dir = self.data_base_dir
         yield MyDatasetItem(...)
 ```
 ## TODOs
