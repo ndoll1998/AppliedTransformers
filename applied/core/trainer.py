@@ -60,8 +60,6 @@ class Trainer(object):
                 # update progress bar
                 pbar.set_postfix({'loss': train_running_loss / i})
                 pbar.update(1)
-                # TODO: remove for full training
-                break
 
         # test model
         self.model.eval()
@@ -88,9 +86,6 @@ class Trainer(object):
                     # update progress bar
                     pbar.set_postfix({'loss': eval_running_loss / i})
                     pbar.update(1)
-
-                    # TODO: remove for full evaluation
-                    break
 
         # add a new metrics entry
         self.metrics.add_entry(
