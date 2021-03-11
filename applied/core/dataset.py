@@ -95,6 +95,28 @@ class Dataset(object):
         # return self
         return self
 
+    def statistics(self) -> str:
+        header = "Split" + " " * 7 + "|"        
+        train_split = "Training" + " " * 4 + "|"
+        eval_split = "Evaluation" + " " * 2 + "|"
+        # build the table column by column
+        for i, label in enumerate(self.__class__.LABELS):
+            # count the number of occurances
+            # of the current label in both the
+            # training and evaluation dataset
+            # TODO: this only works for single label datasets
+            #       what if target is a multi-dimensional tensor
+            n_train = sum((t[0] == i).sum() for _, t in self.train)    
+            n_eval = sum((t[0] == i).sum() for _, t in self.eval)    
+            # update tables
+            nc = len(label)
+            header += " %s |" % label
+            train_split += " %{0}i |".format(nc) % n_train
+            eval_split += " %{0}i |".format(nc) % n_eval
+        # combine rows of the table
+        table = "\n".join([header, '-' * len(header), train_split, eval_split])
+        return "\n" + self.__class__.__name__ + " Statistics:\n" + table + "\n"
+
     def _collate_fn(self, batch):
         tensors = torch.utils.data._utils.collate.default_collate(batch)
         tensors = tuple(t.to(self.__device) for t in tensors)
