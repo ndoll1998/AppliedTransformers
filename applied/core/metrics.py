@@ -155,16 +155,20 @@ Losses = MetricCollection[TrainLoss, EvalLoss].share_axes()
 
 class __F1Score(Metric):
     """ Abstract F1-Score Metric """
-    idx = None      # index used on label and logit tuple
-    average = None  # which average to use
+    idx = None              # index used on label and logit tuple
+    average = None          # which average to use
+    ignore_label = None     # label to be ignored by the metric
 
     def compute(self, logits, labels, **kwargs) -> float:
         # get labels and predictions
         logits, labels = logits[self.__class__.idx], labels[self.__class__.idx]
+        # discard the entries corresponding
+        # to the ignore label if one is given
+        if self.__class__.ignore_label is not None:
+            mask = (labels != self.__class__.ignore_label)
+            labels, logits = labels[mask], logits[mask, :]
+        # build predictions
         predicts = logits.argmax(axis=-1)
-        # flatten both
-        labels = labels.reshape(-1)
-        predicts = predicts.reshape(-1)
         # compute micro-f1-score
         return f1_score(predicts, labels, average=self.__class__.average)
 
