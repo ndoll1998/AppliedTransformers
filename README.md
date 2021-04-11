@@ -7,10 +7,10 @@ Applied Transformers is a project collecting state-of-the-art transformer models
 
 The Project currently holds the following tasks:
 
-- [AspectBasedSentimentAnalysis](applied/tasks/absa/README.md)
-- [AspectOpinionExtraction](applied/tasks/aoex/README.md)
-- [NamedEntityClassification](applied/tasks/nec/README.md)
-- [RelationExtraction](applied/tasks/relex/README.md)
+- [AspectBasedSentimentAnalysis](applied/tasks/absa)
+- [AspectOpinionExtraction](applied/tasks/aoex)
+- [NamedEntityClassification](applied/tasks/nec)
+- [RelationExtraction](applied/tasks/relex)
 
 ## How to use
 
