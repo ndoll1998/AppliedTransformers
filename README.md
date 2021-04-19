@@ -14,7 +14,7 @@ The Project currently holds the following tasks:
 
 ## How to use
 
-Our main goal is to provide a very simple yet scalable interface for both training and infering SOTA transformer models for serveral NLP tasks. The following shows a simple example to train a `BERT` model for aspect based sentiment analysis (from `examples/train_abse.py`).
+Our main goal is to provide a very simple yet scalable interface for both training and infering SOTA transformer models for serveral NLP tasks. The following shows a simple example on how to train a `BERT` model for aspect based sentiment analysis (from `examples/train_abse.py`).
 
 ```python
 import torch
