@@ -7,6 +7,9 @@ class SemEval2015Task12(AOEx_Dataset):
         Downlaod: https://github.com/happywwy/Coupled-Multi-layer-Attentions/tree/master/util/data_semEval
     """    
 
+    n_train_items = lambda self: 1316
+    n_eval_items = lambda self: 686
+    
     def yield_items(self, aspect_fname:str, sent_opinion_fname:str):
         # build full paths to files
         aspect_fpath = self.data_base_dir / aspect_fname
@@ -40,10 +43,22 @@ class SemEval2015Task12(AOEx_Dataset):
 
     # yield train and test items
     yield_train_items = lambda self: self.yield_items(
-        aspect_fname=FilePath("SemEval2015-Task12/aspectTerm_res15", "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/aspectTerm_res15"),
-        sent_opinion_fname=FilePath("SemEval2015-Task12/sentence_res15_op", "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_res15_op")
+        aspect_fname=FilePath(
+            "SemEval2015-Task12/aspectTerm_res15", 
+            "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/aspectTerm_res15"
+        ),
+        sent_opinion_fname=FilePath(
+            "SemEval2015-Task12/sentence_res15_op", 
+            "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_res15_op"
+        )
     )
     yield_eval_items = lambda self: self.yield_items(
-        aspect_fname=FilePath("SemEval2015-Task12/aspectTerm_restest15", "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/aspectTerm_restest15"),
-        sent_opinion_fname=FilePath("SemEval2015-Task12/sentence_restest15_op", "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_restest15_op")
+        aspect_fname=FilePath(
+            "SemEval2015-Task12/aspectTerm_restest15", 
+            "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/aspectTerm_restest15"
+        ),
+        sent_opinion_fname=FilePath(
+            "SemEval2015-Task12/sentence_restest15_op", 
+            "https://raw.githubusercontent.com/happywwy/Coupled-Multi-layer-Attentions/master/util/data_semEval/sentence_restest15_op"
+        )
     )

@@ -49,6 +49,9 @@ class SemEval2014Task4_Restaurants(__SemEval2014Task4):
         "https://alt.qcri.org/semeval2014/task4/data/uploads/restaurants-trial.xml"
     )
     
+    n_train_items = lambda self: 3041
+    n_eval_items = lambda self: 100
+    
     def get_aspect_label_pairs(self, sentence):
         # get aspect categories and terms
         aspect_categories, aspect_terms = sentence.find('aspectCategories'), sentence.find('aspectTerms')
@@ -76,6 +79,9 @@ class SemEval2014Task4_Laptops(__SemEval2014Task4):
         "https://alt.qcri.org/semeval2014/task4/data/uploads/laptops-trial.xml"
     )
 
+    n_train_items = lambda self: 3045
+    n_eval_items = lambda self: 100
+    
     def get_aspect_label_pairs(self, sentence):
         # get aspect categories and terms
         aspect_terms = sentence.find('aspectTerms')
@@ -91,6 +97,9 @@ class SemEval2014Task4(SemEval2014Task4_Restaurants, SemEval2014Task4_Laptops):
         Combination of the restaurant and laptop dataset.
         Download: http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools
     """
+
+    n_train_items = lambda self: 6082
+    n_eval_items = lambda self: 200
 
     def yield_train_items(self) -> iter:
         # yield from restaurant and from laptop dataset
@@ -116,6 +125,9 @@ class SemEval2014Task4_Category(__SemEval2014Task4):
         "SemEval2014-Task4/restaurants-trial.xml",
         "https://alt.qcri.org/semeval2014/task4/data/uploads/restaurants-trial.xml"
     )
+    
+    n_train_items = lambda self: 3041
+    n_eval_items = lambda self: 100
     
     def get_aspect_label_pairs(self, sentence):
         # only get categories

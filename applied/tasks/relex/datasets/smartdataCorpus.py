@@ -10,14 +10,25 @@ class SmartdataCorpus(RelExDataset):
     """
     
     # training and evaluation files
-    TRAIN_FILE = FilePath("SmartdataCorpus/train.json", "https://github.com/DFKI-NLP/smartdata-corpus/blob/master/v2_20190802/train.json.gz?raw=true", post_fetch=gzip.decompress)
-    EVAL_FILE = FilePath("SmartdataCorpus/test.json", "https://github.com/DFKI-NLP/smartdata-corpus/blob/master/v2_20190802/test.json.gz?raw=true", post_fetch=gzip.decompress)
+    TRAIN_FILE = FilePath(
+        "SmartdataCorpus/train.json", 
+        "https://github.com/DFKI-NLP/smartdata-corpus/blob/master/v2_20190802/train.json.gz?raw=true", 
+        post_fetch=gzip.decompress
+    )
+    EVAL_FILE = FilePath(
+        "SmartdataCorpus/test.json", 
+        "https://github.com/DFKI-NLP/smartdata-corpus/blob/master/v2_20190802/test.json.gz?raw=true", 
+        post_fetch=gzip.decompress
+    )
     # set of valid labels
     LABELS = ["Acquisition", "Insolvency", "Layoffs", "Merger", "OrganizationLeadership", "SpinOff", "Strike"]
     # yield training and evaluation items
     yield_train_items = lambda self: self.yield_items(self.data_base_dir / SmartdataCorpus.TRAIN_FILE)
     yield_eval_items = lambda self: self.yield_items(self.data_base_dir / SmartdataCorpus.EVAL_FILE)
 
+    n_train_items = lambda self: 808
+    n_eval_items = lambda self: 75
+    
     def yield_items(self, fpath:str):
         # read data
         with open(fpath, 'r', encoding='utf-8') as f:

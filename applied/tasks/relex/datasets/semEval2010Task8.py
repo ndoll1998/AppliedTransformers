@@ -8,8 +8,14 @@ class SemEval2010Task8(RelExDataset):
     """
 
     # training and testing files
-    TRAIN_FILE = FilePath("SemEval2010-Task8/SemEval2010_task8_training/TRAIN_FILE.TXT", "https://raw.githubusercontent.com/sahitya0000/Relation-Classification/master/corpus/SemEval2010_task8_training/TRAIN_FILE.TXT")
-    EVAL_FILE = FilePath("SemEval2010-Task8/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT", "https://raw.githubusercontent.com/sahitya0000/Relation-Classification/master/corpus/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT")
+    TRAIN_FILE = FilePath(
+        "SemEval2010-Task8/SemEval2010_task8_training/TRAIN_FILE.TXT", 
+        "https://raw.githubusercontent.com/sahitya0000/Relation-Classification/master/corpus/SemEval2010_task8_training/TRAIN_FILE.TXT"
+    )
+    EVAL_FILE = FilePath(
+        "SemEval2010-Task8/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT", 
+        "https://raw.githubusercontent.com/sahitya0000/Relation-Classification/master/corpus/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT"
+    )
     # set of valid labels
     LABELS = [
         "Other",
@@ -24,6 +30,9 @@ class SemEval2010Task8(RelExDataset):
         "Entity-Origin(e2,e1)",         "Entity-Origin(e1,e2)"
     ]
 
+    n_train_items = lambda self: 8000
+    n_eval_items = lambda self: 2717
+    
     # yield training and evaluation items
     yield_train_items = lambda self: self.yield_item(self.data_base_dir / SemEval2010Task8.TRAIN_FILE)
     yield_eval_items = lambda self: self.yield_item(self.data_base_dir / SemEval2010Task8.EVAL_FILE)

@@ -4,6 +4,7 @@ from .model import Model
 # utils
 import itertools as it
 from typing import Iterator
+from tqdm import tqdm
 
 __all__ = ['Dataset', 'DatasetItem']
 
@@ -28,14 +29,15 @@ class Dataset(object):
         self.__seq_length = seq_length
         self.__batch_size = batch_size
         self.__device = device
-        # training and testing dataloaders
-        self.__train_loader:torch.utils.data.DataLoader = None
-        self.__eval_loader:torch.utils.data.DataLoader = None
+        # training and testing datasets
+        self.__train_data:torch.utils.data.Dataset = None
+        self.__eval_data:torch.utils.data.Dataset = None
         # number of inputs and targets
         self.__n_inputs, self.__n_targets = None, None
 
-    def to(self, device:str) -> None:
+    def to(self, device:str) -> "Dataset":
         self.__device = device
+        return self
 
     @property
     def data_base_dir(self) -> str:
@@ -46,52 +48,79 @@ class Dataset(object):
     @property
     def batch_size(self) -> int:
         return self.__batch_size
+    @property
+    def is_prepared(self) -> bool:
+        return (self.__train_data is not None) and \
+                (self.__eval_data is not None)
 
     @property
     def train(self) -> torch.utils.data.DataLoader:
-        return self.__train_loader
+        assert self.is_prepared
+        return torch.utils.data.DataLoader(
+            self.__train_data, 
+            shuffle=True,
+            batch_size=self.batch_size,
+            collate_fn=self._collate_fn
+        )
     @property
     def eval(self) -> torch.utils.data.DataLoader:
-        return self.__eval_loader
+        assert self.is_prepared
+        return torch.utils.data.DataLoader(
+            self.__eval_data, 
+            shuffle=False,
+            batch_size=self.batch_size,
+            collate_fn=self._collate_fn
+        )
 
     def yield_train_items(self) -> Iterator[DatasetItem]:
         raise NotImplementedError()
     def yield_eval_items(self) -> Iterator[DatasetItem]:
         raise NotImplementedError()
 
-    def _data_prep_pipe(self, model:Model, items:Iterator[DatasetItem]) -> torch.utils.data.TensorDataset:
-        # 0) dataset -> yield items
-        drop_none = lambda f: f is not None
-        items = filter(drop_none, items)
-        # 1) model -> build features
-        features = map(model.build_features_from_item, items)
-        features = filter(drop_none, features)
-        features = it.chain(*features)
-        # 2) feature pair -> tokenize text
-        features = map(lambda f: f.tokenize(model.encoder.tokenizer), features)
-        # 3) model -> truncate features
-        truncate = lambda f: model.truncate_feature(f, max_seq_length=self.seq_length)
-        features = map(truncate, features)
-        features = filter(drop_none, features)
-        features = list(features)
-        assert len(features) > 0, "Empty datasets are not allowed!"
+    def n_train_items(self) -> int:
+        return None
+    def n_eval_items(self) -> int:
+        return None
+
+    def _data_prep_pipe(self, 
+        model:Model, 
+        items:Iterator[DatasetItem], 
+        n_items:int
+    ) -> torch.utils.data.TensorDataset:
+        # build all features
+        all_features = []
+        for item in tqdm(items, desc="Preparing", total=n_items, ascii=True):
+            # 0) dataset -> yield items
+            if (item is None): continue
+            # 1) model -> build features
+            features = model.build_features_from_item(item)
+            if (features is None): continue
+            # 2) feature -> tokenize text
+            features = map(lambda f: f.tokenize(model.encoder.tokenizer), features)
+            # 3) model -> truncate features
+            truncate = lambda f: model.truncate_feature(f, max_seq_length=self.seq_length)
+            features = map(truncate, features)
+            features = filter(lambda f: f is not None, features)
+            all_features.extend(features)
+        # make sure the dataset is not empty
+        assert len(all_features) > 0
+        FeatureClass = all_features[0].__class__
         # 4) model/encoder -> build feature tensors
-        input_features = model.encoder.build_feature_tensors(features)
-        additional_features = features[0].__class__.build_additional_feature_tensors(features)
-        target_tensors = model.build_target_tensors(features)
+        input_features = model.encoder.build_feature_tensors(all_features)
+        additional_features = FeatureClass.build_additional_feature_tensors(all_features)
+        target_tensors = model.build_target_tensors(all_features)
         # get number of input and target tensors
         self.__n_inputs = len(input_features) + len(additional_features)
         self.__n_targets = len(target_tensors)
         # 5) build tensor dataset from feature tensors
         return torch.utils.data.TensorDataset(*input_features, *additional_features, *target_tensors)
 
-    def prepare(self, model:Model) -> None:
-        # prepare training and testing dataset
-        train_dataset = self._data_prep_pipe(model, self.yield_train_items())
-        eval_dataset = self._data_prep_pipe(model, self.yield_eval_items())
-        # create dataloaders
-        self.__train_loader = torch.utils.data.DataLoader(train_dataset, shuffle=True, batch_size=self.batch_size, collate_fn=self._collate_fn)
-        self.__eval_loader = torch.utils.data.DataLoader(eval_dataset, shuffle=False, batch_size=self.batch_size, collate_fn=self._collate_fn)
+    def prepare(self, model:Model, force:bool =False) -> "Dataset":
+        # only prepare once
+        if not self.is_prepared or force:
+            # prepare training and testing dataset
+            self.__train_data = self._data_prep_pipe(model, self.yield_train_items(), self.n_train_items())
+            self.__eval_data = self._data_prep_pipe(model, self.yield_eval_items(), self.n_eval_items())
         # return self
         return self
 
@@ -116,6 +145,9 @@ class Dataset(object):
         # combine rows of the table
         table = "\n".join([header, '-' * len(header), train_split, eval_split])
         return "\n" + self.__class__.__name__ + " Statistics:\n" + table + "\n"
+
+    def __str__(self) -> str:
+        return self.statistics()
 
     def _collate_fn(self, batch):
         tensors = torch.utils.data._utils.collate.default_collate(batch)

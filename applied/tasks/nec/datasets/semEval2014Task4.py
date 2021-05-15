@@ -40,6 +40,9 @@ class SemEval2014Task4_Restaurants(__SemEval2014Task4):
     TRAIN_FILE = FilePath("SemEval2014-Task4/Restaurants_Train.xml", "https://raw.githubusercontent.com/pedrobalage/SemevalAspectBasedSentimentAnalysis/master/semeval_data/Restaurants_Train_v2.xml")
     TEST_FILE = FilePath("SemEval2014-Task4/restaurants-trial.xml", "https://alt.qcri.org/semeval2014/task4/data/uploads/restaurants-trial.xml")
 
+    n_train_items = lambda self: 3041
+    n_eval_items = lambda self: 100
+    
     def get_aspect_label_pairs(self, sentence):
         # get aspect categories and terms
         aspect_terms = sentence.find('aspectTerms')
@@ -60,6 +63,9 @@ class SemEval2014Task4_Laptops(__SemEval2014Task4):
     TRAIN_FILE = FilePath("SemEval2014-Task4/Laptops_Train.xml", "https://raw.githubusercontent.com/pedrobalage/SemevalAspectBasedSentimentAnalysis/master/semeval_data/Laptop_Train_v2.xml")
     TEST_FILE = FilePath("SemEval2014-Task4/laptops-trial.xml", "https://alt.qcri.org/semeval2014/task4/data/uploads/laptops-trial.xml")
 
+    n_train_items = lambda self: 3045
+    n_eval_items = lambda self: 100
+    
     def get_aspect_label_pairs(self, sentence):
         # get aspect categories and terms
         aspect_terms = sentence.find('aspectTerms')
@@ -77,6 +83,9 @@ class SemEval2014Task4(SemEval2014Task4_Restaurants, SemEval2014Task4_Laptops):
         Download: http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools
     """
 
+    n_train_items = lambda self: 6082
+    n_eval_items = lambda self: 200
+    
     def yield_train_items(self) -> iter:
         # yield from restaurant and from laptop dataset
         yield from SemEval2014Task4_Restaurants.yield_train_items(self)
