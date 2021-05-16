@@ -1,5 +1,9 @@
 # Applied Transformers
-![Unit Tests](https://github.com/ndoll1998/AppliedTransformers/workflows/Unit%20Tests/badge.svg)
+
+| Branch  | Status |
+| ------- | :----: |
+| Master  | ![Unit Tests](https://github.com/ndoll1998/AppliedTransformers/workflows/Unit%20Tests%20Master/badge.svg)  |
+| Develop | ![Unit Tests](https://github.com/ndoll1998/AppliedTransformers/workflows/Unit%20Tests%20Develop/badge.svg) |
 
 Applied Transformers is a project collecting state-of-the-art transformer models to tackle typical natural language processing (NLP) task. It provides PyTorch implementations of the models as well as a number of datasets for several NLP tasks. The beauty of Applied Transformers is that one can easily switch between different encoders (i.e. BERT, ALBERT, KnowBERT, etc.) indipendent of the task or classifier.
 
