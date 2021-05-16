@@ -86,9 +86,15 @@ class Model(nn.Module):
     def build_target_tensors(self, features:Tuple[InputFeatures]) -> Tuple[torch.Tensor]:
         raise NotImplementedError()
 
+    def prepare(self, dataset:object) -> None:
+        """ Prepare the model for the specific dataset. 
+            Not all models need this. (by default does nothing)
+        """
+        pass
+    
     def truncate_feature(self, f:InputFeatures, max_seq_length:int) -> InputFeatures:
         """ This function may be overriden as needed for specific models or tasks 
-            By default just cuts tokens that exceed the maximum sequence length.
+            By default cuts tokens that exceed the maximum sequence length.
         """
         f.tokens = f.tokens[:max_seq_length]
         f.labels = f.labels[:max_seq_length] if isinstance(f.labels, (tuple, list)) else f.labels

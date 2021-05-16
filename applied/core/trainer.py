@@ -32,9 +32,10 @@ class Trainer(object):
         self.model = model
         self.data = dataset
         self.optim = optimizer
-        # prepare dataset
+        # prepare both the model and the dataset
+        self.model.prepare(self.data)
         self.data.prepare(self.model)
-        # list to store al
+        # create metrics track
         self.metrics = Track(self.__class__.METRIC_TYPE())
 
     def run_epoch(self) -> None:
