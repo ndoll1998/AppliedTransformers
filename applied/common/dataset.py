@@ -3,27 +3,33 @@ from dataclasses import is_dataclass, fields
 import numpy as np
 import lxml.etree as ET
 
-def elem2dict(node):
-    """ Convert an lxml.etree node tree into a dict.
-        Source: https://gist.github.com/jacobian/795571
-    """
+def node2obj(node):
+    """ Convert a xml-node to a python object """
+
+    # handle type specification
+    if 'type' in node.attrib:
+        # list
+        if node.attrib['type'] == 'list':
+            return [node2obj(child) for child in node]
+        elif node.attrib['type'] == 'tuple':
+            return tuple(node2obj(child) for child in node)
+        elif node.attrib['type'] == 'int':
+            return int(node.text)    
+
+    # check node content
+    if (node.text is not None) and (len(node.text.strip()) > 0):
+        return node.text
+    
+    # default type is dict
     result = {}
-    for element in node.iterchildren():
-        # Remove namespace prefix
-        key = element.tag.split('}')[1] if '}' in element.tag else element.tag
-        # Process element as tree element if the inner XML contains non-whitespace content
-        if element.text and element.text.strip():
-            value = element.text
-        else:
-            value = elem2dict(element)
-        if key in result:            
-            if type(result[key]) is list:
-                result[key].append(value)
-            else:
-                result[key] = [result[key], value]
-        else:
-            result[key] = value
-    return result
+    for el in node:
+        # ignore namespace prefix
+        clean_tag = el.tag.split('}')[1] if '}' in el.tag else el.tag
+        # solve recursively 
+        result[clean_tag] = node2obj(el)
+   
+    return result 
+
 
 class XML_Dataset(Dataset):
     """ Dataset reading from xml file and applying XSL
@@ -48,7 +54,7 @@ class XML_Dataset(Dataset):
 
     def create_item(self, xml) -> DatasetItem:
         # convert xml to keyword arguments for item
-        kwargs = elem2dict(xml)
+        kwargs = node2obj(xml)
         # make sure all items are present
         for f in fields(self.__ItemType):
             if f.name not in kwargs:
@@ -69,6 +75,6 @@ class XML_Dataset(Dataset):
                 root = xml_items.getroot()
                 if root is not None:
                     yield self.create_item(root)
-    
+ 
     yield_train_items = lambda self: self.parse_xml(self.__train_path)    
     yield_eval_items = lambda self: self.parse_xml(self.__eval_path)    
