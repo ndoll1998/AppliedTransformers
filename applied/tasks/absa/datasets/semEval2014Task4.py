@@ -1,68 +1,88 @@
-import xml.etree.ElementTree as ET
 from .base import ABSA_Dataset, ABSA_DatasetItem
+from applied.common.dataset import XML_Dataset
 from applied.common.path import FilePath
 
-class __SemEval2014Task4(ABSA_Dataset):
+class __SemEval2014Task4(ABSA_Dataset, XML_Dataset):
 
+    # labels
     LABELS = ['positive', 'neutral', 'negative', 'conflict']
-    # train and test files
+    # train and eval data files
     TRAIN_FILE = None
-    TEST_FILE = None
+    EVAL_FILE = None
 
-    # yield train and test items
-    yield_train_items = lambda self: self.yield_items(self.data_base_dir / self.__class__.TRAIN_FILE)
-    yield_eval_items = lambda self: self.yield_items(self.data_base_dir / self.__class__.TEST_FILE)
+    # define xls-template    
+    XSL_TEMPLATE = """
+        <?xml version="1.0"?>
+        <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-    def yield_items(self, fpath):
-        # parse xml file
-        tree = ET.parse(fpath)
-        root = tree.getroot()
-        # parse all reviews
-        for sentence in root:            
-            # get sentence
-            text = sentence.find('text').text
-            # get aspect terms and labels
-            aspect_label_pairs = self.get_aspect_label_pairs(sentence)
-            aspect_terms, labels = zip(*aspect_label_pairs) if len(aspect_label_pairs) > 0 else ([], [])
-            # get label ids
-            labels = [self.__class__.LABELS.index(l) for l in labels]
-            # yield item
-            yield ABSA_DatasetItem(
-                sentence=text, aspects=aspect_terms, labels=labels)
-    
-    def get_aspect_label_pairs(self, sentence):
-        raise NotImplementedError()
-    
+            <!-- ignore root element since each item/sentence is processed individually -->
+            <xsl:template match="sentences"/>
+
+            <!-- collect only valuable information about a singel annotated sentence -->
+            <xsl:template match="sentence">
+                <root>
+                    <sentence> <xsl:value-of select="text"/> </sentence>
+
+                    <!-- aspect terms with labels -->
+                    <xsl:for-each select="aspectTerms/aspectTerm">
+                    <aspects>
+                        <xsl:value-of select="@term"/>
+                    </aspects>
+                    <labels>
+                        <xsl:value-of select="@polarity"/>
+                    </labels>
+                    </xsl:for-each>
+
+                    <!-- aspect categories with labels -->
+                    <xsl:for-each select="aspectCategories/aspectCategory">
+                    <aspects>
+                        <xsl:value-of select="@category"/>
+                    </aspects>
+                    <labels>
+                        <xsl:value-of select="@polarity"/>
+                    </labels>
+                    </xsl:for-each>
+                </root>
+            </xsl:template>
+
+        </xsl:stylesheet>
+        """
+
+    def prepare_item_kwargs(self, kwargs:dict) -> dict:
+        # convert labels from string to index
+        kwargs['labels'] = [kwargs['labels']] if isinstance(kwargs['labels'], str) else kwargs['labels']
+        kwargs['labels'] = [SemEval2014Task4_Restaurants.LABELS.index(l) for l in kwargs['labels']]
+        return kwargs
+
+    def __init__(self, *args, **kwargs):
+        # initialize dataset
+        ABSA_Dataset.__init__(self, *args, **kwargs)
+        XML_Dataset.__init__(self,
+            ItemType=ABSA_DatasetItem,
+            template=SemEval2014Task4_Restaurants.XSL_TEMPLATE,
+            train_path=SemEval2014Task4_Restaurants.TRAIN_FILE,
+            eval_path=SemEval2014Task4_Restaurants.EVAL_FILE
+        )
+
 
 class SemEval2014Task4_Restaurants(__SemEval2014Task4):
     """ SemEval 2014 Task 4 Restaurant Dataset for Aspect based Sentiment Analysis.
         Download: http://alt.qcri.org/semeval2014/task4/index.php?id=data-and-tools
     """
-
+    
     # paths
     TRAIN_FILE = FilePath(
         "SemEval2014-Task4/Restaurants_Train.xml",
         "https://raw.githubusercontent.com/pedrobalage/SemevalAspectBasedSentimentAnalysis/master/semeval_data/Restaurants_Train_v2.xml"
     )
-    TEST_FILE = FilePath(
+    EVAL_FILE = FilePath(
         "SemEval2014-Task4/restaurants-trial.xml",
         "https://alt.qcri.org/semeval2014/task4/data/uploads/restaurants-trial.xml"
     )
     
     n_train_items = lambda self: 3041
     n_eval_items = lambda self: 100
-    
-    def get_aspect_label_pairs(self, sentence):
-        # get aspect categories and terms
-        aspect_categories, aspect_terms = sentence.find('aspectCategories'), sentence.find('aspectTerms')
-        # load aspect label pairs
-        aspect_label_pairs = []
-        if aspect_categories is not None:
-            aspect_label_pairs += [(aspect.attrib['category'], aspect.attrib['polarity']) for aspect in aspect_categories]
-        if aspect_terms is not None:
-            aspect_label_pairs += [(aspect.attrib['term'], aspect.attrib['polarity']) for aspect in aspect_terms]
-        # return
-        return aspect_label_pairs
+   
 
 class SemEval2014Task4_Laptops(__SemEval2014Task4):
     """ SemEval 2014 Task 4 Laptop Dataset for Aspect based Sentiment Analysis.
@@ -81,16 +101,7 @@ class SemEval2014Task4_Laptops(__SemEval2014Task4):
 
     n_train_items = lambda self: 3045
     n_eval_items = lambda self: 100
-    
-    def get_aspect_label_pairs(self, sentence):
-        # get aspect categories and terms
-        aspect_terms = sentence.find('aspectTerms')
-        # load aspect label pairs
-        aspect_label_pairs = []
-        if aspect_terms is not None:
-            aspect_label_pairs += [(aspect.attrib['term'], aspect.attrib['polarity']) for aspect in aspect_terms]
-        # return
-        return aspect_label_pairs
+
 
 class SemEval2014Task4(SemEval2014Task4_Restaurants, SemEval2014Task4_Laptops):
     """ SemEval 2014 Task 4 Dataset for Aspect based Sentiment Analysis.
@@ -109,6 +120,7 @@ class SemEval2014Task4(SemEval2014Task4_Restaurants, SemEval2014Task4_Laptops):
         # yield from restaurant and from laptop dataset
         yield from SemEval2014Task4_Restaurants.yield_eval_items(self)
         yield from SemEval2014Task4_Laptops.yield_eval_items(self)
+
 
 class SemEval2014Task4_Category(__SemEval2014Task4):
     """ SemEval 2014 Task 4 Aspect-Category Dataset for Aspect based Sentiment Analysis.
@@ -129,12 +141,31 @@ class SemEval2014Task4_Category(__SemEval2014Task4):
     n_train_items = lambda self: 3041
     n_eval_items = lambda self: 100
     
-    def get_aspect_label_pairs(self, sentence):
-        # only get categories
-        aspect_categories = sentence.find('aspectCategories')
-        # build aspect label pairs
-        aspect_label_pairs = []
-        if aspect_categories is not None:
-            aspect_label_pairs += [(aspect.attrib['category'], aspect.attrib['polarity']) for aspect in sentence.find('aspectCategories') if aspect is not None]
-        # return
-        return aspect_label_pairs
+    # define xls-template    
+    XSL_TEMPLATE = """
+        <?xml version="1.0"?>
+        <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+            <!-- ignore root element since each item/sentence is processed individually -->
+            <xsl:template match="sentences"/>
+
+            <!-- collect only valuable information about a singel annotated sentence -->
+            <xsl:template match="sentence">
+                <root>
+                    <sentence> <xsl:value-of select="text"/> </sentence>
+
+                    <!-- aspect categories with labels -->
+                    <xsl:for-each select="aspectCategories/aspectCategory">
+                    <aspects>
+                        <xsl:value-of select="@category"/>
+                    </aspects>
+                    <labels>
+                        <xsl:value-of select="@polarity"/>
+                    </labels>
+                    </xsl:for-each>
+
+                </root>
+            </xsl:template>
+
+        </xsl:stylesheet>
+        """
