@@ -1,5 +1,6 @@
 --find-links https://download.pytorch.org/whl/torch_stable.html
 
+lxml==4.6.3
 requests==2.25.1
 torch==1.7.1+cpu
 transformers==4.2.2
