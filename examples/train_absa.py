@@ -19,7 +19,9 @@ trainer = absa.Trainer(
     model=model, 
     dataset=dataset,
     optimizer=optim
-).train(epochs=2)
+)
+exit()
+# .train(epochs=2)
 # save metrics and model
 trainer.metrics.save_table("../results/ABSA-Bert/metrics.table")
 torch.save(model.state_dict(), "../results/ABSA-Bert/model.bin")

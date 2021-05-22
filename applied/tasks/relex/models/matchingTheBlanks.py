@@ -8,7 +8,7 @@ from applied.core.model import Encoder, InputFeatures
 # import utils
 from typing import Tuple
 from dataclasses import dataclass
-from applied.common import build_token_spans
+from applied.common.token import build_token_spans
 
 @dataclass
 class _MTB_InputFeatures(InputFeatures):
