@@ -2,6 +2,7 @@ import os
 import xml.etree.ElementTree as ET
 from .base import NEC_Dataset, NEC_DatasetItem
 from applied.common.path import FilePath
+from applied.common.dataset import XML_Dataset
 
 class __SemEval2015Task12(NEC_Dataset):
     TRAIN_FILE = None
@@ -12,12 +13,13 @@ class __SemEval2015Task12(NEC_Dataset):
     yield_eval_items = lambda self: self.yield_items(self.data_base_dir / self.__class__.EVAL_FILE)
 
 
-class SemEval2015Task12_AspectPolarity(__SemEval2015Task12):
+class SemEval2015Task12_AspectPolarity(XML_Dataset, NEC_Dataset):
     """ Dataset for the SemEval2014 Task4 data for Aspect-based Sentiment Analysis
         Download: http://alt.qcri.org/semeval2015/task12/index.php?id=data-and-tools
     """
 
     LABELS = ['positive', 'neutral', 'negative']
+    # train and eval files
     TRAIN_FILE = FilePath(
         "SemEval2015-Task12/ABSA-15_Restaurants_Train_Final.xml", 
         "https://raw.githubusercontent.com/peace195/aspect-based-sentiment-analysis/master/data/ABSA_SemEval2015/Restaurants_Train_Final.xml"
@@ -27,38 +29,61 @@ class SemEval2015Task12_AspectPolarity(__SemEval2015Task12):
         "https://raw.githubusercontent.com/peace195/aspect-based-sentiment-analysis/master/data/ABSA_SemEval2015/Restaurants_Test.xml"
     )
 
-    n_train_items = lambda self: 833
-    n_eval_items = lambda self: 402
+    n_train_items = lambda self: 1315
+    n_eval_items = lambda self: 685
+
+    XSL_TEMPLATE = """
+        <?xml version="1.0"?>
+        <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+            <!-- ignore root element since each item/sentence is processed individually -->
+            <xsl:template match="Review"/>
+            <xsl:template match="Reviews"/>
+            <xsl:template match="sentences"/>
+
+            <!-- collect only valuable information about a singel annotated sentence -->
+            <xsl:template match="sentence">
+                <root>
+                    <sentence> <xsl:value-of select="text"/> </sentence>
+
+                    <!-- collect all aspect spans -->
+                    <entity_spans type="list">
+                        <xsl:for-each select="Opinions/Opinion">
+                        <item type="tuple">
+                            <item type="int"><xsl:value-of select="@from"/></item>
+                            <item type="int"><xsl:value-of select="@to"/>  </item>
+                        </item>
+                        </xsl:for-each>
+                    </entity_spans>
+                    
+                    <!-- collect the corresponding labels -->
+                    <labels type="list">
+                        <xsl:for-each select="Opinions/Opinion">
+                        <item><xsl:value-of select="@polarity"/></item>
+                        </xsl:for-each>
+                    </labels>
+
+                </root>
+            </xsl:template>
+
+        </xsl:stylesheet>
+    """
     
-    def yield_items(self, fpath:str) -> iter:
-        # parse xml file
-        tree = ET.parse(fpath)
-        root = tree.getroot()
-        # parse all reviews
-        for review in root:
-            for sent in review[0].findall('sentence'):
-                # get sentence
-                text = sent.find('text').text
-                # find opinions
-                opinions = sent.find('Opinions')
-                if opinions is None:
-                    continue
-                # get aspects and sentiments
-                aspects = [(int(o.attrib['from']), int(o.attrib['to'])) for o in opinions]
-                sentiments = [o.attrib['polarity'] for o in opinions]
-                # remove unvalids - no aspect target
-                sentiments = [s for s, (b, e) in zip(sentiments, aspects) if b < e]
-                aspects = [(b, e) for (b, e) in aspects if b < e]
-                # no aspects found
-                if len(aspects) == 0:
-                    continue
-                
-                # build dataset item
-                yield NEC_DatasetItem(
-                    sentence=text,
-                    entity_spans=aspects,
-                    labels=[SemEval2015Task12_AspectPolarity.LABELS.index(s) for s in sentiments]
-                )
+    def prepare_item_kwargs(self, kwargs:dict) -> dict:
+        # convert labels from string to index
+        kwargs['labels'] = [SemEval2015Task12_AspectPolarity.LABELS.index(l) for l in kwargs['labels']]
+        return kwargs
+
+    def __init__(self, *args, **kwargs):
+        # initialize dataset
+        NEC_Dataset.__init__(self, *args, **kwargs)
+        XML_Dataset.__init__(self,
+            ItemType=NEC_DatasetItem,
+            template=self.__class__.XSL_TEMPLATE,
+            train_path=self.__class__.TRAIN_FILE,
+            eval_path=self.__class__.EVAL_FILE
+        )
+
 
 class SemEval2015Task12_OpinionPolarity(__SemEval2015Task12):
     """ Dataset for the SemEval2014 Task4 data for Opinion-based Sentiment Analysis
@@ -103,3 +128,8 @@ class SemEval2015Task12_OpinionPolarity(__SemEval2015Task12):
                 entity_spans=opinion_spans, 
                 labels=sentiments
             )
+    
+    # yield training and evaluation items
+    yield_train_items = lambda self: self.yield_items(self.data_base_dir / self.__class__.TRAIN_FILE)
+    yield_eval_items = lambda self: self.yield_items(self.data_base_dir / self.__class__.EVAL_FILE)
+

@@ -24,17 +24,23 @@ class __SemEval2014Task4(NEC_Dataset, XML_Dataset):
                 <root>
                     <sentence> <xsl:value-of select="text"/> </sentence>
 
-                    <!-- aspect terms with labels -->
-                    <xsl:for-each select="aspectTerms/aspectTerm">
-                    <entity_spans>
-                        <begin><xsl:value-of select="@from"/></begin>
-                        <end>  <xsl:value-of select="@to"/>  </end>
+                    <!-- collect all aspect spans -->
+                    <entity_spans type="list">
+                        <xsl:for-each select="aspectTerms/aspectTerm">
+                        <item type="tuple">
+                            <item type="int"><xsl:value-of select="@from"/></item>
+                            <item type="int"><xsl:value-of select="@to"/>  </item>
+                        </item>
+                        </xsl:for-each>
                     </entity_spans>
-                    <labels>
-                        <xsl:value-of select="@polarity"/>
+                    
+                    <!-- collect the corresponding labels -->
+                    <labels type="list">
+                        <xsl:for-each select="aspectTerms/aspectTerm">
+                        <item><xsl:value-of select="@polarity"/></item>
+                        </xsl:for-each>
                     </labels>
-                    </xsl:for-each>
-
+                
                 </root>
             </xsl:template>
 
@@ -42,12 +48,8 @@ class __SemEval2014Task4(NEC_Dataset, XML_Dataset):
         """
 
     def prepare_item_kwargs(self, kwargs:dict) -> dict:
-        # convert span dicts to tuples
-        kwargs['entity_spans'] = [kwargs['entity_spans']] if isinstance(kwargs['entity_spans'], dict) else kwargs['entity_spans']
-        kwargs['entity_spans'] = [(int(s['begin']), int(s['end'])) for s in kwargs['entity_spans']]
         # convert labels from string to index
-        kwargs['labels'] = [kwargs['labels']] if isinstance(kwargs['labels'], str) else kwargs['labels']
-        kwargs['labels'] = [SemEval2014Task4_Restaurants.LABELS.index(l) for l in kwargs['labels']]
+        kwargs['labels'] = [self.__class__.LABELS.index(l) for l in kwargs['labels']]
         return kwargs
 
     def __init__(self, *args, **kwargs):
@@ -55,9 +57,9 @@ class __SemEval2014Task4(NEC_Dataset, XML_Dataset):
         NEC_Dataset.__init__(self, *args, **kwargs)
         XML_Dataset.__init__(self,
             ItemType=NEC_DatasetItem,
-            template=SemEval2014Task4_Restaurants.XSL_TEMPLATE,
-            train_path=SemEval2014Task4_Restaurants.TRAIN_FILE,
-            eval_path=SemEval2014Task4_Restaurants.EVAL_FILE
+            template=self.__class__.XSL_TEMPLATE,
+            train_path=self.__class__.TRAIN_FILE,
+            eval_path=self.__class__.EVAL_FILE
         )
 
 
@@ -90,7 +92,7 @@ class SemEval2014Task4_Laptops(__SemEval2014Task4):
         "SemEval2014-Task4/Laptops_Train.xml",
         "https://raw.githubusercontent.com/pedrobalage/SemevalAspectBasedSentimentAnalysis/master/semeval_data/Laptop_Train_v2.xml"
     )
-    TEST_FILE = FilePath(
+    EVAL_FILE = FilePath(
         "SemEval2014-Task4/laptops-trial.xml",
         "https://alt.qcri.org/semeval2014/task4/data/uploads/laptops-trial.xml"
     )
