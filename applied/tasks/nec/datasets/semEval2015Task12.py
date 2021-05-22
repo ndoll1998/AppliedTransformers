@@ -4,15 +4,6 @@ from .base import NEC_Dataset, NEC_DatasetItem
 from applied.common.path import FilePath
 from applied.common.dataset import XML_Dataset
 
-class __SemEval2015Task12(NEC_Dataset):
-    TRAIN_FILE = None
-    EVAL_FILE = None
-
-    # yield training and evaluation items
-    yield_train_items = lambda self: self.yield_items(self.data_base_dir / self.__class__.TRAIN_FILE)
-    yield_eval_items = lambda self: self.yield_items(self.data_base_dir / self.__class__.EVAL_FILE)
-
-
 class SemEval2015Task12_AspectPolarity(XML_Dataset, NEC_Dataset):
     """ Dataset for the SemEval2014 Task4 data for Aspect-based Sentiment Analysis
         Download: http://alt.qcri.org/semeval2015/task12/index.php?id=data-and-tools
@@ -69,11 +60,6 @@ class SemEval2015Task12_AspectPolarity(XML_Dataset, NEC_Dataset):
         </xsl:stylesheet>
     """
     
-    def prepare_item_kwargs(self, kwargs:dict) -> dict:
-        # convert labels from string to index
-        kwargs['labels'] = [SemEval2015Task12_AspectPolarity.LABELS.index(l) for l in kwargs['labels']]
-        return kwargs
-
     def __init__(self, *args, **kwargs):
         # initialize dataset
         NEC_Dataset.__init__(self, *args, **kwargs)
@@ -85,7 +71,7 @@ class SemEval2015Task12_AspectPolarity(XML_Dataset, NEC_Dataset):
         )
 
 
-class SemEval2015Task12_OpinionPolarity(__SemEval2015Task12):
+class SemEval2015Task12_OpinionPolarity(NEC_Dataset):
     """ Dataset for the SemEval2014 Task4 data for Opinion-based Sentiment Analysis
         Downlaod: https://github.com/happywwy/Coupled-Multi-layer-Attentions/tree/master/util/data_semEval
     """
@@ -121,12 +107,12 @@ class SemEval2015Task12_OpinionPolarity(__SemEval2015Task12):
             opinion_pos = [sent.find(o) for o in opinions]
             opinion_spans = [(i, i + len(o)) for i, o in zip(opinion_pos, opinions)]
             # get sentiment labels
-            sentiments = [(-int(i) + 1) // 2 for i in sentiments]
+            sentiments = [self.__class__.LABELS[(1 - int(i)) // 2] for i in sentiments]
             # build dataset item
             yield NEC_DatasetItem(
                 sentence=sent, 
-                entity_spans=opinion_spans, 
-                labels=sentiments
+                entity_spans=opinion_spans,
+                labels=sentiments, 
             )
     
     # yield training and evaluation items

@@ -48,11 +48,6 @@ class __SemEval2014Task4(ABSA_Dataset, XML_Dataset):
         </xsl:stylesheet>
         """
 
-    def prepare_item_kwargs(self, kwargs:dict) -> dict:
-        # convert labels from string to index
-        kwargs['labels'] = [self.__class__.LABELS.index(l) for l in kwargs['labels']]
-        return kwargs
-
     def __init__(self, *args, **kwargs):
         # initialize dataset
         ABSA_Dataset.__init__(self, *args, **kwargs)

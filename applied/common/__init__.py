@@ -23,3 +23,9 @@ def align_shape(L:list, shape:tuple, fill_value:float =0) -> np.ndarray:
     # match the shape of a one dimensional array
     return np.asarray(L + [fill_value] * (shape[0] - len(L)))
 
+def map_recursive(fn:callable, L:list) -> list:
+    """ apply function to all items in arbitrary deep nested lists """
+    if not isinstance(L, list):
+        return fn(L)
+    return [map_recursive(fn, l) for l in L]
+

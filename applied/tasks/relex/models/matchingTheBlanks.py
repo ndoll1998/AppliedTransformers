@@ -87,7 +87,7 @@ class MatchingTheBlanks(RelExModel):
         return f
         
     def build_target_tensors(self, features:Tuple[_MTB_InputFeatures]) -> Tuple[torch.Tensor]:
-        return (torch.LongTensor([f.labels for f in features]),)
+        return (torch.LongTensor([f.label_ids for f in features]),)
 
     def forward(self,
         # encoder inputs

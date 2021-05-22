@@ -68,5 +68,5 @@ class SmartdataCorpus(RelExDataset):
                             sentence=sent_string,
                             source_entity_span=spanA,
                             target_entity_span=spanB,
-                            relation_type=SmartdataCorpus.LABELS.index(rel_type)
+                            relation_type=rel_type
                         )

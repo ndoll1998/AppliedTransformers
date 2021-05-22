@@ -4,7 +4,7 @@ def build_bio_scheme(token_spans:list, entity_spans:list) -> list:
 
     # no entities provided
     if len(entity_spans) == 0:
-        return [0] * len(token_spans)
+        return ['O'] * len(token_spans)
 
     # sort entities by occurance in text
     entity_spans = sorted(entity_spans, key=lambda e: e[0])
@@ -18,15 +18,15 @@ def build_bio_scheme(token_spans:list, entity_spans:list) -> list:
         if (eb <= tb) and (te <= ee):
             if in_entity:
                 # already in entity
-                bio.append(2)
+                bio.append("I")
             else:
                 # new entity
                 in_entity = True
-                bio.append(1)
+                bio.append("B")
         else:
             # out of entity
             in_entity = False
-            bio.append(0)
+            bio.append("O")
 
     return bio
 

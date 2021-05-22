@@ -2,19 +2,26 @@
 import torch
 import torch.nn as nn
 # import utils
+from applied.common import map_recursive
 from dataclasses import dataclass, fields
 from typing import Union, Tuple, Dict
 
 @dataclass
 class InputFeatures(object):
     text:str
-    labels:Union[Tuple[int], int]    # depending on task
+    labels:Union[Tuple[str], str]    # depending on task
     # optional
     tokens:Tuple[str] =None
+    label_ids:Union[Tuple[int], int] =None
 
     def tokenize(self, tokenizer) -> "InputFeatures":
         if self.tokens is None:
             self.tokens = tokenizer.tokenize(self.text)
+        return self
+
+    def index_labels(self, dataset) -> "InputFeatures":
+        if self.label_ids is None:
+            self.label_ids = map_recursive(lambda l: dataset.LABELS.index(l), self.labels)
         return self
 
     def token_ids(self, tokenizer) -> Tuple[int]:
@@ -24,7 +31,8 @@ class InputFeatures(object):
     @classmethod
     def build_additional_feature_tensors(cls, features:Tuple["InputFeatures"]) -> Tuple[torch.Tensor]:
         # get additional fields
-        additional_fields = tuple(f for f in fields(cls) if f.name not in ['text', 'labels', 'tokens'])
+        default_fields = tuple(f.name for f in fields(InputFeatures))
+        additional_fields = tuple(f for f in fields(cls) if f.name not in default_fields)
         # stack and create tensor
         return tuple(
             f.type([getattr(feat, f.name) for feat in features]) 
@@ -98,6 +106,7 @@ class Model(nn.Module):
         """
         f.tokens = f.tokens[:max_seq_length]
         f.labels = f.labels[:max_seq_length] if isinstance(f.labels, (tuple, list)) else f.labels
+        f.label_idx = f.label_ids[:max_seq_length] if isinstance(f.label_ids, (tuple, list)) else f.label_ids
         return f
 
     def parameters(self, only_head:bool =False):

@@ -70,5 +70,5 @@ class SemEval2010Task8(RelExDataset):
                 sentence=sent,
                 source_entity_span=entity_span_A,
                 target_entity_span=entity_span_B,
-                relation_type=SemEval2010Task8.LABELS.index(label)
+                relation_type=label
             )

@@ -128,7 +128,7 @@ class CapsuleNetwork(ABSA_Model):
         )
 
     def build_target_tensors(self, features:Tuple[InputFeatures]) -> Tuple[torch.Tensor]:
-        return (torch.LongTensor([f.labels for f in features]),)
+        return (torch.LongTensor([f.label_ids for f in features]),)
 
     def capsule_guided_routing(self, primary_capsule, norm_weight):
         # build guide matrix

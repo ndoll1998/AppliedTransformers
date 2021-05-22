@@ -27,7 +27,7 @@ class SentencePairClassifier(ABSA_Model):
             ) for aspect, label in zip(item.aspects, item.labels))
 
     def build_target_tensors(self, features:Tuple[InputFeatures]) -> Tuple[torch.LongTensor]:
-        return (torch.LongTensor([f.labels for f in features]),)
+        return (torch.LongTensor([f.label_ids for f in features]),)
 
     def forward(self, 
         input_ids, 

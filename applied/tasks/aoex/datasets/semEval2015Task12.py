@@ -7,6 +7,9 @@ class SemEval2015Task12(AOEx_Dataset):
         Downlaod: https://github.com/happywwy/Coupled-Multi-layer-Attentions/tree/master/util/data_semEval
     """    
 
+    # begin-in-out labeling scheme
+    LABELS = ["O", "B", "I"]
+
     n_train_items = lambda self: 1316
     n_eval_items = lambda self: 686
     
