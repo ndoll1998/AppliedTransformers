@@ -2,7 +2,7 @@
 import torch
 import torch.nn as nn
 # import utils
-from applied.common import map_recursive
+from applied.common.nested import map_recursive
 from dataclasses import dataclass, fields
 from typing import Union, Tuple, Dict
 

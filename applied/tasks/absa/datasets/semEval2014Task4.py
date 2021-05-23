@@ -1,5 +1,5 @@
 from .base import ABSA_Dataset, ABSA_DatasetItem
-from applied.common.dataset import XML_Dataset
+from applied.common.datasets import XML_Dataset
 from applied.common.path import FilePath
 
 class __SemEval2014Task4(ABSA_Dataset, XML_Dataset):

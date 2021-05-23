@@ -7,9 +7,9 @@ from .base import AOEx_Model
 from ..datasets.base import AOEx_DatasetItem
 from applied.core.model import Encoder, InputFeatures
 # import utils
-from applied.common import align_shape
 from applied.common.bio import build_bio_scheme
 from applied.common.token import build_token_spans
+from applied.common.nested import align_shape
 from typing import Tuple
 
 class TokenClassifier(AOEx_Model):

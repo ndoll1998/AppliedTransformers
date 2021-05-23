@@ -7,7 +7,7 @@ from .base import ABSA_Model
 from ..datasets.base import ABSA_Dataset, ABSA_DatasetItem
 from applied.core.model import Encoder, InputFeatures
 # import utils
-from applied.common import align_shape
+from applied.common.nested import align_shape
 from typing import Tuple
 
 """ Bi-Linear Attention """

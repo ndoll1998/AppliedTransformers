@@ -2,7 +2,7 @@ import os
 import xml.etree.ElementTree as ET
 from .base import NEC_Dataset, NEC_DatasetItem
 from applied.common.path import FilePath
-from applied.common.dataset import XML_Dataset
+from applied.common.datasets import XML_Dataset
 
 class SemEval2015Task12_AspectPolarity(XML_Dataset, NEC_Dataset):
     """ Dataset for the SemEval2014 Task4 data for Aspect-based Sentiment Analysis

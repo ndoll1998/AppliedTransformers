@@ -1,7 +1,7 @@
 import torch
 import transformers
 from applied.core.model import Encoder
-from applied.common import align_shape
+from applied.common.nested import align_shape
 
 class HuggingfaceModel(transformers.PreTrainedModel, Encoder):
 

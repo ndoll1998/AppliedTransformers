@@ -1,6 +1,6 @@
 
 from .base import NEC_Dataset, NEC_DatasetItem
-from applied.common.dataset import XML_Dataset
+from applied.common.datasets import XML_Dataset
 from applied.common.path import FilePath
 
 class __SemEval2014Task4(NEC_Dataset, XML_Dataset):
