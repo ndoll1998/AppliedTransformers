@@ -163,7 +163,7 @@ class CustomModel(BaseModel):
             Also make sure that the first dimension of each label tensor 
             corresponds to the examples, i.e. it should have the size of len(features).
         """
-        labels = [f.labels for f in features]
+        labels = [f.label_ids for f in features]
         return (torch.LongTensor(labels),)
 
     def forward(self, 
